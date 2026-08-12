@@ -7,3 +7,9 @@ class UserRegistrationRequestSchema(BaseModel):
     email: EmailStr
     password: str
     group: UserGroupEnum
+
+
+class UserRegistrationResponseSchema(BaseModel):
+    id: int
+    email: EmailStr
+    group: UserGroupEnum
