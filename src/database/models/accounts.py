@@ -47,7 +47,11 @@ class UserModel(Base):
         default=datetime.now(timezone.utc),
         nullable=False
     )
-    updated_at = Column(DateTime(timezone=True), nullable=False)
+    updated_at = Column(
+        DateTime(timezone=True),
+        nullable=False,
+        default=datetime.now(timezone.utc),
+    )
     group_id = Column(Integer, ForeignKey("user_groups.id"), nullable=False)
     group = relationship(UserGroupModel, back_populates="users")
 
