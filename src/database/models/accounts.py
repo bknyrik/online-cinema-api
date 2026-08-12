@@ -89,7 +89,11 @@ class ActivationTokenModel(AbstractTokenModel):
 class PasswordResetTokenModel(AbstractTokenModel):
     __tablename__ = "password_reset_tokens"
 
-    user = relationship(UserModel, back_populates="password_reset_tokens")
+    user = relationship(
+        UserModel,
+        back_populates="password_reset_token",
+        single_parent=True
+    )
 
     __table_args__ = (UniqueConstraint("user_id"),)
 
