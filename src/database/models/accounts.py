@@ -81,3 +81,8 @@ class PasswordResetTokenModel(AbstractTokenModel):
 
     user = relationship(UserModel, back_populates="password_reset_tokens")
 
+
+class RefreshTokenModel(AbstractTokenModel):
+    __tablename__ = "refresh_tokens"
+
+    user = relationship(UserModel, back_populates="refresh_tokens")
