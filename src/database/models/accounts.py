@@ -99,8 +99,6 @@ class RefreshTokenModel(AbstractTokenModel):
 
     user = relationship(UserModel, back_populates="refresh_tokens")
 
-    __table_args__ = (UniqueConstraint("user_id"),)
-
 
 class GenderEnum(StrEnum):
     MAN = auto()
