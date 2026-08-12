@@ -6,7 +6,7 @@ from src.database.models.accounts import UserGroupEnum
 class UserRegistrationRequestSchema(BaseModel):
     email: EmailStr
     password: str
-    group: UserGroupEnum
+    group: UserGroupEnum = UserGroupEnum.USER
 
 
 class UserRegistrationResponseSchema(BaseModel):
