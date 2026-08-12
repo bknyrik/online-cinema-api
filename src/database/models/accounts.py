@@ -8,7 +8,8 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     Boolean,
-    UniqueConstraint
+    UniqueConstraint,
+    Text
 )
 from sqlalchemy.orm import relationship
 from enum import StrEnum, auto
@@ -114,6 +115,8 @@ class UserProfileModel(Base):
     last_name = Column(String(255), nullable=True)
     avatar = Column(String(255), nullable=False)
     gender = Column(Enum(GenderEnum), nullable=True)
+    date_of_birth = Column(DateTime, nullable=True)
+    info = Column(Text, nullable=False)
     user = relationship(
         UserModel,
         back_populates="profile",
