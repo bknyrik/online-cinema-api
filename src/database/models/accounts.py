@@ -70,6 +70,11 @@ class UserModel(Base):
         "RefreshTokenModel",
         back_populates="user"
     )
+    profile = relationship(
+        "UserProfileModel",
+        back_populates="user",
+        single_parent=True
+    )
 
 
 class AbstractTokenModel(Base):
