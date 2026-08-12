@@ -68,3 +68,10 @@ class AbstractTokenModel(Base):
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False
     )
+
+
+class ActivationTokenModel(AbstractTokenModel):
+    __tablename__ = "activation_tokens"
+
+    user = relationship(UserModel, back_populates="activation_tokens")
+
