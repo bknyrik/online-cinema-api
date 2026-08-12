@@ -7,7 +7,8 @@ from sqlalchemy import (
     Enum,
     DateTime,
     ForeignKey,
-    Boolean
+    Boolean,
+    UniqueConstraint
 )
 from sqlalchemy.orm import relationship
 from enum import StrEnum, auto
@@ -75,14 +76,21 @@ class ActivationTokenModel(AbstractTokenModel):
 
     user = relationship(UserModel, back_populates="activation_tokens")
 
+    __table_args__ = (UniqueConstraint("user_id"),)
+
 
 class PasswordResetTokenModel(AbstractTokenModel):
     __tablename__ = "password_reset_tokens"
 
     user = relationship(UserModel, back_populates="password_reset_tokens")
 
+    __table_args__ = (UniqueConstraint("user_id"),)
+
 
 class RefreshTokenModel(AbstractTokenModel):
     __tablename__ = "refresh_tokens"
 
     user = relationship(UserModel, back_populates="refresh_tokens")
+
+    __table_args__ = (UniqueConstraint("user_id"),)
+
