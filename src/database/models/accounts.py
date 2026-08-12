@@ -98,3 +98,23 @@ class RefreshTokenModel(AbstractTokenModel):
 class GenderEnum(StrEnum):
     MAN = auto()
     WOMAN = auto()
+
+
+class UserProfileModel(Base):
+    __tablename__ = "user_profiles"
+
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        unique=True,
+        nullable=False
+    )
+    first_name = Column(String(255), nullable=True)
+    last_name = Column(String(255), nullable=True)
+    avatar = Column(String(255), nullable=False)
+    gender = Column(Enum(GenderEnum), nullable=True)
+    user = relationship(
+        UserModel,
+        back_populates="profile",
+        single_parent=True
+    )
