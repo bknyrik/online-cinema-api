@@ -94,3 +94,7 @@ class RefreshTokenModel(AbstractTokenModel):
 
     __table_args__ = (UniqueConstraint("user_id"),)
 
+
+class GenderEnum(StrEnum):
+    MAN = auto()
+    WOMAN = auto()
