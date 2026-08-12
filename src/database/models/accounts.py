@@ -75,3 +75,9 @@ class ActivationTokenModel(AbstractTokenModel):
 
     user = relationship(UserModel, back_populates="activation_tokens")
 
+
+class PasswordResetTokenModel(AbstractTokenModel):
+    __tablename__ = "password_reset_tokens"
+
+    user = relationship(UserModel, back_populates="password_reset_tokens")
+
