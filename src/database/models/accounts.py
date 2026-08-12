@@ -81,7 +81,11 @@ class AbstractTokenModel(Base):
 class ActivationTokenModel(AbstractTokenModel):
     __tablename__ = "activation_tokens"
 
-    user = relationship(UserModel, back_populates="activation_tokens")
+    user = relationship(
+        UserModel,
+        back_populates="activation_token",
+        single_parent=True
+    )
 
     __table_args__ = (UniqueConstraint("user_id"),)
 
