@@ -34,6 +34,7 @@ class UserGroupModel(Base):
         nullable=False,
         unique=True
     )
+    users = relationship("UserModel", back_populates="group")
 
 
 class UserModel(Base):
