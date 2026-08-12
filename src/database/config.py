@@ -14,7 +14,6 @@ engine = create_async_engine(
     SQLALCHEMY_DATABASE_URL,
     echo=True,
     future=True,
-    connect_args={"check_same_thread": False}
 )
 
 
