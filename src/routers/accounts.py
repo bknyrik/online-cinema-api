@@ -1,6 +1,7 @@
 from fastapi import APIRouter, status, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.database.models.accounts import UserModel
 from src.schemas.accounts import (
     UserRegistrationRequestSchema,
     UserRegistrationResponseSchema
@@ -14,12 +15,13 @@ router = APIRouter()
 
 @router.post(
     "/register/",
-    status_code=status.HTTP_201_CREATED
+    status_code=status.HTTP_201_CREATED,
+    response_model=UserRegistrationResponseSchema
 )
 async def register_user(
     data: UserRegistrationRequestSchema,
     db: AsyncSession = Depends(get_db)
-) -> UserRegistrationResponseSchema:
+) -> UserModel:
     user = await get_user_by_email(db, data.email)
 
     if user:
@@ -29,7 +31,4 @@ async def register_user(
         )
 
     user = await create_user(db, data)
-    return UserRegistrationResponseSchema(
-        id=user.id,
-        email=user.email,
-    )
+    return user
