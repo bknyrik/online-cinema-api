@@ -1,7 +1,12 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.orm import joinedload
 
-from src.database.models.accounts import UserModel, UserGroupModel
+from src.database.models.accounts import (
+    UserModel,
+    UserGroupModel,
+    AbstractTokenModel
+)
 from src.schemas.accounts import UserRegistrationRequestSchema
 from src.security.password import hash_password
 
@@ -37,3 +42,23 @@ async def create_user(
     await db.refresh(user)
 
     return user
+
+
+async def create_token(
+    db: AsyncSession,
+    user_id: int,
+    token_model: type[AbstractTokenModel]
+) -> AbstractTokenModel:
+    token_instance = token_model(user_id=user_id)
+
+    db.add(token_instance)
+    await db.commit()
+
+    result = await db.execute(
+        select(token_model)
+        .options(joinedload(token_model.user))
+        .where(token_model.user_id == user_id)
+    )
+    token = result.scalar_one()
+
+    return token
