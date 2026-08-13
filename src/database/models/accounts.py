@@ -16,6 +16,7 @@ from sqlalchemy.orm import relationship
 from enum import StrEnum, auto
 
 from src.database.models.base import Base
+from src.security.utils import generate_secure_token
 
 
 class UserGroupEnum(StrEnum):
@@ -84,7 +85,8 @@ class AbstractTokenModel(Base):
     token = Column(
         String(255),
         unique=True,
-        nullable=False
+        nullable=False,
+        default=generate_secure_token
     )
     expires_at = Column(
         DateTime(timezone=True),
