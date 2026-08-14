@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     DB_PORT = os.getenv("DB_PORT")
     SMTP_HOST = os.getenv("SMTP_HOST")
     SMTP_PORT = os.getenv("SMTP_PORT")
+    CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
+    CELERY_RESULT_BACKEND = os.getenv("CELERY_BACKEND_RESULT")
 
     class Config:
         env_file = ".env"
