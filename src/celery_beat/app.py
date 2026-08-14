@@ -13,3 +13,4 @@ app = Celery(
 
 app.conf.beat_dburi = SQLALCHEMY_DATABASE_CELERY_BEAT_URL
 app.conf.beat_scheduler = "sqlalchemy_celery_beat.schedulers:DatabaseScheduler"
+app.conf.beat_schema = "public"
