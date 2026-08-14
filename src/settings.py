@@ -13,6 +13,8 @@ class Settings(BaseSettings):
     DB_PASSWORD = os.getenv("DB_PASSWORD")
     DB_HOST = os.getenv("DB_HOST")
     DB_PORT = os.getenv("DB_PORT")
+    SMTP_HOST = os.getenv("SMTP_HOST")
+    SMTP_PORT = os.getenv("SMTP_PORT")
 
     class Config:
         env_file = ".env"
