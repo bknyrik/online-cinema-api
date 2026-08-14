@@ -1,3 +1,5 @@
+from pathlib import Path
+from string import Template
 from email.message import EmailMessage
 
 import aiosmtplib
@@ -24,3 +26,8 @@ async def send_email(
 
         message.set_content(html_body, "html")
         await smtp_server.send_message(message)
+
+
+def parse_html_content(path: Path, **kwargs) -> str:
+    template = Template(path.read_text())
+    return template.substitute(kwargs)
