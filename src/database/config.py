@@ -9,6 +9,10 @@ SQLALCHEMY_DATABASE_URL = (
     f"@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}"
 )
 
+SQLALCHEMY_DATABASE_CELERY_BEAT_URL = (
+    f"postgresql+psycopg://{settings.DB_USER}:{settings.DB_PASSWORD}"
+    f"@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}"
+)
 
 engine = create_async_engine(
     SQLALCHEMY_DATABASE_URL,
