@@ -1,3 +1,4 @@
+from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
@@ -20,10 +21,22 @@ engine = create_async_engine(
     future=True,
 )
 
+sync_engine = create_engine(
+    SQLALCHEMY_DATABASE_CELERY_BEAT_URL,
+    echo=True,
+    future=True
+)
+
 
 SessionLocal = sessionmaker(
     autoflush=False,
     autocommit=False,
     bind=engine,
     class_=AsyncSession
+)
+
+SyncSessionLocal = sessionmaker(
+    autoflush=False,
+    autocommit=False,
+    bind=sync_engine
 )
