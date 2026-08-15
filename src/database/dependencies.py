@@ -1,8 +1,8 @@
 from typing import AsyncGenerator
 
-from src.database.config import SessionLocal
+from src.database.config import AsyncSessionLocal
 
 
 async def get_db() -> AsyncGenerator:
-    async with SessionLocal() as session:
+    async with AsyncSessionLocal() as session:
         yield session

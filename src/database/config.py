@@ -28,7 +28,7 @@ sync_engine = create_engine(
 )
 
 
-SessionLocal = sessionmaker(
+AsyncSessionLocal = sessionmaker(
     autoflush=False,
     autocommit=False,
     bind=engine,
