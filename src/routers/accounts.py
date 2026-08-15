@@ -10,7 +10,12 @@ from src.schemas.accounts import (
     UserRegistrationResponseSchema
 )
 from src.database.dependencies import get_db
-from src.crud.accounts import create_user, get_user_by_email, create_token
+from src.crud.accounts import (
+    create_user,
+    get_user_by_email,
+    create_token,
+    create_periodic_task_to_delete_activation_token
+)
 from src.smtp import emails
 
 
@@ -48,5 +53,11 @@ async def register_user(
         user.email,
         activation_link,
         activation_token.token
+    )
+    background_tasks.add_task(
+        create_periodic_task_to_delete_activation_token,
+        db,
+        user.id,
+        activation_token.expires_at
     )
     return user
