@@ -14,6 +14,11 @@ class UserRegistrationRequestSchema(BaseModel):
     def validate_email(cls, value: str) -> str:
         return accounts.validate_email(value)
 
+    @field_validator("password", mode="before")
+    @classmethod
+    def validate_password(cls, value: str) -> str:
+        return accounts.validate_password(value)
+
 
 class UserRegistrationResponseSchema(BaseModel):
     id: int
