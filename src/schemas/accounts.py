@@ -18,3 +18,8 @@ class UserRegistrationRequestSchema(BaseModel):
 class UserRegistrationResponseSchema(BaseModel):
     id: int
     email: EmailStr
+
+
+class LoginRequestSchema(BaseModel):
+    email: EmailStr
+    password: str
