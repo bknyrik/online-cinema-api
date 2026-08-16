@@ -24,7 +24,7 @@ def validate_password(password: str) -> str:
             "Password must contain at least 6 characters"
         )
 
-    elif not re.search(r"[#!-_@?.]+", password):
+    elif not re.search(r"[#!\-_@?.]+", password):
         raise ValueError(
             "Password must contain at "
             "least one special character: #!-_@?"
