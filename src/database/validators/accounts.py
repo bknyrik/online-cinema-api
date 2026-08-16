@@ -11,10 +11,8 @@ def validate_email(email: str) -> str:
 
 
 def validate_password(password: str) -> str:
-    if not re.search(r"{8, 16}", password):
-        raise ValueError(
-            "Password length must be min 8, max 16"
-        )
+    if not re.search(r".{8,16}", password):
+        raise ValueError("Password length must be in range 8 and 16")
 
     elif not re.search(r"\d{3,}", password):
         raise ValueError(
