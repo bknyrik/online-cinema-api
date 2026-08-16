@@ -41,3 +41,9 @@ class UserRegistrationResponseSchema(BaseModel):
 class LoginRequestSchema(BaseModel):
     email: EmailStr
     password: str
+
+
+class LoginResponseSchema(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: str = "Bearer"
