@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     SMTP_PORT = os.getenv("SMTP_PORT")
     CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
     CELERY_RESULT_BACKEND = os.getenv("CELERY_BACKEND_RESULT")
+    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 
     class Config:
         env_file = ".env"
