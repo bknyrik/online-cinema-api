@@ -85,7 +85,7 @@ async def create_periodic_task_to_delete_activation_token(
         name=f"Remove expired activation token of user {user_id}",
         task="src.celery_beat.tasks.delete_expired_activation_token",
         one_off=True,
-        args=json.dumps([user_id,])
+        args=json.dumps([user_id, clocked_schedule.id])
     )
     db.add(periodic_task)
     await db.commit()
