@@ -1,3 +1,4 @@
+from fastapi import HTTPException, status
 from pydantic import BaseModel, EmailStr, field_validator
 
 from src.database.models.accounts import UserGroupEnum
@@ -12,12 +13,24 @@ class UserRegistrationRequestSchema(BaseModel):
     @field_validator("email", mode="before")
     @classmethod
     def validate_email(cls, value: str) -> str:
-        return accounts.validate_email(value)
+        try:
+            return accounts.validate_email(value)
+        except ValueError as error:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=str(error)
+            )
 
     @field_validator("password", mode="before")
     @classmethod
     def validate_password(cls, value: str) -> str:
-        return accounts.validate_password(value)
+        try:
+            return accounts.validate_password(value)
+        except ValueError as error:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=str(error)
+            )
 
 
 class UserRegistrationResponseSchema(BaseModel):
