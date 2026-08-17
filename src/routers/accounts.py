@@ -11,14 +11,16 @@ from src.schemas.accounts import (
     UserRegistrationResponseSchema,
     LoginRequestSchema,
     LoginResponseSchema,
-    UserDetailResponseSchema
+    UserDetailResponseSchema,
+    ChangeUserGroupRequestSchema
 )
 from src.security.password import verify_password
 from src.security.auth import create_access_token
-from src.security.dependencies import get_current_user
+from src.security.dependencies import get_current_user, require_admin_user
 from src.database.dependencies import get_db
 from src.crud.accounts import (
     create_user,
+    update_user,
     get_user_by_email,
     create_token,
     update_token,
@@ -111,6 +113,35 @@ async def logout(
     current_user: UserModel = Depends(get_current_user),
 ) -> None:
     await delete_token(db, current_user.id, RefreshTokenModel)
+
+
+@router.patch(
+    "/{user_id}/change_user_group/",
+    response_model=UserDetailResponseSchema
+)
+async def change_user_group(
+    user_id: int,
+    data: ChangeUserGroupRequestSchema,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserModel = Depends(require_admin_user)
+) -> UserDetailResponseSchema:
+    user = await update_user(
+        db=db,
+        user_id=user_id,
+        data={"group": data.group}
+    )
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+
+    return UserDetailResponseSchema(
+        id=user.id,
+        email=user.email,
+        group=user.group.name
+    )
 
 
 @router.get("/me/", response_model=UserDetailResponseSchema)
