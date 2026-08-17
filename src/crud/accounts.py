@@ -42,15 +42,11 @@ async def create_user(
     db: AsyncSession,
     data: UserRegistrationRequestSchema
 ) -> UserModel:
-    group_id_result = await db.execute(
-        select(UserGroupModel.id)
-        .where(UserGroupModel.name == data.group.value)
-    )
-    group_id: int = group_id_result.scalar_one_or_none()
+    group = await get_user_group_by_name(db, data.group)
     user = UserModel(
         email=data.email,
         hashed_password=hash_password(data.password),
-        group_id=group_id
+        group_id=group.id
     )
 
     db.add(user)
