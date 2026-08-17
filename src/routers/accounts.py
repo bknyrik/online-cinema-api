@@ -21,6 +21,7 @@ from src.crud.accounts import (
     create_user,
     get_user_by_email,
     create_token,
+    update_token,
     create_periodic_task_to_delete_activation_token
 )
 from src.smtp import emails
@@ -84,11 +85,19 @@ async def login(
         )
 
     access_token = create_access_token(email=user.email)
-    refresh_token_instance = await create_token(
+    refresh_token_instance = await update_token(
         db=db,
         user_id=user.id,
         token_model=RefreshTokenModel
     )
+
+    if not refresh_token_instance:
+        refresh_token_instance = await create_token(
+            db=db,
+            user_id=user.id,
+            token_model=RefreshTokenModel
+        )
+
     return {
         "access_token": access_token,
         "refresh_token": refresh_token_instance.token
