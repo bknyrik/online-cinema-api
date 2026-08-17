@@ -120,6 +120,7 @@ class ResetPasswordCompleteRequestSchema(BaseModel):
 
 class RefreshAccessTokenRequestSchema(BaseModel):
     refresh_token: str
+    email: EmailStr
 
 
 class RefreshAccessTokenResponseSchema(BaseModel):
