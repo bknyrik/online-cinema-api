@@ -5,6 +5,7 @@ from src.database.models.accounts import (
     UserModel,
     ActivationTokenModel,
     RefreshTokenModel,
+    PasswordResetTokenModel
 )
 from src.schemas.accounts import (
     UserRegistrationRequestSchema,
@@ -14,6 +15,7 @@ from src.schemas.accounts import (
     UserDetailResponseSchema,
     ChangeUserGroupRequestSchema,
     ChangeUserPasswordRequestSchema,
+    ResetUserPasswordRequestSchema,
     MessageResponseSchema
 )
 from src.security.password import verify_password
@@ -25,6 +27,7 @@ from src.crud.accounts import (
     update_user,
     get_user_by_email,
     get_user_by_id,
+    get_token,
     create_token,
     update_token,
     delete_token,
@@ -186,6 +189,54 @@ async def change_user_password(
     await update_user(db, current_user.id, {"password": data.new_password})
 
     return {"message": "Password is changed successfully"}
+
+
+@router.post("/reset_password/", response_model=MessageResponseSchema)
+async def reset_password(
+    data: ResetUserPasswordRequestSchema,
+    background_tasks: BackgroundTasks,
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    user = await get_user_by_email(db, data.email)
+
+    if user and user.is_active:
+        reset_password_link = (
+            "http://localhost:8000/accounts/me/"
+            "reset_password/complete/"
+        )
+
+        reset_password_token_instance = await get_token(
+            db=db,
+            user_id=user.id,
+            token_model=PasswordResetTokenModel
+        )
+
+        if reset_password_token_instance:
+            reset_password_token_instance = await update_token(
+                db=db,
+                user_id=user.id,
+                token_model=PasswordResetTokenModel
+            )
+        else:
+            reset_password_token_instance = await create_token(
+                db=db,
+                user_id=user.id,
+                token_model=PasswordResetTokenModel
+            )
+
+        background_tasks.add_task(
+            emails.send_reset_password_email,
+            user.email,
+            reset_password_link,
+            reset_password_token_instance.token
+        )
+
+    return {
+        "message": (
+            "If you are registered, "
+            "you will receive an email with information"
+        )
+    }
 
 
 @router.get("/me/", response_model=UserDetailResponseSchema)
