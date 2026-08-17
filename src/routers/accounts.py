@@ -13,6 +13,7 @@ from src.schemas.accounts import (
     LoginResponseSchema,
     UserDetailResponseSchema,
     ChangeUserGroupRequestSchema,
+    ChangeUserPasswordRequestSchema,
     MessageResponseSchema
 )
 from src.security.password import verify_password
@@ -168,6 +169,23 @@ async def activate_user_account(
 
     await update_user(db, user.id, {"is_active": True})
     return {"message": "Account is activated successfully"}
+
+
+@router.patch("/me/change_password/", response_model=MessageResponseSchema)
+async def change_user_password(
+    data: ChangeUserPasswordRequestSchema,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user)
+) -> dict:
+    if not verify_password(current_user.hashed_password, data.old_password):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="The old password is invalid"
+        )
+
+    await update_user(db, current_user.id, {"password": data.new_password})
+
+    return {"message": "Password is changed successfully"}
 
 
 @router.get("/me/", response_model=UserDetailResponseSchema)
