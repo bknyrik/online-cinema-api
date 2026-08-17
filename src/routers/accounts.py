@@ -1,5 +1,3 @@
-from datetime import datetime, timezone, timedelta
-
 from fastapi import APIRouter, status, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -85,10 +83,7 @@ async def login(
             detail="Invalid account with given credentials"
         )
 
-    access_token = create_access_token(
-        email=user.email,
-        expires_at=datetime.now(timezone.utc) + timedelta(minutes=30)
-    )
+    access_token = create_access_token(email=user.email)
     refresh_token_instance = await create_token(
         db=db,
         user_id=user.id,

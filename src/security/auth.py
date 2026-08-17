@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 from fastapi import HTTPException, status
 from jose import jwt, exceptions
@@ -7,11 +7,16 @@ from src.settings import settings
 
 
 ALGORITHM = "HS256"
+ACCESS_TOKEN_LIFETIME_MINUTES = 30
 
 
-def create_access_token(email: str, expires_at: datetime) -> str:
+def create_access_token(email: str) -> str:
+    exp = (
+        datetime.now(timezone.utc) +
+        timedelta(minutes=ACCESS_TOKEN_LIFETIME_MINUTES)
+    )
     return jwt.encode(
-        claims={"sub": email, "exp": expires_at},
+        claims={"sub": email, "exp": exp},
         key=settings.JWT_SECRET_KEY,
         algorithm=ALGORITHM
     )
