@@ -12,7 +12,8 @@ from src.schemas.accounts import (
     LoginRequestSchema,
     LoginResponseSchema,
     UserDetailResponseSchema,
-    ChangeUserGroupRequestSchema
+    ChangeUserGroupRequestSchema,
+    MessageResponseSchema
 )
 from src.security.password import verify_password
 from src.security.auth import create_access_token
@@ -22,6 +23,7 @@ from src.crud.accounts import (
     create_user,
     update_user,
     get_user_by_email,
+    get_user_by_id,
     create_token,
     update_token,
     delete_token,
@@ -142,6 +144,30 @@ async def change_user_group(
         email=user.email,
         group=user.group.name
     )
+
+
+@router.patch("/{user_id}/activate/", response_model=MessageResponseSchema)
+async def activate_user_account(
+    user_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user = Depends(require_admin_user)
+) -> dict:
+    user = await get_user_by_id(db, user_id)
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+
+    if user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="User is already active."
+        )
+
+    await update_user(db, user.id, {"is_active": True})
+    return {"message": "Account is activated successfully"}
 
 
 @router.get("/me/", response_model=UserDetailResponseSchema)
