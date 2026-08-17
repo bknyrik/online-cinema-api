@@ -53,3 +53,7 @@ class UserDetailResponseSchema(BaseModel):
     id: int
     email: EmailStr
     group: UserGroupEnum
+
+
+class ChangeUserGroupRequestSchema(BaseModel):
+    group: UserGroupEnum
