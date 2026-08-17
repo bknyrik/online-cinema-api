@@ -56,6 +56,37 @@ async def create_user(
     return user
 
 
+async def update_user(
+    db: AsyncSession,
+    user_id: int,
+    data: dict
+) -> UserModel | None:
+    user_result = await db.execute(
+        select(UserModel)
+        .options(joinedload(UserModel.group))
+        .where(UserModel.id == user_id)
+    )
+    user: UserModel = user_result.scalar_one_or_none()
+
+    if not user:
+        return None
+
+    user.email = data.get("email", user.email)
+    user.is_active = data.get("is_active", user.is_active)
+
+    if data.get("password"):
+        user.hashed_password = hash_password(data["password"])
+
+    if data.get("group"):
+        group = await get_user_group_by_name(db, data["group"])
+        user.group_id = group.id
+
+    await db.commit()
+    await db.refresh(user)
+
+    return user
+
+
 async def create_token(
     db: AsyncSession,
     user_id: int,
