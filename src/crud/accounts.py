@@ -101,6 +101,19 @@ async def update_user(
     return user
 
 
+async def get_token(
+    db: AsyncSession,
+    user_id: int,
+    token_model: type[AbstractTokenModel]
+) -> AbstractTokenModel | None:
+    token_result = await db.execute(
+        select(token_model)
+        .options(joinedload(token_model.user))
+        .where(token_model.user_id == user_id)
+    )
+    return token_result.scalar_one_or_none()
+
+
 async def create_token(
     db: AsyncSession,
     user_id: int,
