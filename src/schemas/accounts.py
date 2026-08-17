@@ -59,5 +59,21 @@ class ChangeUserGroupRequestSchema(BaseModel):
     group: UserGroupEnum
 
 
+class ChangeUserPasswordRequestSchema(BaseModel):
+    old_password: str
+    new_password: str
+
+    @field_validator("new_password", mode="before")
+    @classmethod
+    def validate_new_password(cls, value: str) -> str:
+        try:
+            return accounts.validate_password(value)
+        except ValueError as error:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=str(error)
+            )
+
+
 class MessageResponseSchema(BaseModel):
     message: str
