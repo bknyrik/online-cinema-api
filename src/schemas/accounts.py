@@ -57,3 +57,7 @@ class UserDetailResponseSchema(BaseModel):
 
 class ChangeUserGroupRequestSchema(BaseModel):
     group: UserGroupEnum
+
+
+class MessageResponseSchema(BaseModel):
+    message: str
