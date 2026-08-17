@@ -12,10 +12,12 @@ from src.schemas.accounts import (
     UserRegistrationRequestSchema,
     UserRegistrationResponseSchema,
     LoginRequestSchema,
-    LoginResponseSchema
+    LoginResponseSchema,
+    UserDetailResponseSchema
 )
 from src.security.password import verify_password
 from src.security.auth import create_access_token
+from src.security.dependencies import get_current_user
 from src.database.dependencies import get_db
 from src.crud.accounts import (
     create_user,
@@ -96,3 +98,14 @@ async def login(
         "access_token": access_token,
         "refresh_token": refresh_token_instance.token
     }
+
+
+@router.get("/me/", response_model=UserDetailResponseSchema)
+async def read_current_user(
+    current_user: UserModel = Depends(get_current_user)
+) -> UserDetailResponseSchema:
+    return UserDetailResponseSchema(
+        id=current_user.id,
+        email=current_user.email,
+        group=current_user.group.name
+    )
