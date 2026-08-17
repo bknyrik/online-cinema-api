@@ -90,5 +90,10 @@ class ResetUserPasswordRequestSchema(BaseModel):
             )
 
 
+class ResetPasswordCompleteRequestSchema(BaseModel):
+    token: str
+    password: str
+
+
 class MessageResponseSchema(BaseModel):
     message: str
