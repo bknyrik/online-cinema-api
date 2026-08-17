@@ -75,5 +75,20 @@ class ChangeUserPasswordRequestSchema(BaseModel):
             )
 
 
+class ResetUserPasswordRequestSchema(BaseModel):
+    email: EmailStr
+
+    @field_validator("email", mode="before")
+    @classmethod
+    def validate_email(cls, value: str) -> str:
+        try:
+            return accounts.validate_email(value)
+        except ValueError as error:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=str(error)
+            )
+
+
 class MessageResponseSchema(BaseModel):
     message: str
