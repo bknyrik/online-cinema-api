@@ -27,6 +27,17 @@ async def get_user_by_email(
     return result.scalar_one_or_none()
 
 
+async def get_user_by_id(
+    db: AsyncSession,
+    user_id: int,
+) -> UserModel | None:
+    result = await db.execute(
+        select(UserModel)
+        .where(UserModel.id == user_id)
+    )
+    return result.scalar_one_or_none()
+
+
 async def get_user_group_by_name(
     db: AsyncSession,
     name: str
