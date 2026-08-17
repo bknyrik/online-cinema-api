@@ -240,6 +240,46 @@ async def reset_password(
     }
 
 
+@router.post(
+    "/reset_password/complete/",
+    response_model=MessageResponseSchema
+)
+async def reset_password_complete(
+    data: ResetPasswordCompleteRequestSchema,
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    user = await get_user_by_email(db, data.email)
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+
+    reset_password_token_instance = await get_token_by_user_id(
+        db=db,
+        user_id=user.id,
+        token_model=PasswordResetTokenModel
+    )
+
+    if not reset_password_token_instance:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Token is invalid"
+        )
+
+    if reset_password_token_instance.has_expired:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Token has expired"
+        )
+
+    await update_user(db, user.id, {"password": data.password})
+    await delete_token(db, user.id, PasswordResetTokenModel)
+
+    return {"message": "Password is changed successfully"}
+
+
 @router.get("/me/", response_model=UserDetailResponseSchema)
 async def read_current_user(
     current_user: UserModel = Depends(get_current_user)
