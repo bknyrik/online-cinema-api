@@ -1,14 +1,21 @@
+from datetime import datetime, timezone, timedelta
+
 from fastapi import APIRouter, status, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.models.accounts import (
     UserModel,
-    ActivationTokenModel
+    ActivationTokenModel,
+    RefreshTokenModel,
 )
 from src.schemas.accounts import (
     UserRegistrationRequestSchema,
-    UserRegistrationResponseSchema
+    UserRegistrationResponseSchema,
+    LoginRequestSchema,
+    LoginResponseSchema
 )
+from src.security.password import verify_password
+from src.security.auth import create_access_token
 from src.database.dependencies import get_db
 from src.crud.accounts import (
     create_user,
@@ -61,3 +68,31 @@ async def register_user(
         activation_token.expires_at
     )
     return user
+
+
+@router.post("/login/", response_model=LoginResponseSchema)
+async def login(
+    data: LoginRequestSchema,
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    user = await get_user_by_email(db, data.email)
+
+    if not user or not verify_password(user.hashed_password, data.password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid account with given credentials"
+        )
+
+    access_token = create_access_token(
+        email=user.email,
+        expires_at=datetime.now(timezone.utc) + timedelta(minutes=30)
+    )
+    refresh_token_instance = await create_token(
+        db=db,
+        user_id=user.id,
+        token_model=RefreshTokenModel
+    )
+    return {
+        "access_token": access_token,
+        "refresh_token": refresh_token_instance.token
+    }
