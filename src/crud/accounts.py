@@ -27,6 +27,17 @@ async def get_user_by_email(
     return result.scalar_one_or_none()
 
 
+async def get_user_group_by_name(
+    db: AsyncSession,
+    name: str
+) -> UserGroupModel:
+    group_result = await db.execute(
+        select(UserGroupModel)
+        .where(UserGroupModel.name == name)
+    )
+    return group_result.scalar_one()
+
+
 async def create_user(
     db: AsyncSession,
     data: UserRegistrationRequestSchema
