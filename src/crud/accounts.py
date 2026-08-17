@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -13,6 +13,7 @@ from src.database.models.accounts import (
 )
 from src.schemas.accounts import UserRegistrationRequestSchema
 from src.security.password import hash_password
+from src.security.utils import generate_secure_token
 
 
 async def get_user_by_email(
@@ -66,6 +67,32 @@ async def create_token(
     token = result.scalar_one()
 
     return token
+
+
+async def update_token(
+    db: AsyncSession,
+    user_id: int,
+    token_model: type[AbstractTokenModel]
+) -> AbstractTokenModel | None:
+    token_result = await db.execute(
+        select(token_model)
+        .options(joinedload(token_model.user))
+        .where(token_model.user_id == user_id)
+    )
+    token_instance: AbstractTokenModel | None = (
+        token_result.scalar_one_or_none()
+    )
+
+    if not token_instance:
+        return None
+
+    token_instance.token = generate_secure_token()
+    token_instance.expires_at = datetime.now(timezone.utc) + timedelta(days=1)
+
+    await db.commit()
+    await db.refresh(token_instance)
+
+    return token_instance
 
 
 async def create_periodic_task_to_delete_activation_token(
