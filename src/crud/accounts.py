@@ -114,6 +114,18 @@ async def get_token_by_user_id(
     return token_result.scalar_one_or_none()
 
 
+async def get_token_by_value(
+    db: AsyncSession,
+    token_value: str,
+    token_model: type[AbstractTokenModel]
+) -> AbstractTokenModel | None:
+    token_result = await db.execute(
+        select(token_model)
+        .where(token_model.token == token_value)
+    )
+    return token_result.scalar_one_or_none()
+
+
 async def create_token(
     db: AsyncSession,
     user_id: int,
