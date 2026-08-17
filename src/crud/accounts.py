@@ -92,6 +92,9 @@ async def update_user(
         group = await get_user_group_by_name(db, data["group"])
         user.group_id = group.id
 
+    if data:
+        user.updated_at = datetime.now(timezone.utc)
+
     await db.commit()
     await db.refresh(user)
 
