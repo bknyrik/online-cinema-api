@@ -22,6 +22,7 @@ from src.crud.accounts import (
     get_user_by_email,
     create_token,
     update_token,
+    delete_token,
     create_periodic_task_to_delete_activation_token
 )
 from src.smtp import emails
@@ -102,6 +103,14 @@ async def login(
         "access_token": access_token,
         "refresh_token": refresh_token_instance.token
     }
+
+
+@router.post("/logout/")
+async def logout(
+    db: AsyncSession = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user),
+) -> None:
+    await delete_token(db, current_user.id, RefreshTokenModel)
 
 
 @router.get("/me/", response_model=UserDetailResponseSchema)
