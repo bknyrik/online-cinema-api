@@ -118,5 +118,9 @@ class ResetPasswordCompleteRequestSchema(BaseModel):
             )
 
 
+class RefreshAccessTokenRequestSchema(BaseModel):
+    refresh_token: str
+
+
 class MessageResponseSchema(BaseModel):
     message: str
