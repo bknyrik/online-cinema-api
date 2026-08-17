@@ -122,5 +122,9 @@ class RefreshAccessTokenRequestSchema(BaseModel):
     refresh_token: str
 
 
+class RefreshAccessTokenResponseSchema(BaseModel):
+    access_token: str
+
+
 class MessageResponseSchema(BaseModel):
     message: str
