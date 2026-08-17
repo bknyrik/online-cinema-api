@@ -101,7 +101,7 @@ async def update_user(
     return user
 
 
-async def get_token(
+async def get_token_by_user_id(
     db: AsyncSession,
     user_id: int,
     token_model: type[AbstractTokenModel]

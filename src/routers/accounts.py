@@ -16,6 +16,7 @@ from src.schemas.accounts import (
     ChangeUserGroupRequestSchema,
     ChangeUserPasswordRequestSchema,
     ResetUserPasswordRequestSchema,
+    ResetPasswordCompleteRequestSchema,
     MessageResponseSchema
 )
 from src.security.password import verify_password
@@ -27,7 +28,7 @@ from src.crud.accounts import (
     update_user,
     get_user_by_email,
     get_user_by_id,
-    get_token,
+    get_token_by_user_id,
     create_token,
     update_token,
     delete_token,
@@ -205,7 +206,7 @@ async def reset_password(
             "reset_password/complete/"
         )
 
-        reset_password_token_instance = await get_token(
+        reset_password_token_instance = await get_token_by_user_id(
             db=db,
             user_id=user.id,
             token_model=PasswordResetTokenModel
