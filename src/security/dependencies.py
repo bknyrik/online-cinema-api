@@ -1,6 +1,7 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security.oauth2 import OAuth2PasswordBearer
 from sqlalchemy import select
+from sqlalchemy.orm import joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.security.auth import decode_access_token
@@ -19,6 +20,7 @@ async def get_current_user(
 
     result = await db.execute(
         select(UserModel)
+        .options(joinedload(UserModel.group))
         .where(UserModel.email == payload["sub"])
     )
     user = result.scalar_one_or_none()
