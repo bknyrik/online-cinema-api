@@ -98,6 +98,10 @@ class AbstractTokenModel(Base):
         nullable=False
     )
 
+    @property
+    def has_expired(self) -> bool:
+        return datetime.now(timezone.utc) >= self.expires_at
+
 
 class ActivationTokenModel(AbstractTokenModel):
     __tablename__ = "activation_tokens"
