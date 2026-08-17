@@ -15,3 +15,15 @@ async def send_activation_email(email: str, link: str, token: str) -> None:
         subject="Account activation",
         html_body=html_body
     )
+
+
+async def send_reset_password_email(email: str, link: str, token: str) -> None:
+    html_body = parse_html_content(
+        path=Path("src/smtp/templates/reset_password.html")
+    )
+    await send_email(
+        sender="online.cinema@mail.com",
+        receiver=email,
+        subject="Reset password",
+        html_body=html_body
+    )
