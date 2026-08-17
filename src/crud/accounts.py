@@ -95,6 +95,22 @@ async def update_token(
     return token_instance
 
 
+async def delete_token(
+    db: AsyncSession,
+    user_id: int,
+    token_model: type[AbstractTokenModel]
+) -> None:
+    token_result = await db.execute(
+        select(token_model)
+        .options(joinedload(token_model.user))
+        .where(token_model.user_id == user_id)
+    )
+    token_instance = token_result.scalar_one()
+
+    await db.delete(token_instance)
+    await db.commit()
+
+
 async def create_periodic_task_to_delete_activation_token(
     db: AsyncSession,
     user_id: int,
