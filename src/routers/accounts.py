@@ -19,6 +19,7 @@ from src.schemas.accounts import (
     ResetPasswordCompleteRequestSchema,
     RefreshAccessTokenRequestSchema,
     RefreshAccessTokenResponseSchema,
+    ActivateUserAccountRequestSchema,
     MessageResponseSchema
 )
 from src.security.password import verify_password
@@ -81,6 +82,50 @@ async def register_user(
         activation_token.expires_at
     )
     return user
+
+
+@router.post("/activate/", response_model=MessageResponseSchema)
+async def activate(
+    data: ActivateUserAccountRequestSchema,
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    user = await get_user_by_email(db, data.email)
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with the given email '{data.email}' not found"
+        )
+
+    if user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="User account is already active."
+        )
+
+    activation_token_instance = await get_token_by_user_id(
+        db=db,
+        user_id=user.id,
+        token_model=ActivationTokenModel
+    )
+
+    if (
+        not activation_token_instance
+        or activation_token_instance.token != data.activation_token
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid token"
+        )
+
+    if activation_token_instance.has_expired:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Token is expired"
+        )
+
+    await update_user(db, user.id, {"is_active": True})
+    return {"message": "Your account is activated"}
 
 
 @router.post("/login/", response_model=LoginResponseSchema)
