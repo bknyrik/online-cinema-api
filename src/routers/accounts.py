@@ -333,7 +333,18 @@ async def change_user_password(
             detail="The old password is invalid"
         )
 
-    await update_user(db, current_user.id, {"password": data.new_password})
+    try:
+        await update_user(
+            db=db,
+            user_id=current_user.id,
+            data={"password": data.new_password}
+        )
+    except SQLAlchemyError:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred while changing user password"
+        )
 
     return {"message": "Password is changed successfully"}
 
