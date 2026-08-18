@@ -94,8 +94,7 @@ async def update_user(
     if data:
         user.updated_at = datetime.now(timezone.utc)
 
-    await db.commit()
-    await db.refresh(user)
+    await db.flush()
 
     return user
 
