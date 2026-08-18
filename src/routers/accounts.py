@@ -240,7 +240,15 @@ async def logout(
     db: AsyncSession = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
 ) -> None:
-    await delete_token(db, current_user.id, RefreshTokenModel)
+    try:
+        await delete_token(db, current_user.id, RefreshTokenModel)
+        await db.commit()
+    except SQLAlchemyError:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred while logout"
+        )
 
 
 @router.patch(
