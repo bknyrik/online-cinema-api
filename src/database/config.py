@@ -32,7 +32,8 @@ AsyncSessionLocal = sessionmaker(
     autoflush=False,
     autocommit=False,
     bind=async_engine,
-    class_=AsyncSession
+    class_=AsyncSession,
+    expire_on_commit=False
 )
 
 SyncSessionLocal = sessionmaker(
