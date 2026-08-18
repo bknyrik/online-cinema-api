@@ -38,6 +38,11 @@ class UserRegistrationResponseSchema(BaseModel):
     email: EmailStr
 
 
+class ActivateUserAccountRequestSchema(BaseModel):
+    activation_token: str
+    email: EmailStr
+
+
 class LoginRequestSchema(BaseModel):
     email: EmailStr
     password: str
