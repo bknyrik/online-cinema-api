@@ -207,18 +207,26 @@ async def login(
             detail="User account is not activated"
         )
 
-    access_token = create_access_token(email=user.email)
-    refresh_token_instance = await update_token(
-        db=db,
-        user_id=user.id,
-        token_model=RefreshTokenModel
-    )
-
-    if not refresh_token_instance:
-        refresh_token_instance = await create_token(
+    try:
+        access_token = create_access_token(email=user.email)
+        refresh_token_instance = await update_token(
             db=db,
             user_id=user.id,
             token_model=RefreshTokenModel
+        )
+
+        if not refresh_token_instance:
+            refresh_token_instance = await create_token(
+                db=db,
+                user_id=user.id,
+                token_model=RefreshTokenModel
+            )
+        await db.commit()
+    except SQLAlchemyError:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred while login"
         )
 
     return {
