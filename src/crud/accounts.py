@@ -145,8 +145,7 @@ async def update_token(
     token_instance.token = generate_secure_token()
     token_instance.expires_at = datetime.now(timezone.utc) + timedelta(days=1)
 
-    await db.commit()
-    await db.refresh(token_instance)
+    await db.flush()
 
     return token_instance
 
