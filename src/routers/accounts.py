@@ -174,6 +174,12 @@ async def login(
             detail="Invalid account with given credentials"
         )
 
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User account is not activated"
+        )
+
     access_token = create_access_token(email=user.email)
     refresh_token_instance = await update_token(
         db=db,
