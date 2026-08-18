@@ -43,6 +43,10 @@ class ActivateUserAccountRequestSchema(BaseModel):
     email: EmailStr
 
 
+class ReactivateUserAccountRequestSchema(BaseModel):
+    email: EmailStr
+
+
 class LoginRequestSchema(BaseModel):
     email: EmailStr
     password: str
