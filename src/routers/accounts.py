@@ -199,7 +199,7 @@ async def change_user_group(
 
 
 @router.patch("/{user_id}/activate/", response_model=MessageResponseSchema)
-async def activate_user_account(
+async def admin_activate_user_account(
     user_id: int,
     db: AsyncSession = Depends(get_db),
     current_user = Depends(require_admin_user)
