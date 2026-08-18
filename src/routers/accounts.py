@@ -162,21 +162,28 @@ async def reactivate_user_account(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"User with given email '{data.email}' not found"
         )
+    try:
+        activation_token_instance = await update_token(
+            db=db,
+            user_id=user.id,
+            token_model=ActivationTokenModel
+        )
+        await db.commit()
+    except SQLAlchemyError:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred while"
+        )
+    else:
+        activation_link = "http://localhost:8000/api/accounts/activate/"
 
-    activation_token_instance = await update_token(
-        db=db,
-        user_id=user.id,
-        token_model=ActivationTokenModel
-    )
-
-    activation_link = "http://localhost:8000/api/accounts/activate/"
-
-    background_tasks.add_task(
-        emails.send_activation_email,
-        user.email,
-        activation_link,
-        activation_token_instance.token
-    )
+        background_tasks.add_task(
+            emails.send_activation_email,
+            user.email,
+            activation_link,
+            activation_token_instance.token
+        )
 
     return {"message": "An activation link is sent to your email"}
 
