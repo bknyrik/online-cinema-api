@@ -437,8 +437,16 @@ async def reset_password_complete(
             detail="Token has expired"
         )
 
-    await update_user(db, user.id, {"password": data.password})
-    await delete_token(db, user.id, PasswordResetTokenModel)
+    try:
+        await update_user(db, user.id, {"password": data.password})
+        await delete_token(db, user.id, PasswordResetTokenModel)
+        await db.commit()
+    except SQLAlchemyError:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred while resetting password completion"
+        )
 
     return {"message": "Password is changed successfully"}
 
