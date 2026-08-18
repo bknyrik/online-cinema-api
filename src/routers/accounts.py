@@ -88,7 +88,6 @@ async def register_user(
         )
         background_tasks.add_task(
             create_periodic_task_to_delete_activation_token,
-        db,
             user.id,
             activation_token.expires_at
         )

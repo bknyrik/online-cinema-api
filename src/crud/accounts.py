@@ -6,6 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 from sqlalchemy_celery_beat.models import PeriodicTask, ClockedSchedule
 
+from src.database.config import AsyncSessionLocal
 from src.database.models.accounts import (
     UserModel,
     UserGroupModel,
@@ -167,23 +168,23 @@ async def delete_token(
 
 
 async def create_periodic_task_to_delete_activation_token(
-    db: AsyncSession,
     user_id: int,
     token_expired_time: datetime
 ) -> None:
-    clocked_schedule = ClockedSchedule(
-        clocked_time=token_expired_time
-    )
+    async with AsyncSessionLocal() as session:
+        clocked_schedule = ClockedSchedule(
+            clocked_time=token_expired_time
+        )
 
-    db.add(clocked_schedule)
-    await db.flush()
+        session.add(clocked_schedule)
+        await session.flush()
 
-    periodic_task = PeriodicTask(
-        schedule_model=clocked_schedule,
-        name=f"Remove expired activation token of user {user_id}",
-        task="src.celery_beat.tasks.delete_expired_activation_token",
-        one_off=True,
-        args=json.dumps([user_id, clocked_schedule.id])
-    )
-    db.add(periodic_task)
-    await db.commit()
+        periodic_task = PeriodicTask(
+            schedule_model=clocked_schedule,
+            name=f"Remove expired activation token of user {user_id}",
+            task="src.celery_beat.tasks.delete_expired_activation_token",
+            one_off=True,
+            args=json.dumps([user_id, clocked_schedule.id])
+        )
+        session.add(periodic_task)
+        await session.commit()
