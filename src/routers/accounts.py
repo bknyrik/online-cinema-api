@@ -368,26 +368,32 @@ async def reset_password(
             user_id=user.id,
             token_model=PasswordResetTokenModel
         )
-
-        if reset_password_token_instance:
-            reset_password_token_instance = await update_token(
-                db=db,
-                user_id=user.id,
-                token_model=PasswordResetTokenModel
+        try:
+            if reset_password_token_instance:
+                reset_password_token_instance = await update_token(
+                    db=db,
+                    user_id=user.id,
+                    token_model=PasswordResetTokenModel
+                )
+            else:
+                reset_password_token_instance = await create_token(
+                    db=db,
+                    user_id=user.id,
+                    token_model=PasswordResetTokenModel
+                )
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while resetting user password"
             )
         else:
-            reset_password_token_instance = await create_token(
-                db=db,
-                user_id=user.id,
-                token_model=PasswordResetTokenModel
-            )
-
-        background_tasks.add_task(
-            emails.send_reset_password_email,
+            background_tasks.add_task(
+                emails.send_reset_password_email,
             user.email,
-            reset_password_link,
-            reset_password_token_instance.token
-        )
+                reset_password_link,
+                reset_password_token_instance.token
+            )
 
     return {
         "message": (
