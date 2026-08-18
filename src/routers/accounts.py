@@ -308,7 +308,16 @@ async def admin_activate_user_account(
             detail="User is already active."
         )
 
-    await update_user(db, user.id, {"is_active": True})
+    try:
+        await update_user(db, user.id, {"is_active": True})
+        await db.commit()
+    except SQLAlchemyError:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred while account activation"
+        )
+
     return {"message": "Account is activated successfully"}
 
 
