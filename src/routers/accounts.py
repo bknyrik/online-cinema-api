@@ -1,5 +1,6 @@
 from fastapi import APIRouter, status, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import SQLAlchemyError
 
 from src.database.models.accounts import (
     UserModel,
@@ -62,26 +63,35 @@ async def register_user(
             detail=f"User with this email {repr(data.email)} exists."
         )
 
-    user = await create_user(db, data)
-    activation_token = await create_token(
-        db=db,
-        user_id=user.id,
-        token_model=ActivationTokenModel
-    )
-    activation_link = "http://127.0.0.1:8000/api/accounts/activate/"
+    try:
+        user = await create_user(db, data)
+        activation_token = await create_token(
+            db=db,
+            user_id=user.id,
+            token_model=ActivationTokenModel
+        )
+    except SQLAlchemyError:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred while user registration"
+        )
+    else:
+        activation_link = "http://127.0.0.1:8000/api/accounts/activate/"
 
-    background_tasks.add_task(
-        emails.send_activation_email,
+        background_tasks.add_task(
+            emails.send_activation_email,
         user.email,
-        activation_link,
-        activation_token.token
-    )
-    background_tasks.add_task(
-        create_periodic_task_to_delete_activation_token,
+            activation_link,
+            activation_token.token
+        )
+        background_tasks.add_task(
+            create_periodic_task_to_delete_activation_token,
         db,
-        user.id,
-        activation_token.expires_at
-    )
+            user.id,
+            activation_token.expires_at
+        )
+
     return user
 
 
