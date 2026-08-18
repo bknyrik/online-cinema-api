@@ -164,7 +164,6 @@ async def delete_token(
     token_instance = token_result.scalar_one()
 
     await db.delete(token_instance)
-    await db.commit()
 
 
 async def create_periodic_task_to_delete_activation_token(
