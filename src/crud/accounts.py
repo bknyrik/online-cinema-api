@@ -61,8 +61,7 @@ async def create_user(
     )
 
     db.add(user)
-    await db.commit()
-    await db.refresh(user)
+    await db.flush()
 
     return user
 
@@ -122,16 +121,9 @@ async def create_token(
     token_instance = token_model(user_id=user_id)
 
     db.add(token_instance)
-    await db.commit()
+    await db.flush()
 
-    result = await db.execute(
-        select(token_model)
-        .options(joinedload(token_model.user))
-        .where(token_model.user_id == user_id)
-    )
-    token = result.scalar_one()
-
-    return token
+    return token_instance
 
 
 async def update_token(
