@@ -70,6 +70,7 @@ async def register_user(
             user_id=user.id,
             token_model=ActivationTokenModel
         )
+        await db.commit()
     except SQLAlchemyError:
         await db.rollback()
         raise HTTPException(
