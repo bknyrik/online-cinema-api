@@ -85,7 +85,7 @@ async def register_user(
 
 
 @router.post("/activate/", response_model=MessageResponseSchema)
-async def activate(
+async def activate_user_account(
     data: ActivateUserAccountRequestSchema,
     db: AsyncSession = Depends(get_db),
 ) -> dict:
