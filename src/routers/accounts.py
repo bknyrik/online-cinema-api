@@ -20,7 +20,8 @@ from src.schemas.accounts import (
     RefreshAccessTokenRequestSchema,
     RefreshAccessTokenResponseSchema,
     ActivateUserAccountRequestSchema,
-    MessageResponseSchema
+    MessageResponseSchema,
+    ReactivateUserAccountRequestSchema
 )
 from src.security.password import verify_password
 from src.security.auth import create_access_token
@@ -126,6 +127,38 @@ async def activate_user_account(
 
     await update_user(db, user.id, {"is_active": True})
     return {"message": "Your account is activated"}
+
+
+@router.post("/activate/new/", response_model=MessageResponseSchema)
+async def reactivate_user_account(
+    data: ReactivateUserAccountRequestSchema,
+    background_tasks: BackgroundTasks,
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    user = await get_user_by_email(db, data.email)
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with given email '{data.email}' not found"
+        )
+
+    activation_token_instance = await update_token(
+        db=db,
+        user_id=user.id,
+        token_model=ActivationTokenModel
+    )
+
+    activation_link = "http://localhost:8000/api/accounts/activate/"
+
+    background_tasks.add_task(
+        emails.send_activation_email,
+        user.email,
+        activation_link,
+        activation_token_instance.token
+    )
+
+    return {"message": "An activation link is sent to your email"}
 
 
 @router.post("/login/", response_model=LoginResponseSchema)
