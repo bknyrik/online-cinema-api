@@ -18,6 +18,10 @@ class Settings(BaseSettings):
     CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
     CELERY_RESULT_BACKEND = os.getenv("CELERY_BACKEND_RESULT")
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+    AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+    AWS_REGION_NAME = os.getenv("AWS_REGION_NAME")
+    AWS_BUCKET_NAME = os.getenv("AWS_BUCKET_NAME")
 
     class Config:
         env_file = ".env"
