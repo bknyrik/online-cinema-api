@@ -4,13 +4,12 @@ from src.s3.client import s3_client
 from src.settings import settings
 
 
-async def upload_avatar(user_id: int, file: UploadFile) -> str:
-    contents = await file.read()
+def upload_avatar(user_id: int, avatar: UploadFile) -> str:
     file_name = f"user_{user_id}.jpg"
     file_path = f"Avatars/{file_name}"
 
     s3_client.upload_fileobj(
-        Fileobj=contents,
+        Fileobj=avatar.file,
         Bucket=settings.AWS_BUCKET_NAME,
         Key=file_path
     )
