@@ -1720,6 +1720,18 @@ pycryptodome = ["pycryptodome (>=3.3.1,<4.0.0)"]
 test = ["pytest", "pytest-cov"]
 
 [[package]]
+name = "python-multipart"
+version = "0.0.32"
+description = "A streaming multipart parser for Python"
+optional = false
+python-versions = ">=3.10"
+groups = ["main"]
+files = [
+    {file = "python_multipart-0.0.32-py3-none-any.whl", hash = "sha256:ff6d3f776f16878c894e52e107296ffc890e913c611b1a4ec6c44e2821fe2e23"},
+    {file = "python_multipart-0.0.32.tar.gz", hash = "sha256:be54b7f3fa167bb83e4fcd936b887b708f4e57fe75911c02aebf53efaf8d938e"},
+]
+
+[[package]]
 name = "redis"
 version = "8.1.0"
 description = "Python client for Redis database and key-value store"
@@ -2072,4 +2084,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12"
-content-hash = "9eeefe34977d1a9fb86567776f8ef0cab04f3f4a95b3e8bae6d54247d80db07e"
+content-hash = "c8f6d8a7a73ad13b6713903d3ac34507a609c0826190bd49762d36601f4ecc05"
