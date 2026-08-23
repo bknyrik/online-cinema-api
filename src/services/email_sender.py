@@ -42,8 +42,9 @@ class EmailSenderService:
         activation_link: str,
         activation_token: str
     ) -> None:
+        template_path = Path("src/templates/emails/account_activation.html")
         body = self.parse_html_template(
-            template_path=Path("src/templates/account_activation.html"),
+            template_path=template_path,
             mapping={"link": activation_link, "token": activation_token}
         )
         await self.send_email(
@@ -59,8 +60,9 @@ class EmailSenderService:
         reset_password_link: str,
         reset_password_token: str
     ) -> None:
+        template_path = Path("src/templates/emails/reset_password.html")
         body = self.parse_html_template(
-            template_path=Path("src/templates/reset_password.html"),
+            template_path=template_path,
             mapping={
                 "link": reset_password_link,
                 "token": reset_password_token
