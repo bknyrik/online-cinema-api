@@ -1,4 +1,4 @@
-from datetime import timezone, datetime, timedelta
+from datetime import timezone, datetime
 
 from sqlalchemy import (
     Column,
@@ -16,7 +16,6 @@ from sqlalchemy.orm import relationship
 from enum import StrEnum, auto
 
 from src.database.models.base import Base
-from src.security.utils import generate_secure_token
 
 
 class UserGroupEnum(StrEnum):
@@ -86,11 +85,9 @@ class AbstractTokenModel(Base):
         String(255),
         unique=True,
         nullable=False,
-        default=generate_secure_token
     )
     expires_at = Column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc) + timedelta(days=1),
         nullable=False
     )
     user_id = Column(
