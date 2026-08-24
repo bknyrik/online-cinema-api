@@ -2,7 +2,7 @@ import secrets
 from datetime import datetime, timezone, timedelta
 
 from sqlalchemy import select, delete
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, session
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.models import accounts
@@ -75,6 +75,12 @@ class TokenService:
         await db.flush()
 
         return token_instance
+
+    def delete_token(self, db: session.Session, user_id: int) -> None:
+        db.execute(
+            delete(self.token_model)
+            .where(self.token_model.user_id == user_id)
+        )
 
     async def adelete_token(self, db: AsyncSession, user_id: int) -> None:
         await db.execute(
