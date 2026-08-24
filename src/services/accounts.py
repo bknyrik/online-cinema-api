@@ -76,7 +76,7 @@ class TokenService:
 
         return token_instance
 
-    async def delete_token(self, db: AsyncSession, user_id: int) -> None:
+    async def adelete_token(self, db: AsyncSession, user_id: int) -> None:
         await db.execute(
             delete(self.token_model)
             .where(self.token_model.user_id == user_id)
