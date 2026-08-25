@@ -1,25 +1,25 @@
 from celery import shared_task
 
-from sqlalchemy import delete
-from sqlalchemy_celery_beat.models import PeriodicTask, ClockedSchedule
-
 from src.database.models.accounts import ActivationTokenModel
 from src.database.config import SyncSessionLocal
-
+from src.services.accounts import TokenService
+from src.services.celery_beat import CeleryBeatService
 
 @shared_task
 def delete_expired_activation_token(user_id: int, schedule_id: int) -> None:
+    token_service = TokenService(ActivationTokenModel)
+
     with SyncSessionLocal() as session:
-        session.execute(
-            delete(ActivationTokenModel)
-            .where(ActivationTokenModel.user_id == user_id)
+        token_service.delete_token(
+            db=session,
+            user_id=user_id
         )
-        session.execute(
-            delete(PeriodicTask)
-            .where(PeriodicTask.schedule_id == schedule_id)
+        pt = CeleryBeatService.get_periodic_task_by_schedule_id(
+            db=session,
+            schedule_id=schedule_id
         )
-        session.execute(
-            delete(ClockedSchedule)
-            .where(ClockedSchedule.id == schedule_id)
+        CeleryBeatService.delete_periodic_task(db=session, id_=pt.id)
+        CeleryBeatService.delete_clocked_schedule(
+            db=session,
+            id_=schedule_id
         )
-        session.commit()
