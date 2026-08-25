@@ -121,8 +121,8 @@ class TokenService:
     async def create_token(
         self,
         db: AsyncSession,
-        data: dict,
         user_id: int,
+        **data
     ) -> accounts.AbstractTokenModel:
         expires_at = data.get(
             "expires_at",
@@ -145,8 +145,8 @@ class TokenService:
     async def update_token(
         self,
         db: AsyncSession,
-        data: dict,
         user_id: int,
+        **data
     ) -> accounts.AbstractTokenModel | None:
         token_instance = await self.get_token_by_user_id(db, user_id)
 
