@@ -6,6 +6,96 @@ from sqlalchemy.orm import joinedload, session
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.models import accounts
+from src.services.security import PasswordSecurityService
+
+
+class UserService:
+
+    @staticmethod
+    async def aget_user_group_by_name(
+        db: AsyncSession,
+        name: str
+    ) -> accounts.UserGroupModel | None:
+        result = await db.scalar(
+            select(accounts.UserGroupModel)
+            .where(accounts.UserGroupModel.name == name)
+        )
+        return result.one_or_none()
+
+    @staticmethod
+    async def aget_user_by_email(
+        db: AsyncSession,
+        email: str
+    ) -> accounts.UserModel | None:
+        result = await db.scalar(
+            select(accounts.UserModel)
+            .where(accounts.UserModel.email == email)
+        )
+        return result.one_or_none()
+
+    @staticmethod
+    async def aget_user_by_id(
+        db: AsyncSession,
+        id_: int
+    ) -> accounts.UserModel | None:
+        result = await db.scalar(
+            select(accounts.UserModel)
+            .where(accounts.UserModel.id == id_)
+        )
+        return result.one_or_none()
+
+    @staticmethod
+    async def acreate_user(
+        db: AsyncSession,
+        data: dict,
+        pss: PasswordSecurityService
+    ) -> accounts.UserModel:
+        password = pss.hash_password(data.pop("password"))
+        user = accounts.UserModel(**data, hashed_password=password)
+
+        db.add(user)
+        await db.flush()
+
+        return user
+
+    @staticmethod
+    async def aupdate_user_by_id(
+        db: AsyncSession,
+        id_: int,
+        data: dict,
+        pss: PasswordSecurityService
+    ) -> accounts.UserModel | None:
+        user = await UserService.aget_user_by_id(db, id_)
+
+        if not user:
+            return None
+
+        user.email = data.get("email", user.email)
+        user.is_active = data.get("is_active", user.is_active)
+
+        if data.get("password"):
+            user.hashed_password = pss.hash_password(data["password"])
+
+        if data.get("group"):
+            group = await UserService.aget_user_group_by_name(db, data["group"])
+            user.group_id = group.id
+
+        if data:
+            user.updated_at = datetime.now(timezone.utc)
+
+        await db.flush()
+
+        return user
+
+    @staticmethod
+    async def adelete_user_by_id(
+        db: AsyncSession,
+        id_: int
+    ) -> None:
+        db.execute(
+            delete(accounts.UserModel)
+            .where(accounts.UserModel.id == id_)
+        )
 
 
 class TokenService:
