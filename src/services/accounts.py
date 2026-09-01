@@ -1,15 +1,68 @@
+from __future__ import annotations
 import secrets
 from datetime import datetime, timezone, timedelta
 
+from fastapi import BackgroundTasks, HTTPException, status
 from sqlalchemy import select, delete
 from sqlalchemy.orm import joinedload, session
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import SQLAlchemyError
 
 from src.database.models import accounts
 from src.services.security import PasswordSecurityService
+from src.services.celery_beat import CeleryBeatService
+from src.services.email_sender import EmailSenderService
 
 
 class UserService:
+
+    @staticmethod
+    async def register_user(
+        db: AsyncSession,
+        data: dict,
+        pss: PasswordSecurityService,
+        email_sender_service: EmailSenderService,
+        token_service: TokenService,
+        background_tasks: BackgroundTasks
+    ) -> accounts.UserModel:
+        user = await UserService.aget_user_by_email(db, data["email"])
+
+        if user:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"User with this email {repr(data["email"])} exists."
+            )
+
+        try:
+            user = await UserService.acreate_user(db, data, pss)
+            activation_token = await token_service.create_token(
+                db=db,
+                user_id=user.id,
+            )
+            await db.commit()
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while user registration"
+            )
+        else:
+            activation_link = "http://127.0.0.1:8000/api/accounts/activate/"
+
+            background_tasks.add_task(
+                email_sender_service.send_activation_email,
+                user.email,
+                activation_link,
+                activation_token.token
+            )
+            background_tasks.add_task(
+                CeleryBeatService.create_periodic_task_to_delete_activation_token,
+                user.id,
+                activation_token.expires_at
+            )
+
+        return user
+
 
     @staticmethod
     async def aget_user_group_by_name(
