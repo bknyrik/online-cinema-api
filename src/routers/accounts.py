@@ -39,6 +39,10 @@ from src.crud.accounts import (
     delete_token,
     create_periodic_task_to_delete_activation_token
 )
+from src.services.accounts import UserService, TokenService
+from src.services.security import PasswordSecurityService
+from src.services.email_sender import EmailSenderService
+from src.services import dependencies
 
 
 router = APIRouter()
@@ -52,41 +56,19 @@ router = APIRouter()
 async def register_user(
     data: UserRegistrationRequestSchema,
     background_tasks: BackgroundTasks,
+    ess: EmailSenderService = Depends(dependencies.get_email_sender_service),
+    pss: PasswordSecurityService = Depends(dependencies.get_password_secure_service),
+    ts: TokenService = Depends(dependencies.get_activation_token_service),
     db: AsyncSession = Depends(get_db)
 ) -> UserModel:
-    user = await get_user_by_email(db, data.email)
-
-    if user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"User with this email {repr(data.email)} exists."
-        )
-
-    try:
-        user = await create_user(db, data)
-        activation_token = await create_token(
-            db=db,
-            user_id=user.id,
-            token_model=ActivationTokenModel
-        )
-        await db.commit()
-    except SQLAlchemyError:
-        await db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An error occurred while user registration"
-        )
-    else:
-        activation_link = "http://127.0.0.1:8000/api/accounts/activate/"
-
-
-        background_tasks.add_task(
-            create_periodic_task_to_delete_activation_token,
-            user.id,
-            activation_token.expires_at
-        )
-
-    return user
+    return await UserService.register_user(
+        db=db,
+        data=data.model_dump(),
+        email_sender_service=ess,
+        pss=pss,
+        token_service=ts,
+        background_tasks=background_tasks
+    )
 
 
 @router.post("/activate/", response_model=MessageResponseSchema)
