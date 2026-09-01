@@ -24,7 +24,7 @@ class CeleryBeatService:
             CeleryBeatService.create_periodic_task(
                 db=session,
                 name=f"Delete activation token by user {user_id}",
-                task="src.celery_beat.task.delete_expired_activation_token",
+                task="src.celery_beat.tasks.delete_expired_activation_token",
                 args=json.dumps((user_id, cs.id)),
                 one_off=True,
                 schedule_model=cs
