@@ -14,11 +14,10 @@ def delete_expired_activation_token(user_id: int, schedule_id: int) -> None:
             db=session,
             user_id=user_id
         )
-        pt = CeleryBeatService.get_periodic_task_by_schedule_id(
+        CeleryBeatService.delete_periodic_task_by_schedule_id(
             db=session,
             schedule_id=schedule_id
         )
-        CeleryBeatService.delete_periodic_task_by_schedule_id(db=session, id_=pt.id)
         CeleryBeatService.delete_clocked_schedule(
             db=session,
             id_=schedule_id
