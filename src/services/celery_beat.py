@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 
 from sqlalchemy import select, delete
@@ -5,8 +6,31 @@ from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.session import Session
 from sqlalchemy_celery_beat.models import PeriodicTask, ClockedSchedule
 
+from src.database.config import SyncSessionLocal
+
 
 class CeleryBeatService:
+
+    @staticmethod
+    def create_periodic_task_to_delete_activation_token(
+        user_id: int,
+        token_expire_time: datetime
+    ) -> None:
+        with SyncSessionLocal() as session:
+            cs = CeleryBeatService.create_clocked_schedule(
+                db=session,
+                clocked_time=token_expire_time
+            )
+            CeleryBeatService.create_periodic_task(
+                db=session,
+                name=f"Delete activation token by user {user_id}",
+                task="src.celery_beat.task.delete_expired_activation_token",
+                args=json.dumps((user_id, cs.id)),
+                one_off=True,
+                schedule_model=cs
+            )
+
+            session.commit()
 
     @staticmethod
     def get_clocked_schedule_by_id(db: Session, id_: int) -> ClockedSchedule | None:
