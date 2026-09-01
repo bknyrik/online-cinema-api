@@ -39,7 +39,6 @@ from src.crud.accounts import (
     delete_token,
     create_periodic_task_to_delete_activation_token
 )
-from src.smtp import emails
 
 
 router = APIRouter()
@@ -80,12 +79,7 @@ async def register_user(
     else:
         activation_link = "http://127.0.0.1:8000/api/accounts/activate/"
 
-        background_tasks.add_task(
-            emails.send_activation_email,
-        user.email,
-            activation_link,
-            activation_token.token
-        )
+
         background_tasks.add_task(
             create_periodic_task_to_delete_activation_token,
             user.id,
@@ -178,12 +172,6 @@ async def reactivate_user_account(
     else:
         activation_link = "http://localhost:8000/api/accounts/activate/"
 
-        background_tasks.add_task(
-            emails.send_activation_email,
-            user.email,
-            activation_link,
-            activation_token_instance.token
-        )
 
     return {"message": "An activation link is sent to your email"}
 
@@ -388,12 +376,7 @@ async def reset_password(
                 detail="An error occurred while resetting user password"
             )
         else:
-            background_tasks.add_task(
-                emails.send_reset_password_email,
-            user.email,
-                reset_password_link,
-                reset_password_token_instance.token
-            )
+            pass
 
     return {
         "message": (
