@@ -69,22 +69,22 @@ class UserService:
         db: AsyncSession,
         name: str
     ) -> accounts.UserGroupModel | None:
-        result = await db.scalar(
+        result = await db.execute(
             select(accounts.UserGroupModel)
             .where(accounts.UserGroupModel.name == name)
         )
-        return result.one_or_none()
+        return result.scalar_one_or_none()
 
     @staticmethod
     async def aget_user_by_email(
         db: AsyncSession,
         email: str
     ) -> accounts.UserModel | None:
-        result = await db.scalar(
+        result = await db.execute(
             select(accounts.UserModel)
             .where(accounts.UserModel.email == email)
         )
-        return result.one_or_none()
+        return result.scalar_one_or_none()
 
     @staticmethod
     async def aget_user_by_id(
