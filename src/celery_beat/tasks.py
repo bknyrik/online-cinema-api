@@ -23,3 +23,4 @@ def delete_expired_activation_token(user_id: int, schedule_id: int) -> None:
             db=session,
             id_=schedule_id
         )
+        session.commit()
