@@ -34,6 +34,8 @@ class UserService:
             )
 
         try:
+            group = await UserService.aget_user_group_by_name(db, data.pop("group"))
+            data["group_id"] = group.id
             user = await UserService.acreate_user(db, data, pss)
             activation_token = await token_service.create_token(
                 db=db,
