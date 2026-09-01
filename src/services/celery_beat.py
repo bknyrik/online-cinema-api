@@ -75,7 +75,7 @@ class CeleryBeatService:
 
 
     @staticmethod
-    def delete_periodic_task(db: Session, id_: int) -> None:
+    def delete_periodic_task_by_schedule_id(db: Session, id_: int) -> None:
         db.execute(
             delete(PeriodicTask)
             .where(PeriodicTask.id == id_)
