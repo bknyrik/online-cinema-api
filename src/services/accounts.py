@@ -12,6 +12,11 @@ from src.database.models import accounts
 from src.services.security import PasswordSecurityService
 from src.services.celery_beat import CeleryBeatService
 from src.services.email_sender import EmailSenderService
+from src.repositories.accounts import (
+    UserRepository,
+    UserGroupRepository,
+    TokenRepository
+)
 
 
 class UserService:
@@ -22,10 +27,13 @@ class UserService:
         data: dict,
         pss: PasswordSecurityService,
         email_sender_service: EmailSenderService,
-        token_service: TokenService,
         background_tasks: BackgroundTasks
     ) -> accounts.UserModel:
-        user = await UserService.aget_user_by_email(db, data["email"])
+        user_repository = UserRepository(pss)
+        user_group_repository = UserGroupRepository()
+        token_repository = TokenRepository(accounts.ActivationTokenModel)
+
+        user = await user_repository.aget_by_email(db, data["email"])
 
         if user:
             raise HTTPException(
@@ -34,13 +42,23 @@ class UserService:
             )
 
         try:
-            group = await UserService.aget_user_group_by_name(db, data.pop("group"))
+            group_name = data.pop("group")
+            group = await user_group_repository.aget_by_name(db, group_name)
+
+            if not group:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Invalid group {repr(group_name)}"
+                )
+
             data["group_id"] = group.id
-            user = await UserService.acreate_user(db, data, pss)
-            activation_token = await token_service.create_token(
+
+            user = await user_repository.acreate(db, data)
+            activation_token = await token_repository.acreate(
                 db=db,
-                user_id=user.id,
+                data=data,
             )
+
             await db.commit()
         except SQLAlchemyError:
             await db.rollback()
