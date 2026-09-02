@@ -37,28 +37,6 @@ class CeleryBeatService:
 
             session.commit()
 
-
-    @staticmethod
-    def create_clocked_schedule(
-        db: Session,
-        clocked_time: datetime
-    ) -> ClockedSchedule:
-        cs = ClockedSchedule(clocked_time=clocked_time)
-
-        db.add(cs)
-        db.flush()
-
-        return cs
-
-    @staticmethod
-    def create_periodic_task(db: Session, **kwargs) -> PeriodicTask:
-        pt = PeriodicTask(**kwargs)
-
-        db.add(pt)
-        db.flush()
-
-        return pt
-
     @staticmethod
     def delete_clocked_schedule(db: Session, id_: int) -> None:
         db.execute(
