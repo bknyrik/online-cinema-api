@@ -18,7 +18,7 @@ class CeleryBeatService:
         with SyncSessionLocal() as session:
             cs = ClockedScheduleRepository().create(
                 db=session,
-                data={"clocked_schedule": token_expire_time}
+                data={"clocked_time": token_expire_time}
             )
             PeriodicTaskRepository().create(
                 db=session,
