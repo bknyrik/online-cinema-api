@@ -1,4 +1,5 @@
-from datetime import datetime, timezone
+import secrets
+from datetime import datetime, timezone, timedelta
 
 from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -6,7 +7,11 @@ from sqlalchemy import select
 
 from src.services.security import PasswordSecurityService
 from src.repositories.base import BaseRepository
-from src.database.models.accounts import UserModel, UserGroupModel
+from src.database.models.accounts import (
+    UserModel,
+    UserGroupModel,
+    AbstractTokenModel
+)
 
 
 class UserRepository(BaseRepository):
@@ -104,3 +109,127 @@ class UserGroupRepository(BaseRepository):
 
     def __init__(self) -> None:
         super().__init__(UserGroupModel)
+
+
+class TokenRepository(BaseRepository):
+
+    @staticmethod
+    def generate_token(length: int = 32) -> str:
+        return secrets.token_urlsafe(length)
+
+    @staticmethod
+    def get_expiration_date(td: timedelta = timedelta(days=1)) -> datetime:
+        return datetime.now(timezone.utc) + td
+
+    async def aget_by_user_id(
+        self,
+        db: AsyncSession,
+        user_id: int
+    ) -> AbstractTokenModel | None:
+        result = await db.execute(
+            select(self._model_type)
+            .where(self._model_type.user_id == user_id)
+        )
+        return result.scalar_one_or_none()
+
+    def get_by_user_id(self, db: Session, user_id: int) -> AbstractTokenModel:
+        result = db.execute(
+            select(self._model_type)
+            .where(self._model_type.user_id == user_id)
+        )
+        return result.scalar_one_or_none()
+
+    async def acreate(
+        self,
+        db: AsyncSession,
+        user_id: int,
+        **data
+    ) -> AbstractTokenModel:
+        expires_at = data.get(
+            "expires_at",
+            self.get_expiration_date()
+        )
+        token = data.get(
+            "token",
+            self.generate_token()
+        )
+        instance = self._model_type(
+            expires_at=expires_at,
+            token=token,
+            user_id=user_id
+        )
+
+        db.add(instance)
+        await db.flush()
+        return instance
+
+    async def aupdate_by_id(
+        self,
+        db: AsyncSession,
+        user_id: int,
+        **data
+    ) -> AbstractTokenModel | None:
+        instance = await self.aget_by_user_id(db, user_id)
+
+        if not instance:
+            return None
+
+        instance.expires_at = data.get(
+            "expires_at",
+            self.get_expiration_date()
+        )
+        instance.token = data.get(
+            "token",
+            self.generate_token()
+        )
+
+        await db.flush()
+
+        return instance
+
+    async def create(
+        self,
+        db: AsyncSession,
+        user_id: int,
+        **data
+    ) -> AbstractTokenModel:
+        expires_at = data.get(
+            "expires_at",
+            self.get_expiration_date()
+        )
+        token = data.get(
+            "token",
+            self.generate_token()
+        )
+        instance = self._model_type(
+            expires_at=expires_at,
+            token=token,
+            user_id=user_id
+        )
+
+        db.add(instance)
+        await db.flush()
+        return instance
+
+    async def update_by_id(
+        self,
+        db: AsyncSession,
+        user_id: int,
+        **data
+    ) -> AbstractTokenModel | None:
+        instance = self.get_by_user_id(db, user_id)
+
+        if not instance:
+            return None
+
+        instance.expires_at = data.get(
+            "expires_at",
+            self.get_expiration_date()
+        )
+        instance.token = data.get(
+            "token",
+            self.generate_token()
+        )
+
+        await db.flush()
+        return instance
