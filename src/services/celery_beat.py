@@ -6,6 +6,10 @@ from sqlalchemy.orm.session import Session
 from sqlalchemy_celery_beat.models import PeriodicTask, ClockedSchedule
 
 from src.database.config import SyncSessionLocal
+from src.repositories.celery_beat import (
+    PeriodicTaskRepository,
+    ClockedScheduleRepository
+)
 
 
 class CeleryBeatService:
@@ -16,17 +20,19 @@ class CeleryBeatService:
         token_expire_time: datetime
     ) -> None:
         with SyncSessionLocal() as session:
-            cs = CeleryBeatService.create_clocked_schedule(
+            cs = ClockedScheduleRepository().create(
                 db=session,
-                clocked_time=token_expire_time
+                data={"clocked_schedule": token_expire_time}
             )
-            CeleryBeatService.create_periodic_task(
+            PeriodicTaskRepository().create(
                 db=session,
-                name=f"Delete activation token by user {user_id}",
-                task="src.celery_beat.tasks.delete_expired_activation_token",
-                args=json.dumps((user_id, cs.id)),
-                one_off=True,
-                schedule_model=cs
+                data={
+                    "name": f"Delete activation token by user {user_id}",
+                    "task": "src.celery_beat.tasks.delete_expired_activation_token",
+                    "args": json.dumps((user_id, cs.id)),
+                    "one_off": True,
+                    "schedule_model": cs
+                }
             )
 
             session.commit()
