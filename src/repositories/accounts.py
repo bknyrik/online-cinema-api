@@ -6,7 +6,7 @@ from sqlalchemy import select
 
 from src.services.security import PasswordSecurityService
 from src.repositories.base import BaseRepository
-from src.database.models.accounts import UserModel
+from src.database.models.accounts import UserModel, UserGroupModel
 
 
 class UserRepository(BaseRepository):
@@ -98,3 +98,9 @@ class UserRepository(BaseRepository):
 
         db.flush()
         return instance
+
+
+class UserGroupRepository(BaseRepository):
+
+    def __init__(self) -> None:
+        super().__init__(UserGroupModel)
