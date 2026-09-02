@@ -1,10 +1,6 @@
 import json
 from datetime import datetime
 
-from sqlalchemy import select, delete
-from sqlalchemy.orm.session import Session
-from sqlalchemy_celery_beat.models import PeriodicTask, ClockedSchedule
-
 from src.database.config import SyncSessionLocal
 from src.repositories.celery_beat import (
     PeriodicTaskRepository,
@@ -36,21 +32,3 @@ class CeleryBeatService:
             )
 
             session.commit()
-
-    @staticmethod
-    def delete_clocked_schedule(db: Session, id_: int) -> None:
-        db.execute(
-            delete(ClockedSchedule)
-            .where(ClockedSchedule.id == id_)
-        )
-
-
-    @staticmethod
-    def delete_periodic_task_by_schedule_id(
-        db: Session,
-        schedule_id: int,
-    ) -> None:
-        db.execute(
-            delete(PeriodicTask)
-            .where(PeriodicTask.schedule_id == schedule_id)
-        )
