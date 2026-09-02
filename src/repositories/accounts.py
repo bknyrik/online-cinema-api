@@ -205,12 +205,7 @@ class TokenRepository(BaseRepository):
 
         return instance
 
-    async def create(
-        self,
-        db: AsyncSession,
-        user_id: int,
-        **data
-    ) -> AbstractTokenModel:
+    def create(self, db: AsyncSession, **data) -> AbstractTokenModel:
         expires_at = data.get(
             "expires_at",
             self.get_expiration_date()
@@ -219,6 +214,7 @@ class TokenRepository(BaseRepository):
             "token",
             self.generate_token()
         )
+        user_id = data["user_id"]
         instance = self._model_type(
             expires_at=expires_at,
             token=token,
@@ -226,7 +222,7 @@ class TokenRepository(BaseRepository):
         )
 
         db.add(instance)
-        await db.flush()
+        db.flush()
         return instance
 
     async def update_by_user_id(
