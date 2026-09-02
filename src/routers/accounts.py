@@ -39,7 +39,7 @@ from src.crud.accounts import (
     delete_token,
     create_periodic_task_to_delete_activation_token
 )
-from src.services.accounts import UserService, TokenService
+from src.services.accounts import UserService
 from src.services.security import PasswordSecurityService
 from src.services.email_sender import EmailSenderService
 from src.services import dependencies
@@ -58,7 +58,6 @@ async def register_user(
     background_tasks: BackgroundTasks,
     ess: EmailSenderService = Depends(dependencies.get_email_sender_service),
     pss: PasswordSecurityService = Depends(dependencies.get_password_secure_service),
-    ts: TokenService = Depends(dependencies.get_activation_token_service),
     db: AsyncSession = Depends(get_db)
 ) -> UserModel:
     return await UserService.register_user(
@@ -66,7 +65,6 @@ async def register_user(
         data=data.model_dump(),
         email_sender_service=ess,
         pss=pss,
-        token_service=ts,
         background_tasks=background_tasks
     )
 

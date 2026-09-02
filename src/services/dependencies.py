@@ -2,9 +2,7 @@ from datetime import timedelta
 
 from src.settings import settings
 from src.services.security import PasswordSecurityService, JWTAuthService
-from src.services.accounts import TokenService
 from src.services.email_sender import EmailSenderService
-from src.database.models.accounts import ActivationTokenModel
 
 
 ACCESS_TOKEN_LIFETIME = timedelta(minutes=30)
@@ -22,10 +20,6 @@ def get_jwt_auth_service() -> JWTAuthService:
         access_token_lifetime=ACCESS_TOKEN_LIFETIME,
         refresh_token_lifetime=REFRESH_TOKEN_LIFETIME
     )
-
-
-def get_activation_token_service() -> TokenService:
-    return TokenService(token_model=ActivationTokenModel)
 
 
 def get_email_sender_service() -> EmailSenderService:
