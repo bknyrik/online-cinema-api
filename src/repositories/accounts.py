@@ -110,6 +110,24 @@ class UserGroupRepository(BaseRepository):
     def __init__(self) -> None:
         super().__init__(UserGroupModel)
 
+    async def aget_by_name(
+        self,
+        db: AsyncSession,
+        name: str
+    ) -> UserGroupModel | None:
+        result = await db.execute(
+            select(self._model_type)
+            .where(self._model_type.name == name)
+        )
+        return result.scalar_one_or_none()
+
+    def get_by_name(self, db: Session, name: str) -> UserGroupModel | None:
+        result = db.execute(
+            select(self._model_type)
+            .where(self._model_type.name == name)
+        )
+        return result.scalar_one_or_none()
+
 
 class TokenRepository(BaseRepository):
 
