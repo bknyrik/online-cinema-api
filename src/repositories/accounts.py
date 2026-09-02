@@ -43,7 +43,7 @@ class UserRepository(BaseRepository):
 
         return user
 
-    async def aupdate_by_id(
+    async def aupdate_by_user_id(
         self,
         db: Session,
         id_: int,
@@ -163,7 +163,7 @@ class TokenRepository(BaseRepository):
         await db.flush()
         return instance
 
-    async def aupdate_by_id(
+    async def aupdate_by_user_id(
         self,
         db: AsyncSession,
         user_id: int,
