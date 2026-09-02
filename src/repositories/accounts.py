@@ -211,7 +211,7 @@ class TokenRepository(BaseRepository):
         await db.flush()
         return instance
 
-    async def update_by_id(
+    async def update_by_user_id(
         self,
         db: AsyncSession,
         user_id: int,
