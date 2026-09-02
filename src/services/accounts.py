@@ -54,6 +54,7 @@ class UserService:
             data["group_id"] = group.id
 
             user = await user_repository.acreate(db, data)
+            data["user_id"] = user.id
             activation_token = await token_repository.acreate(
                 db=db,
                 data=data,
