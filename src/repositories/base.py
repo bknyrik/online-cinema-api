@@ -20,7 +20,7 @@ class BaseRepository[T]:
     async def aget_by_id(self, db: AsyncSession, id_: int) -> T | None:
         result = await db.execute(
             select(self._model_type)
-            .where(self.model_type.id == id_)
+            .where(self._model_type.id == id_)
         )
         return result.scalar_one_or_none()
 
