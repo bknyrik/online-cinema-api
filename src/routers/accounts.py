@@ -74,53 +74,10 @@ async def activate_user_account(
     data: ActivateUserAccountRequestSchema,
     db: AsyncSession = Depends(get_db),
 ) -> dict:
-    user = await get_user_by_email(db, data.email)
-
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"User with the given email '{data.email}' not found"
-        )
-
-    if user.is_active:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="User account is already active."
-        )
-
-    activation_token_instance = await get_token_by_user_id(
-        db=db,
-        user_id=user.id,
-        token_model=ActivationTokenModel
+    return await UserService.activate_user_account(
+        data=data.model_dump(),
+        db=db
     )
-
-    if (
-        not activation_token_instance
-        or activation_token_instance.token != data.activation_token
-    ):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid token"
-        )
-
-    if activation_token_instance.has_expired:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Token is expired"
-        )
-
-    try:
-        await update_user(db, user.id, {"is_active": True})
-    except SQLAlchemyError:
-        await db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An error occurred while account activation"
-        )
-    else:
-        await db.commit()
-
-    return {"message": "Your account is activated"}
 
 
 @router.post("/activate/new/", response_model=MessageResponseSchema)
