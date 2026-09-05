@@ -14,7 +14,7 @@ from src.database.models.accounts import (
 )
 
 
-class UserRepository(BaseRepository):
+class UserRepository(BaseRepository[UserModel]):
 
     def __init__(self, pss: PasswordSecurityService) -> None:
         super().__init__(UserModel)
