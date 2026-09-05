@@ -40,7 +40,7 @@ class BaseRepository[T]:
         if not instance:
             return None
 
-        for name, value in data:
+        for name, value in data.items():
             setattr(instance, name, value)
 
         await db.flush()
@@ -80,7 +80,7 @@ class BaseRepository[T]:
         if not instance:
             return None
 
-        for key, value in data:
+        for key, value in data.items():
             setattr(instance, key, value)
 
         return instance
