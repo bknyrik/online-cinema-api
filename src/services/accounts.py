@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 
 from src.database.models import accounts
-from src.services.security import PasswordSecurityService
+from src.services.security import PasswordSecurityService, JWTAuthService
 from src.services.celery_beat import CeleryBeatService
 from src.services.email_sender import EmailSenderService
 from src.repositories.accounts import (
@@ -191,3 +191,69 @@ class UserService:
             )
 
         return {"message": "An activation link is sent to your email"}
+
+    @staticmethod
+    async def login(
+        data: dict,
+        pss: PasswordSecurityService,
+        jwt_service: JWTAuthService,
+        db: AsyncSession,
+    ) -> dict:
+        user_repository = UserRepository()
+        token_repository = TokenRepository(accounts.RefreshTokenModel)
+
+        user = await user_repository.aget_by_email(db, data["email"])
+
+        if (
+            not user
+            or not pss.verify_password(data["password"], user.hashed_password)
+        ):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid account with given credentials"
+            )
+
+        if not user.is_active:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="User account is not activated"
+            )
+
+        try:
+            access_token = jwt_service.encode_token(
+                user_id=user.id,
+                token_type="access"
+            )
+            refresh_token = jwt_service.encode_token(
+                user_id=user.id,
+                token_type="refresh"
+            )
+            token_instance = await token_repository.aget_by_user_id(
+                db=db,
+                user_id=user.id
+            )
+
+            if not token_instance:
+                token_instance = await token_repository.acreate(
+                    db=db,
+                    data={"user_id": user.id, "token": refresh_token}
+                )
+            else:
+                token_instance = await token_repository.aupdate_by_id(
+                    db=db,
+                    id_=token_instance.id,
+                    data={"user_id": user.id, "token": refresh_token}
+                )
+
+            await db.commit()
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while login"
+            )
+
+        return {
+            "access_token": access_token,
+            "refresh_token": token_instance.token
+        }
