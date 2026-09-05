@@ -1,11 +1,8 @@
-from typing import TypeVar, Sequence
+from typing import Sequence
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
-
-
-T = TypeVar("T")
 
 
 class BaseRepository[T]:
