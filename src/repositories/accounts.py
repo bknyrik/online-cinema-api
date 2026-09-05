@@ -36,13 +36,13 @@ class UserRepository(BaseRepository[UserModel]):
 
         return user
 
-    async def aupdate_by_user_id(
+    async def aupdate_by_id(
         self,
-        db: Session,
+        db: AsyncSession,
         id_: int,
         data: dict
     ) -> UserModel | None:
-        instance = self.get_by_id(db, id_)
+        instance = await self.aget_by_id(db, id_)
 
         if not instance:
             return None
