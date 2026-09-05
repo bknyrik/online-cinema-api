@@ -29,7 +29,7 @@ class UserService:
         email_sender_service: EmailSenderService,
         background_tasks: BackgroundTasks
     ) -> accounts.UserModel:
-        user_repository = UserRepository(pss)
+        user_repository = UserRepository()
         user_group_repository = UserGroupRepository()
         token_repository = TokenRepository(accounts.ActivationTokenModel)
 

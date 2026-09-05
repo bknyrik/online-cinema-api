@@ -16,9 +16,8 @@ from src.database.models.accounts import (
 
 class UserRepository(BaseRepository[UserModel]):
 
-    def __init__(self, pss: PasswordSecurityService) -> None:
+    def __init__(self) -> None:
         super().__init__(UserModel)
-        self._pss = pss
 
     async def aget_by_email(self, db: AsyncSession, email: str) -> UserModel | None:
         result = await db.execute(
@@ -28,8 +27,7 @@ class UserRepository(BaseRepository[UserModel]):
         return result.scalar_one_or_none()
 
     async def acreate(self, db: AsyncSession, data: dict) -> UserModel:
-        password = self._pss.hash_password(data.pop("password"))
-        user = self._model_type(**data, hashed_password=password)
+        user = self._model_type(**data)
 
         db.add(user)
         await db.flush()
