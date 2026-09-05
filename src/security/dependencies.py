@@ -5,7 +5,7 @@ from sqlalchemy.orm import joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.security.auth import decode_access_token
-from src.database.dependencies import get_db
+from dependencies.dependencies import get_db
 from src.database.models.accounts import UserModel
 
 

@@ -4,7 +4,6 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from src.database.models.accounts import (
     UserModel,
-    ActivationTokenModel,
     RefreshTokenModel,
     PasswordResetTokenModel
 )
@@ -27,17 +26,15 @@ from src.schemas.accounts import (
 from src.security.password import verify_password
 from src.security.auth import create_access_token
 from src.security.dependencies import get_current_user, require_admin_user
-from src.database.dependencies import get_db
+from dependencies.dependencies import get_db
 from src.crud.accounts import (
-    create_user,
     update_user,
     get_user_by_email,
     get_user_by_id,
     get_token_by_user_id,
     create_token,
     update_token,
-    delete_token,
-    create_periodic_task_to_delete_activation_token
+    delete_token
 )
 from src.services.accounts import UserService
 from src.services.security import PasswordSecurityService, JWTAuthService
