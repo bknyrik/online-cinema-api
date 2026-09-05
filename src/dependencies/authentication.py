@@ -34,7 +34,7 @@ async def get_current_user(
     return user
 
 
-async def require_admin_user(
+async def get_current_admin_user(
     current_user: UserModel = Depends(get_current_user)
 ) -> UserModel:
     if current_user.group.name.value != "admin":

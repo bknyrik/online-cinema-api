@@ -25,7 +25,7 @@ from src.schemas.accounts import (
 )
 from src.security.password import verify_password
 from src.security.auth import create_access_token
-from dependencies.authentication import get_current_user, require_admin_user
+from dependencies.authentication import get_current_user, get_current_admin_user
 from dependencies.database import get_db
 from src.crud.accounts import (
     update_user,
@@ -131,7 +131,7 @@ async def change_user_group(
     user_id: int,
     data: ChangeUserGroupRequestSchema,
     db: AsyncSession = Depends(get_db),
-    current_user: UserModel = Depends(require_admin_user)
+    current_user: UserModel = Depends(get_current_admin_user)
 ) -> UserDetailResponseSchema:
     try:
         user = await update_user(
@@ -164,7 +164,7 @@ async def change_user_group(
 async def admin_activate_user_account(
     user_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user = Depends(require_admin_user)
+    current_user = Depends(get_current_admin_user)
 ) -> dict:
     user = await get_user_by_id(db, user_id)
 
