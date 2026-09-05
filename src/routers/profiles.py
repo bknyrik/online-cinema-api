@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from dependencies.database import get_db
 from src.database.models.accounts import UserModel, UserProfileModel
-from src.security.dependencies import get_current_user
+from dependencies.authentication import get_current_user
 from src.schemas.profiles import ProfileDetailResponseSchema
 from src.crud.profiles import get_profile_by_user_id
 
