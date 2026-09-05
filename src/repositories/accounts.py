@@ -3,7 +3,7 @@ from datetime import datetime, timezone, timedelta
 
 from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, delete
 
 from src.services.security import PasswordSecurityService
 from src.repositories.base import BaseRepository
@@ -145,3 +145,15 @@ class TokenRepository(BaseRepository):
         await db.flush()
 
         return instance
+
+    async def adelete_by_user_id(
+        self,
+        db: AsyncSession,
+        user_id: int
+    ) -> AbstractTokenModel | None:
+        instance = await self.aget_by_user_id(
+            db=db,
+            user_id=user_id
+        )
+
+        return await self.adelete_by_id(db=db, id_=instance.id)
