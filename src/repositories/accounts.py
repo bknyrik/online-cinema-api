@@ -145,26 +145,3 @@ class TokenRepository(BaseRepository):
         await db.flush()
 
         return instance
-
-    async def update_by_user_id(
-        self,
-        db: AsyncSession,
-        user_id: int,
-        **data
-    ) -> AbstractTokenModel | None:
-        instance = self.get_by_user_id(db, user_id)
-
-        if not instance:
-            return None
-
-        instance.expires_at = data.get(
-            "expires_at",
-            self.get_expiration_date()
-        )
-        instance.token = data.get(
-            "token",
-            self.generate_token()
-        )
-
-        await db.flush()
-        return instance
