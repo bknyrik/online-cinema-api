@@ -62,41 +62,6 @@ class UserRepository(BaseRepository[UserModel]):
         await db.flush()
         return instance
 
-    def create(self, db: AsyncSession, data: dict) -> UserModel:
-        password = self._pss.hash_password(data.pop("password"))
-        user = self._model_type(**data, hashed_password=password)
-
-        db.add(user)
-        db.flush()
-
-        return user
-
-    def update_by_id(
-        self,
-        db: Session,
-        id_: int,
-        data: dict
-    ) -> UserModel | None:
-        instance = self.get_by_id(db, id_)
-
-        if not instance:
-            return None
-
-        instance.email = data.get("email", instance.email)
-        instance.group_id = data.get("group_id", instance.group_id)
-        instance.is_active = data.get("is_active", instance.is_active)
-
-        if data.get("password"):
-            instance.hashed_password = self._pss.hash_password(
-                data["password"]
-            )
-
-        if data:
-            instance.updated_at = datetime.now(timezone.utc)
-
-        db.flush()
-        return instance
-
 
 class UserGroupRepository(BaseRepository):
 
