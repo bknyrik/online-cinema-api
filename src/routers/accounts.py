@@ -40,7 +40,7 @@ from src.crud.accounts import (
     create_periodic_task_to_delete_activation_token
 )
 from src.services.accounts import UserService
-from src.services.security import PasswordSecurityService
+from src.services.security import PasswordSecurityService, JWTAuthService
 from src.services.email_sender import EmailSenderService
 from src.services import dependencies
 
@@ -98,48 +98,16 @@ async def reactivate_user_account(
 @router.post("/login/", response_model=LoginResponseSchema)
 async def login(
     data: LoginRequestSchema,
+    pss: PasswordSecurityService = Depends(dependencies.get_password_secure_service),
+    jwt_service: JWTAuthService = Depends(dependencies.get_jwt_auth_service),
     db: AsyncSession = Depends(get_db),
 ) -> dict:
-    user = await get_user_by_email(db, data.email)
-
-    if not user or not verify_password(user.hashed_password, data.password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid account with given credentials"
-        )
-
-    if not user.is_active:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="User account is not activated"
-        )
-
-    try:
-        access_token = create_access_token(email=user.email)
-        refresh_token_instance = await update_token(
-            db=db,
-            user_id=user.id,
-            token_model=RefreshTokenModel
-        )
-
-        if not refresh_token_instance:
-            refresh_token_instance = await create_token(
-                db=db,
-                user_id=user.id,
-                token_model=RefreshTokenModel
-            )
-        await db.commit()
-    except SQLAlchemyError:
-        await db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An error occurred while login"
-        )
-
-    return {
-        "access_token": access_token,
-        "refresh_token": refresh_token_instance.token
-    }
+    return await UserService.login(
+        data=data.model_dump(),
+        db=db,
+        jwt_service=jwt_service,
+        pss=pss
+    )
 
 
 @router.post("/logout/")
