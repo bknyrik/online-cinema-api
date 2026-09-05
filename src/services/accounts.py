@@ -52,6 +52,7 @@ class UserService:
                 )
 
             data["group_id"] = group.id
+            data["hashed_password"] = pss.hash_password(data.pop("password"))
 
             user = await user_repository.acreate(db, data)
 
