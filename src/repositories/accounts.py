@@ -27,13 +27,6 @@ class UserRepository(BaseRepository[UserModel]):
         )
         return result.scalar_one_or_none()
 
-    def get_by_email(self, db: Session, email: str) -> UserModel | None:
-        result = db.execute(
-            select(self._model_type)
-            .where(self._model_type.email == email)
-        )
-        return result.scalar_one_or_none()
-
     async def acreate(self, db: AsyncSession, data: dict) -> UserModel:
         password = self._pss.hash_password(data.pop("password"))
         user = self._model_type(**data, hashed_password=password)
