@@ -136,3 +136,58 @@ class UserService:
             await db.commit()
 
         return {"message": "Your account is activated"}
+
+    @staticmethod
+    async def reactivate_user_account(
+        data: dict,
+        db: AsyncSession,
+        background_tasks: BackgroundTasks,
+        email_sender_service: EmailSenderService
+    ) -> dict:
+        user_repository = UserRepository()
+        token_repository = TokenRepository(accounts.ActivationTokenModel)
+
+        user = await user_repository.aget_by_email(db, data["email"])
+
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"User with given email '{data["email"]}' not found"
+            )
+
+        try:
+            token_instance = await token_repository.aget_by_user_id(
+                db=db,
+                user_id=user.id,
+            )
+
+            if not token_instance:
+                token_instance = await token_repository.acreate(
+                    db=db,
+                    data=data
+                )
+            else:
+                token_instance = await token_repository.aupdate_by_id(
+                    db=db,
+                    id_=token_instance.id,
+                    data={"user_id": user.id}
+                )
+
+            await db.commit()
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while activating account"
+            )
+        else:
+            activation_link = "http://localhost:8000/api/accounts/activate/"
+
+            background_tasks.add_task(
+                email_sender_service.send_activation_email,
+                user.email,
+                activation_link,
+                token_instance.token
+            )
+
+        return {"message": "An activation link is sent to your email"}
