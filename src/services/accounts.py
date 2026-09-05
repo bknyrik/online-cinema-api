@@ -80,3 +80,59 @@ class UserService:
             )
 
         return user
+
+    @staticmethod
+    async def activate_user_account(data: dict, db: AsyncSession) -> dict:
+        user_repository = UserRepository()
+        token_repository = TokenRepository(accounts.ActivationTokenModel)
+
+        user = await user_repository.aget_by_email(db, data["email"])
+
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"User with the given email '{data["email"]}' not found"
+            )
+
+        if user.is_active:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User account is already active."
+            )
+
+        token_instance = await token_repository.aget_by_user_id(
+            db=db,
+            user_id=user.id,
+        )
+
+        if (
+            not token_instance
+            or token_instance.token != data["activation_token"]
+        ):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid token"
+            )
+
+        if token_instance.has_expired:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Token is expired"
+            )
+
+        try:
+            await user_repository.aupdate_by_id(
+                db=db,
+                id_=user.id,
+                data={"is_active": True}
+            )
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while account activation"
+            )
+        else:
+            await db.commit()
+
+        return {"message": "Your account is activated"}
