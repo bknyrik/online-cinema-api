@@ -26,14 +26,6 @@ class UserRepository(BaseRepository[UserModel]):
         )
         return result.scalar_one_or_none()
 
-    async def acreate(self, db: AsyncSession, data: dict) -> UserModel:
-        user = self._model_type(**data)
-
-        db.add(user)
-        await db.flush()
-
-        return user
-
     async def aupdate_by_id(
         self,
         db: AsyncSession,
