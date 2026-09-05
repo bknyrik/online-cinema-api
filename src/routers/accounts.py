@@ -26,7 +26,7 @@ from src.schemas.accounts import (
 from src.security.password import verify_password
 from src.security.auth import create_access_token
 from src.security.dependencies import get_current_user, require_admin_user
-from dependencies.dependencies import get_db
+from dependencies.database import get_db
 from src.crud.accounts import (
     update_user,
     get_user_by_email,
