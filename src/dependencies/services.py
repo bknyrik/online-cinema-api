@@ -3,6 +3,7 @@ from datetime import timedelta
 from src.settings import settings
 from src.services.security import PasswordSecurityService, JWTAuthService
 from src.services.email_sender import EmailSenderService
+from src.services.s3 import S3Service
 
 
 ACCESS_TOKEN_LIFETIME = timedelta(minutes=30)
@@ -26,4 +27,13 @@ def get_email_sender_service() -> EmailSenderService:
     return EmailSenderService(
         host=settings.SMTP_HOST,
         port=settings.SMTP_PORT
+    )
+
+
+def get_s3_service() -> S3Service:
+    return S3Service(
+        access_key_id=settings.AWS_ACCESS_KEY_ID,
+        secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        bucket_name=settings.AWS_BUCKET_NAME,
+        region_name=settings.AWS_REGION_NAME
     )
