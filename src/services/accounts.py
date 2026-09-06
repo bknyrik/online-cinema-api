@@ -483,6 +483,7 @@ class UserService:
                         db=db,
                         data={"user_id": user.id}
                     )
+                await db.commit()
             except SQLAlchemyError:
                 await db.rollback()
                 raise HTTPException(
