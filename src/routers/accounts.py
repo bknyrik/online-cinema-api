@@ -39,8 +39,7 @@ from src.crud.accounts import (
 from src.services.accounts import UserService
 from src.services.security import PasswordSecurityService, JWTAuthService
 from src.services.email_sender import EmailSenderService
-from src.services import dependencies
-
+from dependencies import services
 
 router = APIRouter()
 
@@ -53,8 +52,8 @@ router = APIRouter()
 async def register_user(
     data: UserRegistrationRequestSchema,
     background_tasks: BackgroundTasks,
-    ess: EmailSenderService = Depends(dependencies.get_email_sender_service),
-    pss: PasswordSecurityService = Depends(dependencies.get_password_secure_service),
+    ess: EmailSenderService = Depends(services.get_email_sender_service),
+    pss: PasswordSecurityService = Depends(services.get_password_secure_service),
     db: AsyncSession = Depends(get_db)
 ) -> UserModel:
     return await UserService.register_user(
@@ -81,7 +80,7 @@ async def activate_user_account(
 async def reactivate_user_account(
     data: ReactivateUserAccountRequestSchema,
     background_tasks: BackgroundTasks,
-    ess: EmailSenderService = Depends(dependencies.get_email_sender_service),
+    ess: EmailSenderService = Depends(services.get_email_sender_service),
     db: AsyncSession = Depends(get_db),
 ) -> dict:
     return await UserService.reactivate_user_account(
@@ -95,8 +94,8 @@ async def reactivate_user_account(
 @router.post("/login/", response_model=LoginResponseSchema)
 async def login(
     data: LoginRequestSchema,
-    pss: PasswordSecurityService = Depends(dependencies.get_password_secure_service),
-    jwt_service: JWTAuthService = Depends(dependencies.get_jwt_auth_service),
+    pss: PasswordSecurityService = Depends(services.get_password_secure_service),
+    jwt_service: JWTAuthService = Depends(services.get_jwt_auth_service),
     db: AsyncSession = Depends(get_db),
 ) -> dict:
     return await UserService.login(
