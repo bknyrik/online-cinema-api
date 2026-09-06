@@ -1,5 +1,6 @@
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import SQLAlchemyError
 
 from src.database.models.accounts import UserModel, UserProfileModel
 from src.repositories.profiles import UserProfileRepository
@@ -54,9 +55,15 @@ class UserProfileService:
         )
         data["user_id"] = current_user.id
 
-        profile = await user_profile_repository.acreate(
-            db=db,
-            data=data
-        )
+        try:
+            profile = await user_profile_repository.acreate(
+                db=db,
+                data=data
+            )
+        except SQLAlchemyError:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while creating profile"
+            )
 
         return profile
