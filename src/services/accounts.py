@@ -257,3 +257,20 @@ class UserService:
             "access_token": access_token,
             "refresh_token": token_instance.token
         }
+
+    @staticmethod
+    async def logout(db: AsyncSession, user: accounts.UserModel) -> None:
+        user_repository = UserRepository()
+
+        try:
+            await user_repository.adelete_by_id(
+                db=db,
+                id_=user.id
+            )
+            await db.commit()
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while logout"
+            )
