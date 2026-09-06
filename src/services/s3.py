@@ -1,4 +1,5 @@
 import os
+import uuid
 
 import boto3
 from fastapi import UploadFile
@@ -26,15 +27,15 @@ class S3Service:
 
     def upload_image(self, user_id: int, image: UploadFile) -> str:
         _, ext = os.path.splitext(image.filename)
-        file_name = f"Avatars/user_{user_id}{ext}"
+        key = f"Avatars/user_{user_id}{uuid.uuid4()}{ext}"
 
         self.client.upload_fileobj(
             Fileobj=image.file,
             Bucket=self.bucket_name,
-            Key=file_name
+            Key=key
         )
 
         return (
             f"https://{self.bucket_name}.s3."
-            f"{self.region_name}.amazonaws.com/{file_name}"
+            f"{self.region_name}.amazonaws.com/{key}"
         )
