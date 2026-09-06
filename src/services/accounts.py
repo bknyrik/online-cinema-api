@@ -390,7 +390,10 @@ class UserService:
             await user_repository.aupdate_by_id(
                 db=db,
                 id_=current_user.id,
-                data={"hashed_password": pss.hash_password(data["new_password"])}
+                data={
+                    "updated_at": datetime.now(timezone.utc),
+                    "hashed_password": pss.hash_password(data["new_password"])
+                }
             )
             await db.commit()
         except SQLAlchemyError:
