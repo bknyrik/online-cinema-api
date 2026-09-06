@@ -24,7 +24,7 @@ async def read_current_user_profile(
     )
 
 
-@router.post("/profiles/", response_model=ProfileDetailResponseSchema)
+@router.post("/", response_model=ProfileDetailResponseSchema)
 async def create_current_user_profile(
     db: AsyncSession = Depends(get_db),
     s3_service: S3Service = Depends(get_s3_service),
