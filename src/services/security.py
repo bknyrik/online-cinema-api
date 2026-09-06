@@ -50,7 +50,7 @@ class JWTAuthService:
         )
         return jwt.encode(
             claims={
-                "sub": user_id,
+                "sub": str(user_id),
                 "exp": datetime.now(timezone.utc) + token_lifetime
             },
             key=self.secret_key,
