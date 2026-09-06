@@ -365,3 +365,33 @@ class UserService:
             )
 
         return {"message": "Account is activated successfully"}
+
+    @staticmethod
+    async def change_user_password(
+        db: AsyncSession,
+        data: dict,
+        current_user: accounts.UserModel,
+        pss: PasswordSecurityService
+    ) -> dict:
+        user_repository = UserRepository()
+
+        if not pss.verify_password(current_user.hashed_password, data["old_password"]):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="The old password is invalid"
+            )
+
+        try:
+            await user_repository.aupdate_by_id(
+                db=db,
+                id_=current_user.id,
+                data={"hashed_password": pss.hash_password(data["new_password"])}
+            )
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while changing user password"
+            )
+
+        return {"message": "Password is changed successfully"}
