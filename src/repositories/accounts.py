@@ -1,11 +1,10 @@
 import secrets
 from datetime import datetime, timezone, timedelta
 
-from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, delete
+from sqlalchemy.orm import joinedload
+from sqlalchemy import select
 
-from src.services.security import PasswordSecurityService
 from src.repositories.base import BaseRepository
 from src.database.models.accounts import (
     UserModel,
@@ -23,6 +22,18 @@ class UserRepository(BaseRepository[UserModel]):
         result = await db.execute(
             select(self._model_type)
             .where(self._model_type.email == email)
+        )
+        return result.scalar_one_or_none()
+
+    async def aget_with_group_by_id(
+        self,
+        db: AsyncSession,
+        id_: int
+    ) -> UserModel | None:
+        result = await db.execute(
+            select(self._model_type)
+            .options(joinedload(self._model_type.group))
+            .where(self._model_type.id == id_)
         )
         return result.scalar_one_or_none()
 
