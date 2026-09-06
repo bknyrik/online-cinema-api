@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from dependencies.database import get_db
+from services.profiles import UserProfileService
 from src.database.models.accounts import UserModel, UserProfileModel
 from dependencies.authentication import get_current_user
 from dependencies.services import get_s3_service
@@ -35,5 +36,16 @@ async def create_current_user_profile(
         db=db,
         data=data.model_dump(),
         s3_service=s3_service,
+        current_user=current_user
+    )
+
+
+@router.delete("/me/")
+async def delete_current_user_profile(
+    db: AsyncSession = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user)
+) -> None:
+    return await UserProfileService.delete_current_user_profile(
+        db=db,
         current_user=current_user
     )
