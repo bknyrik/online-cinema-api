@@ -52,6 +52,7 @@ class UserProfileService:
             user_id=current_user.id,
             image=data["avatar"]
         )
+        data["user_id"] = current_user.id
 
         profile = await user_profile_repository.acreate(
             db=db,
