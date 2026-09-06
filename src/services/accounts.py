@@ -448,3 +448,58 @@ class UserService:
                 token_type="access"
             )
         }
+
+    @staticmethod
+    async def reset_password(
+        db: AsyncSession,
+        data: dict,
+        ess: EmailSenderService,
+        background_tasks: BackgroundTasks
+    ) -> dict:
+        user_repository = UserRepository()
+        token_repository = TokenRepository(accounts.PasswordResetTokenModel)
+
+        user = await user_repository.aget_by_email(db, data["email"])
+
+        if user and user.is_active:
+            reset_password_link = (
+                "http://localhost:8000/accounts/me/reset_password/complete/"
+            )
+
+            token_instance = await token_repository.aget_by_user_id(
+                db=db,
+                user_id=user.id,
+            )
+
+            try:
+                if token_instance:
+                    token_instance = await token_repository.aupdate_by_id(
+                        db=db,
+                        id_=token_instance.id,
+                        data={"user_id": user.id}
+                    )
+                else:
+                    token_instance = await token_repository.acreate(
+                        db=db,
+                        data={"user_id": user.id}
+                    )
+            except SQLAlchemyError:
+                await db.rollback()
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="An error occurred while resetting user password"
+                )
+            else:
+                background_tasks.add_task(
+                    ess.send_reset_password_email,
+                    user.email,
+                    reset_password_link,
+                    token_instance.token
+                )
+
+        return {
+            "message": (
+                "If you are registered, "
+                "you will receive an email with information"
+            )
+        }
