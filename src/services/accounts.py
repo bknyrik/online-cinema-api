@@ -1,4 +1,5 @@
 from __future__ import annotations
+from datetime import datetime, timezone
 
 from fastapi import BackgroundTasks, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -374,8 +375,12 @@ class UserService:
         pss: PasswordSecurityService
     ) -> dict:
         user_repository = UserRepository()
+        password_is_verified = pss.verify_password(
+            raw_password=data["old_password"],
+            hashed_password=current_user.hashed_password
+        )
 
-        if not pss.verify_password(current_user.hashed_password, data["old_password"]):
+        if not password_is_verified:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="The old password is invalid"
@@ -387,6 +392,7 @@ class UserService:
                 id_=current_user.id,
                 data={"hashed_password": pss.hash_password(data["new_password"])}
             )
+            await db.commit()
         except SQLAlchemyError:
             await db.rollback()
             raise HTTPException(
