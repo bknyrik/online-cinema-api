@@ -274,3 +274,54 @@ class UserService:
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while logout"
             )
+
+    @staticmethod
+    async def change_user_group(
+        db: AsyncSession,
+        data: dict,
+        user_id: int
+    ) -> dict:
+        user_repository = UserRepository()
+        user_group_repository = UserGroupRepository()
+
+        try:
+            group = await user_group_repository.aget_by_name(
+                db=db,
+                name=data["group"]
+            )
+
+            if not group:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Group {data["group"]} not found"
+                )
+
+            await user_repository.aupdate_by_id(
+                db=db,
+                id_=user_id,
+                data={"group_id": group.id}
+            )
+            await db.commit()
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while changing user group"
+            )
+
+        user = await user_repository.aget_with_group_by_id(
+            db=db,
+            id_=user_id
+        )
+
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found"
+            )
+
+        return {
+            "id": user.id,
+            "email": user.email,
+            "group": user.group.name
+        }
