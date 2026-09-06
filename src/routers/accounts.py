@@ -126,31 +126,11 @@ async def change_user_group(
     data: ChangeUserGroupRequestSchema,
     db: AsyncSession = Depends(get_db),
     current_user: UserModel = Depends(get_current_admin_user)
-) -> UserDetailResponseSchema:
-    try:
-        user = await update_user(
-            db=db,
-            user_id=user_id,
-            data={"group": data.group}
-        )
-        await db.commit()
-    except SQLAlchemyError:
-        await db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An error occurred while changing user group"
-        )
-
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found"
-        )
-
-    return UserDetailResponseSchema(
-        id=user.id,
-        email=user.email,
-        group=user.group.name
+) -> dict:
+    return await UserService.change_user_group(
+        db=db,
+        data=data.model_dump(),
+        user_id=user_id
     )
 
 
