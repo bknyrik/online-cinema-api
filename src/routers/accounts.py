@@ -150,28 +150,15 @@ async def admin_activate_user_account(
 async def change_user_password(
     data: ChangeUserPasswordRequestSchema,
     db: AsyncSession = Depends(get_db),
-    current_user: UserModel = Depends(get_current_user)
+    current_user: UserModel = Depends(get_current_user),
+    pss: PasswordSecurityService = Depends(services.get_password_secure_service)
 ) -> dict:
-    if not verify_password(current_user.hashed_password, data.old_password):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="The old password is invalid"
-        )
-
-    try:
-        await update_user(
-            db=db,
-            user_id=current_user.id,
-            data={"password": data.new_password}
-        )
-    except SQLAlchemyError:
-        await db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An error occurred while changing user password"
-        )
-
-    return {"message": "Password is changed successfully"}
+    return await UserService.change_user_password(
+        db=db,
+        current_user=current_user,
+        data=data.model_dump(),
+        pss=pss
+    )
 
 
 @router.post("/reset_password/", response_model=MessageResponseSchema)
