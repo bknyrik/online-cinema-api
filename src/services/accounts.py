@@ -404,3 +404,47 @@ class UserService:
             )
 
         return {"message": "Password is changed successfully"}
+
+    @staticmethod
+    async def refresh_access_token(
+        data: dict,
+        jwt_auth_service: JWTAuthService,
+        db: AsyncSession
+    ) -> dict:
+        user_repository = UserRepository()
+        token_repository = TokenRepository(accounts.RefreshTokenModel)
+
+        user = await user_repository.aget_by_email(db, data["email"])
+
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found"
+            )
+
+        token_instance = await token_repository.aget_by_user_id(
+            db=db,
+            user_id=user.id,
+        )
+
+        if (
+            not token_instance
+            or token_instance.token != data["refresh_token"]
+        ):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Token is invalid or missing"
+            )
+
+        if token_instance.has_expired:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Token is expired"
+            )
+
+        return {
+            "access_token": jwt_auth_service.encode_token(
+                user_id=user.id,
+                token_type="access"
+            )
+        }
