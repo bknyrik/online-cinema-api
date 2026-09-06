@@ -37,32 +37,6 @@ class UserRepository(BaseRepository[UserModel]):
         )
         return result.scalar_one_or_none()
 
-    async def aupdate_by_id(
-        self,
-        db: AsyncSession,
-        id_: int,
-        data: dict
-    ) -> UserModel | None:
-        instance = await self.aget_by_id(db, id_)
-
-        if not instance:
-            return None
-
-        instance.email = data.get("email", instance.email)
-        instance.group_id = data.get("group_id", instance.group_id)
-        instance.is_active = data.get("is_active", instance.is_active)
-
-        if data.get("password"):
-            instance.hashed_password = self._pss.hash_password(
-                data["password"]
-            )
-
-        if data:
-            instance.updated_at = datetime.now(timezone.utc)
-
-        await db.flush()
-        return instance
-
 
 class UserGroupRepository(BaseRepository[UserGroupModel]):
 
