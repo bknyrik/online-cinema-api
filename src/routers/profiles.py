@@ -1,11 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from dependencies.database import get_db
 from src.database.models.accounts import UserModel, UserProfileModel
 from dependencies.authentication import get_current_user
 from src.schemas.profiles import ProfileDetailResponseSchema
-from src.crud.profiles import get_profile_by_user_id
 
 
 router = APIRouter()
@@ -16,15 +15,4 @@ async def read_current_user_profile(
     db: AsyncSession = Depends(get_db),
     current_user: UserModel = Depends(get_current_user)
 ) -> UserProfileModel:
-    profile = await get_profile_by_user_id(
-        db=db,
-        user_id=current_user.id
-    )
-
-    if not profile:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Account doesn't have a profile"
-        )
-
-    return profile
+    pass
