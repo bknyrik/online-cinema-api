@@ -1,12 +1,7 @@
-from fastapi import APIRouter, status, Depends, HTTPException, BackgroundTasks
+from fastapi import APIRouter, status, Depends, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.exc import SQLAlchemyError
 
-from src.database.models.accounts import (
-    UserModel,
-    RefreshTokenModel,
-    PasswordResetTokenModel
-)
+from src.database.models.accounts import UserModel
 from src.schemas.accounts import (
     UserRegistrationRequestSchema,
     UserRegistrationResponseSchema,
@@ -23,19 +18,8 @@ from src.schemas.accounts import (
     MessageResponseSchema,
     ReactivateUserAccountRequestSchema
 )
-from src.security.password import verify_password
-from src.security.auth import create_access_token
 from dependencies.authentication import get_current_user, get_current_admin_user
 from dependencies.database import get_db
-from src.crud.accounts import (
-    update_user,
-    get_user_by_email,
-    get_user_by_id,
-    get_token_by_user_id,
-    create_token,
-    update_token,
-    delete_token
-)
 from src.services.accounts import UserService
 from src.services.security import PasswordSecurityService, JWTAuthService
 from src.services.email_sender import EmailSenderService
