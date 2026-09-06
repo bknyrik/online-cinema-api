@@ -504,3 +504,60 @@ class UserService:
                 "you will receive an email with information"
             )
         }
+
+    @staticmethod
+    async def reset_password_complete(
+        db: AsyncSession,
+        data: dict,
+        pss: PasswordSecurityService
+    ) -> dict:
+        user_repository = UserRepository()
+        token_repository = TokenRepository(accounts.PasswordResetTokenModel)
+
+        user = await user_repository.aget_by_email(db, data["email"])
+
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found"
+            )
+
+        token_instance = await token_repository.aget_by_user_id(
+            db=db,
+            user_id=user.id,
+        )
+
+        if not token_instance or token_instance.token != data["token"]:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Token is invalid"
+            )
+
+        if token_instance.has_expired:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Token has expired"
+            )
+
+        try:
+            await user_repository.aupdate_by_id(
+                db=db,
+                id_=user.id,
+                data={
+                    "updated_at": datetime.now(timezone.utc),
+                    "hashed_password": pss.hash_password(data["password"])
+                }
+            )
+            await token_repository.adelete_by_id(
+                db=db,
+                id_=token_instance.id
+            )
+            await db.commit()
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while resetting password completion"
+            )
+
+        return {"message": "Password is changed successfully"}
