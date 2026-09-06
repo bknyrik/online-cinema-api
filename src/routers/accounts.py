@@ -165,49 +165,15 @@ async def change_user_password(
 async def reset_password(
     data: ResetUserPasswordRequestSchema,
     background_tasks: BackgroundTasks,
+    ess: EmailSenderService = Depends(services.get_email_sender_service),
     db: AsyncSession = Depends(get_db),
 ) -> dict:
-    user = await get_user_by_email(db, data.email)
-
-    if user and user.is_active:
-        reset_password_link = (
-            "http://localhost:8000/accounts/me/"
-            "reset_password/complete/"
-        )
-
-        reset_password_token_instance = await get_token_by_user_id(
-            db=db,
-            user_id=user.id,
-            token_model=PasswordResetTokenModel
-        )
-        try:
-            if reset_password_token_instance:
-                reset_password_token_instance = await update_token(
-                    db=db,
-                    user_id=user.id,
-                    token_model=PasswordResetTokenModel
-                )
-            else:
-                reset_password_token_instance = await create_token(
-                    db=db,
-                    user_id=user.id,
-                    token_model=PasswordResetTokenModel
-                )
-        except SQLAlchemyError:
-            await db.rollback()
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="An error occurred while resetting user password"
-            )
-        else:
-            pass
-
-    return {
-        "message": (
-            "If you are registered, "
-            "you will receive an email with information"
-        )
-    }
+    return await UserService.reset_password(
+        db=db,
+        background_tasks=background_tasks,
+        data=data.model_dump(),
+        ess=ess
+    )
 
 
 @router.post(
