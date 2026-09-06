@@ -26,7 +26,7 @@ class S3Service:
 
     def upload_image(self, user_id: int, image: UploadFile) -> str:
         _, ext = os.path.splitext(image.filename)
-        file_name = f"user_{user_id}.{ext}"
+        file_name = f"Avatars/user_{user_id}{ext}"
 
         self.client.upload_fileobj(
             Fileobj=image.file,
