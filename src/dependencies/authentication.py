@@ -7,6 +7,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.security.auth import decode_access_token
 from dependencies.database import get_db
 from src.database.models.accounts import UserModel
+from src.repositories.accounts import UserRepository
+from src.services.security import JWTAuthService
+from src.dependencies.services import get_jwt_auth_service
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
@@ -14,16 +17,16 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 async def get_current_user(
     db: AsyncSession = Depends(get_db),
-    token: str = Depends(oauth2_scheme)
+    token: str = Depends(oauth2_scheme),
+    jwt_auth_service: JWTAuthService = Depends(get_jwt_auth_service)
 ) -> UserModel:
-    payload = decode_access_token(token)
+    user_repository = UserRepository()
+    payload = jwt_auth_service.decode_token(token)
 
-    result = await db.execute(
-        select(UserModel)
-        .options(joinedload(UserModel.group))
-        .where(UserModel.email == payload["sub"])
+    user = await user_repository.aget_by_id(
+        db=db,
+        id_=int(payload["sub"])
     )
-    user = result.scalar_one_or_none()
 
     if not user:
         raise HTTPException(
