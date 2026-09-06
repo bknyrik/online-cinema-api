@@ -35,28 +35,12 @@ async def get_current_user(
 
 
 async def get_current_admin_user(
-    db: AsyncSession = Depends(get_db),
-    token: str = Depends(oauth2_scheme),
-    jwt_auth_service: JWTAuthService = Depends(get_jwt_auth_service)
+    current_user: UserModel = Depends(get_current_user)
 ) -> UserModel:
-    user_repository = UserRepository()
-    payload = jwt_auth_service.decode_token(token)
-
-    user = await user_repository.aget_with_group_by_id(
-        db=db,
-        id_=int(payload["sub"])
-    )
-
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found"
-        )
-
-    if user.group.name.value != "admin":
+    if current_user.group.name.value != "admin":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="User is not an admin to perform this action"
         )
 
-    return user
+    return current_user
