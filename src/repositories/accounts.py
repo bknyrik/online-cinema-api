@@ -64,7 +64,7 @@ class UserRepository(BaseRepository[UserModel]):
         return instance
 
 
-class UserGroupRepository(BaseRepository):
+class UserGroupRepository(BaseRepository[UserGroupModel]):
 
     def __init__(self) -> None:
         super().__init__(UserGroupModel)
@@ -81,7 +81,7 @@ class UserGroupRepository(BaseRepository):
         return result.scalar_one_or_none()
 
 
-class TokenRepository(BaseRepository):
+class TokenRepository(BaseRepository[AbstractTokenModel]):
 
     @staticmethod
     def generate_token(length: int = 32) -> str:
