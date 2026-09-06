@@ -325,3 +325,43 @@ class UserService:
             "email": user.email,
             "group": user.group.name
         }
+
+    @staticmethod
+    async def admin_activate_user_account(
+        user_id: int,
+        db: AsyncSession,
+    ) -> dict:
+        user_repository = UserRepository()
+
+        user = await user_repository.aget_by_id(
+            db=db,
+            id_=user_id
+        )
+
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found"
+            )
+
+        if user.is_active:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User is already active."
+            )
+
+        try:
+            await user_repository.aupdate_by_id(
+                db=db,
+                id_=user.id,
+                data={"is_active": True}
+            )
+            await db.commit()
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while account activation"
+            )
+
+        return {"message": "Account is activated successfully"}
