@@ -183,45 +183,13 @@ async def reset_password(
 async def reset_password_complete(
     data: ResetPasswordCompleteRequestSchema,
     db: AsyncSession = Depends(get_db),
+    pss: PasswordSecurityService = Depends(services.get_password_secure_service)
 ) -> dict:
-    user = await get_user_by_email(db, data.email)
-
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found"
-        )
-
-    reset_password_token_instance = await get_token_by_user_id(
+    return await UserService.reset_password_complete(
         db=db,
-        user_id=user.id,
-        token_model=PasswordResetTokenModel
+        data=data.model_dump(),
+        pss=pss
     )
-
-    if not reset_password_token_instance:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Token is invalid"
-        )
-
-    if reset_password_token_instance.has_expired:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Token has expired"
-        )
-
-    try:
-        await update_user(db, user.id, {"password": data.password})
-        await delete_token(db, user.id, PasswordResetTokenModel)
-        await db.commit()
-    except SQLAlchemyError:
-        await db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An error occurred while resetting password completion"
-        )
-
-    return {"message": "Password is changed successfully"}
 
 
 @router.post(
