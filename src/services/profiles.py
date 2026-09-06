@@ -69,3 +69,28 @@ class UserProfileService:
             )
 
         return profile
+
+    @staticmethod
+    async def delete_current_user_profile(
+        db: AsyncSession,
+        current_user: UserModel
+    ) -> None:
+        user_profile_repository = UserProfileRepository()
+
+        try:
+            profile = await user_profile_repository.adelete_by_user_id(
+                db=db,
+                user_id=current_user.id
+            )
+
+            if not profile:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Profile not found"
+                )
+        except SQLAlchemyError:
+            await db.commit()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while profile deletion"
+            )
