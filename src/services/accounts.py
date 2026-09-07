@@ -126,10 +126,13 @@ class UserService:
             )
 
         try:
-            await user_repository.aupdate_by_id(
+            await user_repository.aupdate(
                 db=db,
-                id_=user.id,
-                data={"is_active": True}
+                instance=user,
+                data={
+                    "is_active": True,
+                    "updated_at": datetime.now(timezone.utc)
+                }
             )
             await db.commit()
         except SQLAlchemyError:
