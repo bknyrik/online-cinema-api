@@ -98,9 +98,7 @@ class BaseRepository[T]:
         if not instance:
             return None
 
-        for key, value in data.items():
-            setattr(instance, key, value)
-
+        self.update(db, instance, data)
         return instance
 
     def delete_by_id(self, db: Session, id_: int) -> T | None:
