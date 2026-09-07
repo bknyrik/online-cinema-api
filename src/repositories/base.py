@@ -85,6 +85,13 @@ class BaseRepository[T]:
 
         return instance
 
+    @staticmethod
+    def update(db: Session, instance: T, data: dict) -> None:
+        for name, value in data.items():
+            setattr(instance, name, value)
+
+        db.flush()
+
     def update_by_id(self, db: Session, id_: int, data: dict) -> T | None:
         instance = self.get_by_id(db, id_)
 
