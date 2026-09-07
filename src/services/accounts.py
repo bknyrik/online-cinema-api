@@ -269,7 +269,7 @@ class UserService:
         try:
             token_instance = token_repository.aget_by_token(
                 db=db,
-                token=data["token"]
+                token=data["refresh_token"]
             )
             await token_repository.adelete(
                 db=db,
