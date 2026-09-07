@@ -21,6 +21,26 @@ class UserProfileRepository(BaseRepository[UserProfileModel]):
         )
         return result.scalar_one_or_none()
 
+    async def aupdate_by_user_id(
+        self,
+        db: AsyncSession,
+        user_id: int,
+        data: dict
+    ) -> UserProfileModel | None:
+        instance = await self.aget_by_user_id(
+            db=db,
+            user_id=user_id
+        )
+
+        if not instance:
+            return None
+
+        for name, value in data.items():
+            setattr(instance, name, value)
+
+        await db.flush()
+        return instance
+
     async def adelete_by_user_id(
         self,
         db: AsyncSession,
