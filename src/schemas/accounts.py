@@ -58,6 +58,10 @@ class LoginResponseSchema(BaseModel):
     token_type: str = "Bearer"
 
 
+class LogoutRequestSchema(BaseModel):
+    refresh_token: str
+
+
 class UserDetailResponseSchema(BaseModel):
     id: int
     email: EmailStr
