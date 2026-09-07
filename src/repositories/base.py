@@ -47,10 +47,7 @@ class BaseRepository[T]:
         if not instance:
             return None
 
-        for name, value in data.items():
-            setattr(instance, name, value)
-
-        await db.flush()
+        await self.aupdate(db, instance, data)
         return instance
 
     async def adelete_by_id(self, db: AsyncSession, id_: int) -> T | None:
