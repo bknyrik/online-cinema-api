@@ -245,7 +245,11 @@ class UserService:
             if not token_instance:
                 token_instance = await token_repository.acreate(
                     db=db,
-                    data={"user_id": user.id, "token": refresh_token}
+                    data={
+                        "user_id": user.id,
+                        "token": refresh_token,
+                        "expires_at": token_repository.get_expiration_date()
+                    }
                 )
 
             await db.commit()
