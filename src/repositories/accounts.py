@@ -98,17 +98,7 @@ class TokenRepository(BaseRepository[AbstractTokenModel]):
         if not instance:
             return None
 
-        instance.expires_at = data.get(
-            "expires_at",
-            self.get_expiration_date()
-        )
-        instance.token = data.get(
-            "token",
-            self.generate_token()
-        )
-
-        await db.flush()
-
+        await self.aupdate(db, instance, data)
         return instance
 
     async def adelete_by_user_id(
