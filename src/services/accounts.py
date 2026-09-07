@@ -267,7 +267,7 @@ class UserService:
         token_repository = TokenRepository(accounts.RefreshTokenModel)
 
         try:
-            token_instance = token_repository.aget_by_token(
+            token_instance = await token_repository.aget_by_token(
                 db=db,
                 token=data["refresh_token"]
             )
