@@ -62,6 +62,10 @@ class BaseRepository[T]:
         await db.delete(instance)
         return instance
 
+    @staticmethod
+    async def adelete(db: AsyncSession, instance: T) -> None:
+        await db.delete(instance)
+
     def get_all(self, db: Session) -> Sequence[T]:
         result = db.execute(select(self._model_type))
         return result.scalars().all()
