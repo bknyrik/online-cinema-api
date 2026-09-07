@@ -29,6 +29,13 @@ class BaseRepository[T]:
 
         return instance
 
+    @staticmethod
+    async def aupdate(db: AsyncSession, instance: T, data: dict) -> None:
+        for name, value in data.items():
+            setattr(instance, name, value)
+
+        await db.flush()
+
     async def aupdate_by_id(
         self,
         db: AsyncSession,
