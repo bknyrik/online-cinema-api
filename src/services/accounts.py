@@ -266,13 +266,20 @@ class UserService:
         }
 
     @staticmethod
-    async def logout(db: AsyncSession, user: accounts.UserModel) -> None:
+    async def logout(
+        db: AsyncSession,
+        data: dict,
+    ) -> None:
         token_repository = TokenRepository(accounts.RefreshTokenModel)
 
         try:
-            await token_repository.adelete_by_user_id(
+            token_instance = token_repository.aget_by_token(
                 db=db,
-                user_id=user.id
+                token=data["token"]
+            )
+            await token_repository.adelete(
+                db=db,
+                instance=token_instance
             )
             await db.commit()
         except SQLAlchemyError:
