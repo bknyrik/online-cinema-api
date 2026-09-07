@@ -87,30 +87,6 @@ class TokenRepository(BaseRepository[AbstractTokenModel]):
         )
         return result.scalar_one_or_none()
 
-    async def acreate(
-        self,
-        db: AsyncSession,
-        data: dict
-    ) -> AbstractTokenModel:
-        expires_at = data.get(
-            "expires_at",
-            self.get_expiration_date()
-        )
-        token = data.get(
-            "token",
-            self.generate_token()
-        )
-        user_id = data["user_id"]
-        instance = self._model_type(
-            expires_at=expires_at,
-            token=token,
-            user_id=user_id
-        )
-
-        db.add(instance)
-        await db.flush()
-        return instance
-
     async def aupdate_by_user_id(
         self,
         db: AsyncSession,
