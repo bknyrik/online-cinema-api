@@ -34,6 +34,34 @@ class ProfileFormSchema(BaseModel):
         )
 
 
+class ProfileUpdateFormSchema(BaseModel):
+    first_name: str | None = Form()
+    last_name: str | None = Form()
+    avatar: UploadFile | None = File(...)
+    gender: GenderEnum | None = Form()
+    date_of_birth: datetime.date | None = Form()
+    info: str | None = Form()
+
+    @classmethod
+    def as_form(
+        cls,
+        first_name: str | None = Form(),
+        last_name: str | None = Form(),
+        avatar: UploadFile | None = File(...),
+        gender: GenderEnum | None = Form(),
+        date_of_birth: datetime.date | None = Form(),
+        info: str | None = Form()
+    ) -> "ProfileUpdateFormSchema":
+        return cls(
+            first_name=first_name,
+            last_name=last_name,
+            avatar=avatar,
+            gender=gender,
+            date_of_birth=date_of_birth,
+            info=info
+        )
+
+
 class ProfileDetailResponseSchema(BaseModel):
     id: int
     first_name: str
