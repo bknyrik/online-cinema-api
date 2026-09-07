@@ -91,7 +91,7 @@ class TokenRepository(BaseRepository[AbstractTokenModel]):
         self,
         db: AsyncSession,
         user_id: int,
-        **data
+        data: dict
     ) -> AbstractTokenModel | None:
         instance = await self.aget_by_user_id(db, user_id)
 
