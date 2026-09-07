@@ -45,12 +45,12 @@ class ProfileUpdateFormSchema(BaseModel):
     @classmethod
     def as_form(
         cls,
-        first_name: str | None = Form(),
-        last_name: str | None = Form(),
-        avatar: UploadFile | None = File(...),
-        gender: GenderEnum | None = Form(),
-        date_of_birth: datetime.date | None = Form(),
-        info: str | None = Form()
+        first_name: str | None = Form(default=None),
+        last_name: str | None = Form(default=None),
+        avatar: UploadFile | None = File(default=None),
+        gender: GenderEnum | None = Form(default=None),
+        date_of_birth: datetime.date | None = Form(default=None),
+        info: str | None = Form(default=None)
     ) -> "ProfileUpdateFormSchema":
         return cls(
             first_name=first_name,
