@@ -247,12 +247,6 @@ class UserService:
                     db=db,
                     data={"user_id": user.id, "token": refresh_token}
                 )
-            else:
-                token_instance = await token_repository.aupdate_by_id(
-                    db=db,
-                    id_=token_instance.id,
-                    data={"user_id": user.id, "token": refresh_token}
-                )
 
             await db.commit()
         except SQLAlchemyError:
