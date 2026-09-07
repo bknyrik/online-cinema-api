@@ -163,21 +163,23 @@ class UserService:
             )
 
         try:
-            token_instance = await token_repository.aget_by_user_id(
+            token = token_repository.generate_token()
+            token_expiration_date = token_repository.get_expiration_date()
+
+            token_instance = await token_repository.aupdate_by_user_id(
                 db=db,
                 user_id=user.id,
+                data={"token": token, "expires_at": token_expiration_date}
             )
 
             if not token_instance:
                 token_instance = await token_repository.acreate(
                     db=db,
-                    data=data
-                )
-            else:
-                token_instance = await token_repository.aupdate_by_id(
-                    db=db,
-                    id_=token_instance.id,
-                    data={"user_id": user.id}
+                    data={
+                        "user_id": user.id,
+                        "expires_at": token_expiration_date,
+                        "token": token
+                    }
                 )
 
             await db.commit()
