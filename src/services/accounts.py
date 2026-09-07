@@ -55,7 +55,11 @@ class UserService:
 
             activation_token = await token_repository.acreate(
                 db=db,
-                data={"user_id": user.id},
+                data={
+                    "user_id": user.id,
+                    "token": token_repository.generate_token(),
+                    "expires_at": token_repository.get_expiration_date()
+                },
             )
 
             await db.commit()
