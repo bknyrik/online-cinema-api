@@ -76,6 +76,17 @@ class TokenRepository(BaseRepository[AbstractTokenModel]):
         )
         return result.scalar_one_or_none()
 
+    async def aget_by_token(
+        self,
+        db: AsyncSession,
+        token: str
+    ) -> AbstractTokenModel | None:
+        result = await db.execute(
+            select(self._model_type)
+            .where(self._model_type.token == token)
+        )
+        return result.scalar_one_or_none()
+
     async def acreate(
         self,
         db: AsyncSession,
