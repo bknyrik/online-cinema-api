@@ -7,6 +7,7 @@ from src.schemas.accounts import (
     UserRegistrationResponseSchema,
     LoginRequestSchema,
     LoginResponseSchema,
+    LogoutRequestSchema,
     UserDetailResponseSchema,
     ChangeUserGroupRequestSchema,
     ChangeUserPasswordRequestSchema,
@@ -92,12 +93,13 @@ async def login(
 
 @router.post("/logout/")
 async def logout(
+    data: LogoutRequestSchema,
     db: AsyncSession = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
 ) -> None:
     return await UserService.logout(
         db=db,
-        user=current_user
+        data=data.model_dump()
     )
 
 
