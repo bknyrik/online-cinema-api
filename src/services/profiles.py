@@ -71,6 +71,44 @@ class UserProfileService:
         return profile
 
     @staticmethod
+    async def update_current_user_profile(
+        db: AsyncSession,
+        data: dict,
+        current_user: UserModel,
+        s3_service: S3Service
+    ) -> UserProfileModel:
+        user_profile_repository = UserProfileRepository()
+
+        try:
+            filtered_data = dict(
+                filter(lambda item: item[1], data.items())
+            )
+
+            if filtered_data.get("avatar"):
+                filtered_data["avatar"] = s3_service.upload_image(
+                    user_id=current_user.id,
+                    image=filtered_data["avatar"]
+                )
+
+            profile = await user_profile_repository.aupdate_by_user_id(
+                db=db,
+                user_id=current_user.id,
+                data=filtered_data
+            )
+
+            if not profile:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Profile not found"
+                )
+
+            await db.commit()
+        except SQLAlchemyError:
+            await db.rollback()
+        else:
+            return profile
+
+    @staticmethod
     async def delete_current_user_profile(
         db: AsyncSession,
         current_user: UserModel
