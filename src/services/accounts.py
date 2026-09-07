@@ -131,14 +131,13 @@ class UserService:
                 id_=user.id,
                 data={"is_active": True}
             )
+            await db.commit()
         except SQLAlchemyError:
             await db.rollback()
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while account activation"
             )
-        else:
-            await db.commit()
 
         return {"message": "Your account is activated"}
 
