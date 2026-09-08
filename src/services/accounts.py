@@ -483,9 +483,9 @@ class UserService:
 
             try:
                 if token_instance:
-                    token_instance = await token_repository.aupdate_by_id(
+                    token_instance = await token_repository.aupdate(
                         db=db,
-                        id_=token_instance.id,
+                        instance=token_instance,
                         data={"user_id": user.id}
                     )
                 else:
