@@ -489,7 +489,7 @@ class UserService:
                 }
 
                 if token_instance:
-                    token_instance = await token_repository.aupdate(
+                    await token_repository.aupdate(
                         db=db,
                         instance=token_instance,
                         data=data
