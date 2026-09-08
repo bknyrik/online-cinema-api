@@ -304,11 +304,21 @@ class UserService:
                     detail=f"Group {data["group"]} not found"
                 )
 
-            await user_repository.aupdate_by_id(
+            user = await user_repository.aupdate_by_id(
                 db=db,
                 id_=user_id,
-                data={"group_id": group.id}
+                data={
+                    "group_id": group.id,
+                    "updated_at": datetime.now(timezone.utc)
+                }
             )
+
+            if not user:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="User not found"
+                )
+
             await db.commit()
         except SQLAlchemyError:
             await db.rollback()
@@ -317,21 +327,10 @@ class UserService:
                 detail="An error occurred while changing user group"
             )
 
-        user = await user_repository.aget_with_group_by_id(
-            db=db,
-            id_=user_id
-        )
-
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="User not found"
-            )
-
         return {
             "id": user.id,
             "email": user.email,
-            "group": user.group.name
+            "group": group.name
         }
 
     @staticmethod
