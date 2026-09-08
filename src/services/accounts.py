@@ -472,29 +472,24 @@ class UserService:
         user = await user_repository.aget_by_email(db, data["email"])
 
         if user and user.is_active:
-            reset_password_link = (
-                "http://localhost:8000/accounts/me/reset_password/complete/"
-            )
-
-            token_instance = await token_repository.aget_by_user_id(
-                db=db,
-                user_id=user.id,
-            )
-
             try:
+                reset_password_link = (
+                    "http://localhost:8000/accounts/me/reset_password/complete/"
+                )
+
                 data = {
-                    "user_id": user.id,
                     "token": token_repository.generate_token(),
                     "expires_at": token_repository.get_expiration_date()
                 }
 
-                if token_instance:
-                    await token_repository.aupdate(
-                        db=db,
-                        instance=token_instance,
-                        data=data
-                    )
-                else:
+                token_instance = await token_repository.aupdate_by_user_id(
+                    db=db,
+                    user_id=user.id,
+                    data=data
+                )
+
+                if not token_instance:
+                    data["user_id"] = user.id
                     token_instance = await token_repository.acreate(
                         db=db,
                         data=data
