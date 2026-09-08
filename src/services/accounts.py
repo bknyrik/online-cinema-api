@@ -438,9 +438,9 @@ class UserService:
                 detail="User not found"
             )
 
-        token_instance = await token_repository.aget_by_user_id(
+        token_instance = await token_repository.aget_by_token(
             db=db,
-            user_id=user.id,
+            token=data["refresh_token"],
         )
 
         if (
