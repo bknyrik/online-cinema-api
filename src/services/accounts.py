@@ -18,6 +18,20 @@ from src.repositories.accounts import (
 
 class UserService:
 
+    def __init__(
+        self,
+        user_repository: UserRepository,
+        user_group_repository: UserGroupRepository,
+        at_repository: TokenRepository,
+        rt_repository: TokenRepository,
+        prt_repository: TokenRepository,
+    ):
+        self.user_repository = user_repository
+        self.user_group_repository = user_group_repository
+        self.at_repository = at_repository
+        self.rt_repository = rt_repository
+        self.prt_repository = prt_repository
+
     @staticmethod
     async def register_user(
         db: AsyncSession,
