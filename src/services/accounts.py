@@ -551,9 +551,9 @@ class UserService:
             )
 
         try:
-            await user_repository.aupdate_by_id(
+            await user_repository.aupdate(
                 db=db,
-                id_=user.id,
+                instance=user,
                 data={
                     "updated_at": datetime.now(timezone.utc),
                     "hashed_password": pss.hash_password(data["password"])
