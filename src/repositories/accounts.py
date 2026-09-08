@@ -2,7 +2,7 @@ import secrets
 from datetime import datetime, timezone, timedelta
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, Session
 from sqlalchemy import select
 
 from src.repositories.base import BaseRepository
@@ -112,3 +112,25 @@ class TokenRepository(BaseRepository[AbstractTokenModel]):
         )
 
         return await self.adelete_by_id(db=db, id_=instance.id)
+
+    def get_by_user_id(
+        self,
+        db: Session,
+        user_id: int
+    ) -> AbstractTokenModel | None:
+        result = db.execute(
+            select(self._model_type)
+            .where(self._model_type.user_id == user_id)
+        )
+        return result.scalar_one_or_none()
+
+    def delete_by_user_id(
+        self,
+        db: Session,
+        user_id: int
+    ) -> AbstractTokenModel | None:
+        instance = self.get_by_user_id(db, user_id)
+
+        self.delete(db, instance)
+
+        return instance
