@@ -111,7 +111,11 @@ class TokenRepository(BaseRepository[AbstractTokenModel]):
             user_id=user_id
         )
 
-        return await self.adelete_by_id(db=db, id_=instance.id)
+        if not instance:
+            return None
+
+        await self.adelete(db, instance)
+        return instance
 
     def get_by_user_id(
         self,
