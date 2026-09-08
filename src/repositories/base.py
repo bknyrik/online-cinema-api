@@ -108,5 +108,5 @@ class BaseRepository[T]:
         return instance
 
     @staticmethod
-    def delete(db: AsyncSession, instance: T) -> None:
+    def delete(db: Session, instance: T) -> None:
         db.delete(instance)
