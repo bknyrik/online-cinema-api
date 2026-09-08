@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from dependencies.database import get_db
-from services.profiles import UserProfileService
 from src.database.models.accounts import UserModel, UserProfileModel
 from dependencies.authentication import get_current_user
 from dependencies.services import get_s3_service
