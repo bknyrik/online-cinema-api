@@ -39,7 +39,7 @@ class UserService:
             )
 
         try:
-            group_name = data.pop("group")
+            group_name = "USER"
             group = await user_group_repository.aget_by_name(db, group_name)
 
             if not group:
