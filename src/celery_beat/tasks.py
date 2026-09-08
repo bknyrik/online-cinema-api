@@ -21,10 +21,9 @@ def delete_expired_activation_token(user_id: int, schedule_id: int) -> None:
             user_id=user_id
         )
 
-        pt = ptr.get_by_schedule_id(db=session, schedule_id=schedule_id)
-        ptr.delete_by_id(
+        ptr.delete_by_schedule_id(
             db=session,
-            id_=pt.id
+            schedule_id=schedule_id
         )
 
         csr.delete_by_id(
