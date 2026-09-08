@@ -559,9 +559,9 @@ class UserService:
                     "hashed_password": pss.hash_password(data["password"])
                 }
             )
-            await token_repository.adelete_by_id(
+            await token_repository.adelete(
                 db=db,
-                id_=token_instance.id
+                instance=token_instance
             )
             await db.commit()
         except SQLAlchemyError:
