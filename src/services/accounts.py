@@ -482,16 +482,22 @@ class UserService:
             )
 
             try:
+                data = {
+                    "user_id": user.id,
+                    "token": token_repository.generate_token(),
+                    "expires_at": token_repository.get_expiration_date()
+                }
+
                 if token_instance:
                     token_instance = await token_repository.aupdate(
                         db=db,
                         instance=token_instance,
-                        data={"user_id": user.id}
+                        data=data
                     )
                 else:
                     token_instance = await token_repository.acreate(
                         db=db,
-                        data={"user_id": user.id}
+                        data=data
                     )
                 await db.commit()
             except SQLAlchemyError:
