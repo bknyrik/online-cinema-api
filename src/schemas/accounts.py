@@ -8,7 +8,6 @@ from src.database.validators import accounts
 class UserRegistrationRequestSchema(BaseModel):
     email: EmailStr
     password: str
-    group: UserGroupEnum = UserGroupEnum.USER
 
     @field_validator("email", mode="before")
     @classmethod
