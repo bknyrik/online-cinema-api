@@ -131,6 +131,9 @@ class TokenRepository(BaseRepository[AbstractTokenModel]):
     ) -> AbstractTokenModel | None:
         instance = self.get_by_user_id(db, user_id)
 
+        if not instance:
+            return None
+
         self.delete(db, instance)
 
         return instance
