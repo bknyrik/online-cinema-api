@@ -16,6 +16,28 @@ from sqlalchemy.orm import relationship
 from src.database.models.base import Base
 
 
+MovieGenresModel = Table(
+    "movie_genres",
+    Base.metadata,
+    Column("movie_id", ForeignKey("movies.id"), primary_key=True),
+    Column("genre_id", ForeignKey("genres.id"), primary_key=True)
+)
+
+MovieStarsModel = Table(
+    "movie_stars",
+    Base.metadata,
+    Column("movie_id", ForeignKey("movies.id"), primary_key=True),
+    Column("genre_id", ForeignKey("stars.id"), primary_key=True)
+)
+
+MovieDirectorsModel = Table(
+    "movie_directors",
+    Base.metadata,
+    Column("movie_id", ForeignKey("movies.id"), primary_key=True),
+    Column("director_id", ForeignKey("directors.id"), primary_key=True)
+)
+
+
 class Genre(Base):
     __tablename__ = "genres"
 
@@ -69,25 +91,3 @@ class Movie(Base):
     __table_args__ = (
         UniqueConstraint("name", "year", "time", name="name_year_time_unique"),
     )
-
-
-MovieGenresModel = Table(
-    "movie_genres",
-    Base.metadata,
-    Column("movie_id", ForeignKey("movies.id"), primary_key=True),
-    Column("genre_id", ForeignKey("genres.id"), primary_key=True)
-)
-
-MovieStarsModel = Table(
-    "movie_stars",
-    Base.metadata,
-    Column("movie_id", ForeignKey("movies.id"), primary_key=True),
-    Column("genre_id", ForeignKey("stars.id"), primary_key=True)
-)
-
-MovieDirectorsModel = Table(
-    "movie_directors",
-    Base.metadata,
-    Column("movie_id", ForeignKey("movies.id"), primary_key=True),
-    Column("director_id", ForeignKey("directors.id"), primary_key=True)
-)
