@@ -194,10 +194,11 @@ async def reset_password_complete(
 )
 async def refresh_access_token(
     data: RefreshAccessTokenRequestSchema,
+    user_service: UserService = Depends(services.get_user_service),
     jwt_auth_service: JWTAuthService = Depends(services.get_jwt_auth_service),
     db: AsyncSession = Depends(get_db),
 ) -> dict:
-    return await UserService.refresh_access_token(
+    return await user_service.refresh_access_token(
         db=db,
         data=data.model_dump(),
         jwt_auth_service=jwt_auth_service
