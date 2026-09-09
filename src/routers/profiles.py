@@ -22,7 +22,7 @@ async def read_current_user_profile(
     db: AsyncSession = Depends(get_db),
     user_profile_service: UserProfileService = Depends(get_profile_service),
     current_user: UserModel = Depends(get_current_user)
-) -> UserProfileModel:
+) -> dict:
     return await user_profile_service.read_current_user_profile(
         db=db,
         current_user=current_user
