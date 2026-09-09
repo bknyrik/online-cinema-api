@@ -15,3 +15,10 @@ class Star(Base):
 
     id = Column(Integer, nullable=False, primary_key=True, index=True)
     name = Column(String(64), nullable=False, unique=True)
+
+
+class Director(Base):
+    __tablename__ = "directors"
+
+    id = Column(Integer, nullable=False, primary_key=True, index=True)
+    name = Column(String(128), nullable=False, unique=True)
