@@ -421,8 +421,8 @@ class UserService:
 
         return {"message": "Password is changed successfully"}
 
-    @staticmethod
     async def refresh_access_token(
+        self,
         data: dict,
         jwt_auth_service: JWTAuthService,
         db: AsyncSession
