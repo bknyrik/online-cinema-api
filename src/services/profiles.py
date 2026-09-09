@@ -12,8 +12,8 @@ class UserProfileService:
     def __init__(self, profile_repository: UserProfileRepository) -> None:
         self.profile_repository = profile_repository
 
-    @staticmethod
     async def read_current_user_profile(
+        self,
         db: AsyncSession,
         current_user: UserModel
     ) -> UserProfileModel:
