@@ -37,11 +37,12 @@ router = APIRouter()
 async def register_user(
     data: UserRegistrationRequestSchema,
     background_tasks: BackgroundTasks,
+    user_service: UserService = Depends(services.get_user_service),
     ess: EmailSenderService = Depends(services.get_email_sender_service),
     pss: PasswordSecurityService = Depends(services.get_password_secure_service),
     db: AsyncSession = Depends(get_db)
 ) -> UserModel:
-    return await UserService.register_user(
+    return await user_service.register_user(
         db=db,
         data=data.model_dump(),
         email_sender_service=ess,
