@@ -219,10 +219,7 @@ class UserService:
         jwt_service: JWTAuthService,
         db: AsyncSession,
     ) -> dict:
-        user_repository = UserRepository()
-        token_repository = TokenRepository(accounts.RefreshTokenModel)
-
-        user = await user_repository.aget_by_email(db, data["email"])
+        user = await self.user_repository.aget_by_email(db, data["email"])
 
         if (
             not user
@@ -248,12 +245,12 @@ class UserService:
                 user_id=user.id,
                 token_type="refresh"
             )
-            token_instance = await token_repository.acreate(
+            token_instance = await self.rt_repository.acreate(
                 db=db,
                 data={
                     "user_id": user.id,
                     "token": refresh_token,
-                    "expires_at": token_repository.get_expiration_date()
+                    "expires_at": self.rt_repository.get_expiration_date()
                 }
             )
 
