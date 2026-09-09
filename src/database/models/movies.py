@@ -1,4 +1,15 @@
-from sqlalchemy import Column, String, Integer
+from sqlalchemy import (
+    Column,
+    String,
+    Integer,
+    Uuid,
+    Float,
+    Text,
+    DECIMAL,
+    ForeignKey
+)
+from sqlalchemy.orm import relationship
+
 
 from src.database.models.base import Base
 
@@ -29,3 +40,21 @@ class Certification(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(10), nullable=False, unique=True)
+
+
+class Movie(Base):
+    __tablename__ = "movies"
+
+    id = Column(Integer, primary_key=True, index=True)
+    uuid = Column(Uuid, nullable=True, unique=True)
+    name = Column(String(255), nullable=False)
+    year = Column(Integer, nullable=False)
+    time = Column(Integer, nullable=False)
+    imdb = Column(Float, nullable=False)
+    votes = Column(Integer, nullable=False)
+    meta_score = Column(Float, nullable=True)
+    gross = Column(Float, nullable=True)
+    description = Column(Text, nullable=False)
+    price = Column(DECIMAL(10, 2), nullable=False)
+    certification_id = ForeignKey("certifications.id", ondelete="CASCADE")
+    certification = relationship(Certification, back_populates="movies")
