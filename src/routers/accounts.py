@@ -115,10 +115,11 @@ async def logout(
 async def change_user_group(
     user_id: int,
     data: ChangeUserGroupRequestSchema,
+    user_service: UserService = Depends(services.get_user_service),
     db: AsyncSession = Depends(get_db),
     current_user: UserModel = Depends(get_current_admin_user)
 ) -> dict:
-    return await UserService.change_user_group(
+    return await user_service.change_user_group(
         db=db,
         data=data.model_dump(),
         user_id=user_id
