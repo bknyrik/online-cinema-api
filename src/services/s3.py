@@ -24,7 +24,7 @@ class S3Service:
             region_name=region_name
         )
 
-    def upload_image(self, user_id: int, image: UploadFile) -> str:
+    def upload_image(self, user_id: int, image: UploadFile) -> tuple[str, str]:
         _, ext = os.path.splitext(image.filename)
         key = f"Avatars/user_{user_id}{ext}"
 
@@ -35,8 +35,9 @@ class S3Service:
         )
 
         return (
-            f"https://{self.bucket_name}.s3."
-            f"{self.region_name}.amazonaws.com/{key}"
+            f"https://{self.bucket_name}.s3.{self.region_name}"
+            f".amazonaws.com/{key}",
+            key
         )
 
 
