@@ -16,7 +16,7 @@ class UserProfileService:
         self,
         db: AsyncSession,
         current_user: UserModel
-    ) -> UserProfileModel:
+    ) -> dict:
 
         profile = await self.profile_repository.aget_by_user_id(
             db=db,
@@ -29,7 +29,15 @@ class UserProfileService:
                 detail="Profile not found"
             )
 
-        return profile
+        return {
+            "id": profile.id,
+            "first_name": profile.first_name,
+            "last_name": profile.last_name,
+            "gender": profile.gender,
+            "date_of_birth": profile.date_of_birth,
+            "avatar": url,
+            "info": profile.info
+        }
 
     async def create_user_profile(
         self,
