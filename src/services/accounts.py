@@ -100,8 +100,11 @@ class UserService:
 
         return user
 
-    @staticmethod
-    async def activate_user_account(data: dict, db: AsyncSession) -> dict:
+    async def activate_user_account(
+        self,
+        data: dict,
+        db: AsyncSession
+    ) -> dict:
         user_repository = UserRepository()
         token_repository = TokenRepository(accounts.ActivationTokenModel)
 
