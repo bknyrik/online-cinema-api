@@ -43,6 +43,10 @@ class Genre(Base):
 
     id = Column(Integer, nullable=False, primary_key=True, index=True)
     name = Column(String(64), nullable=False, unique=True)
+    movies = relationship(
+        secondary=MovieGenresModel,
+        back_populates="genres"
+    )
 
 
 class Star(Base):
