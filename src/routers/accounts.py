@@ -67,10 +67,11 @@ async def activate_user_account(
 async def reactivate_user_account(
     data: ReactivateUserAccountRequestSchema,
     background_tasks: BackgroundTasks,
+    user_service: UserService = Depends(services.get_user_service),
     ess: EmailSenderService = Depends(services.get_email_sender_service),
     db: AsyncSession = Depends(get_db),
 ) -> dict:
-    return await UserService.reactivate_user_account(
+    return await user_service.reactivate_user_account(
         data=data.model_dump(),
         background_tasks=background_tasks,
         email_sender_service=ess,
