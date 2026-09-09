@@ -70,8 +70,8 @@ class UserProfileService:
 
         return profile
 
-    @staticmethod
     async def update_current_user_profile(
+        self,
         db: AsyncSession,
         data: dict,
         current_user: UserModel,
