@@ -57,7 +57,11 @@ class Movie(Base):
     gross = Column(Float, nullable=True)
     description = Column(Text, nullable=False)
     price = Column(DECIMAL(10, 2), nullable=False)
-    certification_id = ForeignKey("certifications.id", ondelete="CASCADE")
+    certification_id = Column(
+        Integer,
+        ForeignKey("certifications.id", ondelete="CASCADE"),
+        nullable=False,
+    )
     certification = relationship(Certification, back_populates="movies")
 
     __table_args__ = (
