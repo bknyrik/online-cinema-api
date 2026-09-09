@@ -296,8 +296,8 @@ class UserService:
                 detail="An error occurred while logout"
             )
 
-    @staticmethod
     async def change_user_group(
+        self,
         db: AsyncSession,
         data: dict,
         user_id: int
