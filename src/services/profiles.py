@@ -97,21 +97,9 @@ class UserProfileService:
         s3_service: S3Service
     ) -> dict:
         try:
-            filtered_data = dict(
-                filter(lambda item: item[1] is not None, data.items())
-            )
-
-            if filtered_data.get("avatar"):
-                key = filtered_data["avatar"] = s3_service.upload_image(
-                    user_id=current_user.id,
-                    image=filtered_data["avatar"]
-                )
-                filtered_data["avatar"] = key
-
-            profile = await self.profile_repository.aupdate_by_user_id(
+            profile = await self.profile_repository.aget_by_user_id(
                 db=db,
-                user_id=current_user.id,
-                data=filtered_data
+                user_id=current_user.id
             )
 
             if not profile:
@@ -120,6 +108,23 @@ class UserProfileService:
                     detail="Profile not found"
                 )
 
+            filtered_data = dict(
+                filter(lambda item: item[1] is not None, data.items())
+            )
+
+            if filtered_data.get("avatar"):
+                s3_service.delete_image(profile.avatar)
+                key = filtered_data["avatar"] = s3_service.upload_image(
+                    user_id=current_user.id,
+                    image=filtered_data["avatar"]
+                )
+                filtered_data["avatar"] = key
+
+            await self.profile_repository.aupdate(
+                db=db,
+                instance=profile,
+                data=filtered_data
+            )
             await db.commit()
         except SQLAlchemyError:
             await db.rollback()
