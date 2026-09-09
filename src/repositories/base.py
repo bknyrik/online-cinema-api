@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
-class BaseRepository[T]:
+class AsyncBaseRepository[T]:
 
     def __init__(self, model_type: type[T]) -> None:
         self._model_type = model_type

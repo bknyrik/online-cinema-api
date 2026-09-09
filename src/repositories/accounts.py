@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, Session
 from sqlalchemy import select
 
-from src.repositories.base import BaseRepository
+from src.repositories.base import AsyncBaseRepository
 from src.database.models.accounts import (
     UserModel,
     UserGroupModel,
@@ -13,7 +13,7 @@ from src.database.models.accounts import (
 )
 
 
-class UserRepository(BaseRepository[UserModel]):
+class UserRepository(AsyncBaseRepository[UserModel]):
 
     def __init__(self) -> None:
         super().__init__(UserModel)
@@ -38,7 +38,7 @@ class UserRepository(BaseRepository[UserModel]):
         return result.scalar_one_or_none()
 
 
-class UserGroupRepository(BaseRepository[UserGroupModel]):
+class UserGroupRepository(AsyncBaseRepository[UserGroupModel]):
 
     def __init__(self) -> None:
         super().__init__(UserGroupModel)
@@ -55,7 +55,7 @@ class UserGroupRepository(BaseRepository[UserGroupModel]):
         return result.scalar_one_or_none()
 
 
-class TokenRepository(BaseRepository[AbstractTokenModel]):
+class TokenRepository(AsyncBaseRepository[AbstractTokenModel]):
 
     @staticmethod
     def generate_token(length: int = 32) -> str:

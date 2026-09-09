@@ -1,11 +1,11 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
-from src.repositories.base import BaseRepository
+from src.repositories.base import AsyncBaseRepository
 from src.database.models.accounts import UserProfileModel
 
 
-class UserProfileRepository(BaseRepository[UserProfileModel]):
+class UserProfileRepository(AsyncBaseRepository[UserProfileModel]):
 
     def __init__(self) -> None:
         super().__init__(UserProfileModel)
