@@ -462,8 +462,8 @@ class UserService:
             )
         }
 
-    @staticmethod
     async def reset_password(
+        self,
         db: AsyncSession,
         data: dict,
         ess: EmailSenderService,
