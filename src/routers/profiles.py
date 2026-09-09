@@ -36,7 +36,7 @@ async def create_user_profile(
     s3_service: S3Service = Depends(get_s3_service),
     current_user: UserModel = Depends(get_current_user),
     data: ProfileFormSchema = Depends(ProfileFormSchema.as_form)
-) -> UserProfileModel:
+) -> dict:
     return await user_profile_service.create_user_profile(
         db=db,
         data=data.model_dump(),
