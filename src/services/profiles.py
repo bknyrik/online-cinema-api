@@ -121,10 +121,11 @@ class UserProfileService:
     async def delete_current_user_profile(
         self,
         db: AsyncSession,
+        s3_service: S3Service,
         current_user: UserModel
     ) -> None:
         try:
-            profile = await self.profile_repository.adelete_by_user_id(
+            profile = await self.profile_repository.aget_by_user_id(
                 db=db,
                 user_id=current_user.id
             )
@@ -134,6 +135,13 @@ class UserProfileService:
                     status_code=status.HTTP_404_NOT_FOUND,
                     detail="Profile not found"
                 )
+
+            s3_service.delete_image(profile.avatar)
+
+            await self.profile_repository.adelete(
+                db=db,
+                instance=profile
+            )
             await db.commit()
         except SQLAlchemyError:
             await db.rollback()
