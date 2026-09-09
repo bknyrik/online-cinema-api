@@ -384,8 +384,8 @@ class UserService:
 
         return {"message": "Account is activated successfully"}
 
-    @staticmethod
     async def change_user_password(
+        self,
         db: AsyncSession,
         data: dict,
         current_user: accounts.UserModel,
