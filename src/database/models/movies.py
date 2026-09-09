@@ -99,6 +99,18 @@ class Movie(Base):
         nullable=False,
     )
     certification = relationship(Certification, back_populates="movies")
+    genres = relationship(
+        secondary=MovieGenresModel,
+        back_populates="movies"
+    )
+    stars = relationship(
+        secondary=MovieStarsModel,
+        back_populates="movies"
+    )
+    directors = relationship(
+        secondary=MovieDirectorsModel,
+        back_populates="movies"
+    )
 
     __table_args__ = (
         UniqueConstraint("name", "year", "time", name="name_year_time_unique"),
