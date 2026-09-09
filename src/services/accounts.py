@@ -470,7 +470,7 @@ class UserService:
 
         if user and user.is_active:
             try:
-                data = {
+                token_data = {
                     "token": self.prt_repository.generate_token(),
                     "expires_at": self.prt_repository.get_expiration_date()
                 }
@@ -478,14 +478,14 @@ class UserService:
                 token_instance = await self.prt_repository.aupdate_by_user_id(
                     db=db,
                     user_id=user.id,
-                    data=data
+                    data=token_data
                 )
 
                 if not token_instance:
-                    data["user_id"] = user.id
+                    token_data["user_id"] = user.id
                     token_instance = await self.prt_repository.acreate(
                         db=db,
-                        data=data
+                        data=token_data
                     )
                 await db.commit()
             except SQLAlchemyError:
