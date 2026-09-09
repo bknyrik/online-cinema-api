@@ -267,8 +267,8 @@ class UserService:
             "refresh_token": token_instance.token
         }
 
-    @staticmethod
     async def logout(
+        self,
         db: AsyncSession,
         data: dict,
     ) -> None:
