@@ -77,8 +77,6 @@ class UserProfileService:
         current_user: UserModel,
         s3_service: S3Service
     ) -> UserProfileModel:
-        user_profile_repository = UserProfileRepository()
-
         try:
             filtered_data = dict(
                 filter(lambda item: item[1] is not None, data.items())
@@ -90,7 +88,7 @@ class UserProfileService:
                     image=filtered_data["avatar"]
                 )
 
-            profile = await user_profile_repository.aupdate_by_user_id(
+            profile = await self.profile_repository.aupdate_by_user_id(
                 db=db,
                 user_id=current_user.id,
                 data=filtered_data
