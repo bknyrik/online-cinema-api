@@ -115,10 +115,8 @@ class UserProfileService:
         db: AsyncSession,
         current_user: UserModel
     ) -> None:
-        user_profile_repository = UserProfileRepository()
-
         try:
-            profile = await user_profile_repository.adelete_by_user_id(
+            profile = await self.profile_repository.adelete_by_user_id(
                 db=db,
                 user_id=current_user.id
             )
