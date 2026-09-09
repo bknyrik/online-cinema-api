@@ -74,7 +74,7 @@ class DirectorModel(Base):
     )
 
 
-class Certification(Base):
+class CertificationModel(Base):
     __tablename__ = "certifications"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -101,7 +101,7 @@ class Movie(Base):
         ForeignKey("certifications.id", ondelete="CASCADE"),
         nullable=False,
     )
-    certification = relationship(Certification, back_populates="movies")
+    certification = relationship(CertificationModel, back_populates="movies")
     genres = relationship(
         GenreModel,
         secondary=MovieGenresModel,
