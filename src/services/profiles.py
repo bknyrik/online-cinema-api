@@ -81,7 +81,7 @@ class UserProfileService:
 
         try:
             filtered_data = dict(
-                filter(lambda item: item[1], data.items())
+                filter(lambda item: item[1] is not None, data.items())
             )
 
             if filtered_data.get("avatar"):
