@@ -6,7 +6,8 @@ from sqlalchemy import (
     Float,
     Text,
     DECIMAL,
-    ForeignKey
+    ForeignKey,
+    UniqueConstraint
 )
 from sqlalchemy.orm import relationship
 
@@ -58,3 +59,7 @@ class Movie(Base):
     price = Column(DECIMAL(10, 2), nullable=False)
     certification_id = ForeignKey("certifications.id", ondelete="CASCADE")
     certification = relationship(Certification, back_populates="movies")
+
+    __table_args__ = (
+        UniqueConstraint("name", "year", "time", name="name_year_time_unique"),
+    )
