@@ -39,3 +39,10 @@ class S3Service:
             f"https://{self.bucket_name}.s3."
             f"{self.region_name}.amazonaws.com/{key}"
         )
+
+
+    def delete_image(self, key: str) -> None:
+        self.client.delete_object(
+            Key=key,
+            Bucket=self.bucket_name
+        )
