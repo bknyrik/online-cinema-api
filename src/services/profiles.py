@@ -48,11 +48,11 @@ class UserProfileService:
                 status_code=status.HTTP_409_CONFLICT,
                 detail="User already has a profile"
             )
-
-        data["avatar"] = s3_service.upload_image(
+        url, key = s3_service.upload_image(
             user_id=current_user.id,
             image=data["avatar"]
         )
+        data["avatar"] = key
         data["user_id"] = current_user.id
 
         try:
