@@ -22,3 +22,10 @@ class Director(Base):
 
     id = Column(Integer, nullable=False, primary_key=True, index=True)
     name = Column(String(128), nullable=False, unique=True)
+
+
+class Certification(Base):
+    __tablename__ = "certifications"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(10), nullable=False, unique=True)
