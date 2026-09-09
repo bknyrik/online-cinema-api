@@ -427,10 +427,7 @@ class UserService:
         jwt_auth_service: JWTAuthService,
         db: AsyncSession
     ) -> dict:
-        user_repository = UserRepository()
-        token_repository = TokenRepository(accounts.RefreshTokenModel)
-
-        user = await user_repository.aget_by_email(db, data["email"])
+        user = await self.user_repository.aget_by_email(db, data["email"])
 
         if not user:
             raise HTTPException(
@@ -438,7 +435,7 @@ class UserService:
                 detail="User not found"
             )
 
-        token_instance = await token_repository.aget_by_token(
+        token_instance = await self.rt_repository.aget_by_token(
             db=db,
             token=data["refresh_token"],
         )
