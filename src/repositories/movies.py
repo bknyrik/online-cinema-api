@@ -27,7 +27,7 @@ class CertificationRepository(AsyncBaseRepository[movies.CertificationModel]):
         super().__init__(movies.CertificationModel)
 
 
-class MovieRepository(AsyncBaseRepository[movies.Movie]):
+class MovieRepository(AsyncBaseRepository[movies.MovieModel]):
 
     def __init__(self) -> None:
-        super().__init__(movies.Movie)
+        super().__init__(movies.MovieModel)

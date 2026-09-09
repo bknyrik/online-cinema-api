@@ -44,7 +44,7 @@ class GenreModel(Base):
     id = Column(Integer, nullable=False, primary_key=True, index=True)
     name = Column(String(64), nullable=False, unique=True)
     movies = relationship(
-        "Movie",
+        "MovieModel",
         secondary=MovieGenresModel,
         back_populates="genres"
     )
@@ -56,7 +56,7 @@ class StarModel(Base):
     id = Column(Integer, nullable=False, primary_key=True, index=True)
     name = Column(String(64), nullable=False, unique=True)
     movies = relationship(
-        "Movie",
+        "MovieModel",
         secondary=MovieStarsModel,
         back_populates="stars"
     )
@@ -68,7 +68,7 @@ class DirectorModel(Base):
     id = Column(Integer, nullable=False, primary_key=True, index=True)
     name = Column(String(128), nullable=False, unique=True)
     movies = relationship(
-        "Movie",
+        "MovieModel",
         secondary=MovieDirectorsModel,
         back_populates="stars"
     )
@@ -79,10 +79,10 @@ class CertificationModel(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(10), nullable=False, unique=True)
-    movies = relationship("Movie", back_populates="certification")
+    movies = relationship("MovieModel", back_populates="certification")
 
 
-class Movie(Base):
+class MovieModel(Base):
     __tablename__ = "movies"
 
     id = Column(Integer, primary_key=True, index=True)
