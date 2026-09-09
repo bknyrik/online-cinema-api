@@ -142,11 +142,12 @@ async def admin_activate_user_account(
 @router.patch("/me/change_password/", response_model=MessageResponseSchema)
 async def change_user_password(
     data: ChangeUserPasswordRequestSchema,
+    user_service: UserService = Depends(services.get_user_service),
     db: AsyncSession = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
     pss: PasswordSecurityService = Depends(services.get_password_secure_service)
 ) -> dict:
-    return await UserService.change_user_password(
+    return await user_service.change_user_password(
         db=db,
         current_user=current_user,
         data=data.model_dump(),
