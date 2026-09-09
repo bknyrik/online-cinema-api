@@ -1,8 +1,8 @@
-from src.repositories.base import SyncBaseRepository
-
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from sqlalchemy_celery_beat.models import PeriodicTask, ClockedSchedule
+
+from src.repositories.base import SyncBaseRepository
 
 
 class PeriodicTaskRepository(SyncBaseRepository):
