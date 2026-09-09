@@ -63,6 +63,12 @@ class AsyncBaseRepository[T]:
     async def adelete(db: AsyncSession, instance: T) -> None:
         await db.delete(instance)
 
+
+class SyncBaseRepository[T]:
+
+    def __init__(self, model_type: type[T]) -> None:
+        self._model_type = model_type
+
     def get_all(self, db: Session) -> Sequence[T]:
         result = db.execute(select(self._model_type))
         return result.scalars().all()
