@@ -159,10 +159,11 @@ async def change_user_password(
 async def reset_password(
     data: ResetUserPasswordRequestSchema,
     background_tasks: BackgroundTasks,
+    user_service: UserService = Depends(services.get_user_service),
     ess: EmailSenderService = Depends(services.get_email_sender_service),
     db: AsyncSession = Depends(get_db),
 ) -> dict:
-    return await UserService.reset_password(
+    return await user_service.reset_password(
         db=db,
         background_tasks=background_tasks,
         data=data.model_dump(),
