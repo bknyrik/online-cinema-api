@@ -8,3 +8,10 @@ class Genre(Base):
 
     id = Column(Integer, nullable=False, primary_key=True, index=True)
     name = Column(String(64), nullable=False, unique=True)
+
+
+class Star(Base):
+    __tablename__ = "stars"
+
+    id = Column(Integer, nullable=False, primary_key=True, index=True)
+    name = Column(String(64), nullable=False, unique=True)
