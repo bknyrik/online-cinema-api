@@ -14,6 +14,7 @@ from src.repositories.accounts import (
     UserGroupRepository,
     TokenRepository
 )
+from src.settings import settings
 
 
 class UserService:
@@ -84,12 +85,10 @@ class UserService:
                 detail="An error occurred while user registration"
             )
         else:
-            activation_link = "http://127.0.0.1:8000/api/accounts/activate/"
-
             background_tasks.add_task(
                 email_sender_service.send_activation_email,
                 user.email,
-                activation_link,
+                settings.LINK_ACTIVATE_ACCOUNT,
                 activation_token.token
             )
             background_tasks.add_task(
@@ -201,12 +200,10 @@ class UserService:
                 detail="An error occurred while activating account"
             )
         else:
-            activation_link = "http://localhost:8000/api/accounts/activate/"
-
             background_tasks.add_task(
                 email_sender_service.send_activation_email,
                 user.email,
-                activation_link,
+                settings.LINK_ACTIVATE_ACCOUNT,
                 token_instance.token
             )
 
