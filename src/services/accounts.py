@@ -105,10 +105,7 @@ class UserService:
         data: dict,
         db: AsyncSession
     ) -> dict:
-        user_repository = UserRepository()
-        token_repository = TokenRepository(accounts.ActivationTokenModel)
-
-        user = await user_repository.aget_by_email(db, data["email"])
+        user = await self.user_repository.aget_by_email(db, data["email"])
 
         if not user:
             raise HTTPException(
@@ -122,7 +119,7 @@ class UserService:
                 detail="User account is already active."
             )
 
-        token_instance = await token_repository.aget_by_user_id(
+        token_instance = await self.at_repository.aget_by_user_id(
             db=db,
             user_id=user.id,
         )
@@ -143,7 +140,7 @@ class UserService:
             )
 
         try:
-            await user_repository.aupdate(
+            await self.user_repository.aupdate(
                 db=db,
                 instance=user,
                 data={
