@@ -212,8 +212,8 @@ class UserService:
 
         return {"message": "An activation link is sent to your email"}
 
-    @staticmethod
     async def login(
+        self,
         data: dict,
         pss: PasswordSecurityService,
         jwt_service: JWTAuthService,
