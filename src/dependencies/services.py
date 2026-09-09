@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from src.settings import settings
 from src.services.accounts import UserService
+from src.services.profiles import UserProfileService
 from src.services.security import PasswordSecurityService, JWTAuthService
 from src.services.email_sender import EmailSenderService
 from src.services.s3 import S3Service
@@ -10,6 +11,7 @@ from src.repositories.accounts import (
     TokenRepository,
     UserGroupRepository
 )
+from src.repositories.profiles import UserProfileRepository
 from src.database.models import accounts
 
 
@@ -53,4 +55,10 @@ def get_user_service() -> UserService:
         at_repository=TokenRepository(accounts.ActivationTokenModel),
         rt_repository=TokenRepository(accounts.RefreshTokenModel),
         prt_repository=TokenRepository(accounts.PasswordResetTokenModel)
+    )
+
+
+def get_profile_service() -> UserProfileService:
+    return UserProfileService(
+        profile_repository=UserProfileRepository()
     )
