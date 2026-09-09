@@ -31,8 +31,8 @@ class UserProfileService:
 
         return profile
 
-    @staticmethod
     async def create_user_profile(
+        self,
         db: AsyncSession,
         s3_service: S3Service,
         current_user: UserModel,
