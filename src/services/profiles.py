@@ -110,8 +110,8 @@ class UserProfileService:
         else:
             return profile
 
-    @staticmethod
     async def delete_current_user_profile(
+        self,
         db: AsyncSession,
         current_user: UserModel
     ) -> None:
