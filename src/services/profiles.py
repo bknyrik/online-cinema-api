@@ -37,7 +37,7 @@ class UserProfileService:
         s3_service: S3Service,
         current_user: UserModel,
         data: dict
-    ) -> UserProfileModel:
+    ) -> dict:
         profile = await self.profile_repository.aget_by_user_id(
             db=db,
             user_id=current_user.id
@@ -68,7 +68,15 @@ class UserProfileService:
                 detail="An error occurred while creating profile"
             )
 
-        return profile
+        return {
+            "id": profile.id,
+            "first_name": profile.first_name,
+            "last_name": profile.last_name,
+            "gender": profile.gender,
+            "date_of_birth": profile.date_of_birth,
+            "avatar": url,
+            "info": profile.info
+        }
 
     async def update_current_user_profile(
         self,
