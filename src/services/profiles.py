@@ -100,10 +100,11 @@ class UserProfileService:
             )
 
             if filtered_data.get("avatar"):
-                filtered_data["avatar"] = s3_service.upload_image(
+                key = filtered_data["avatar"] = s3_service.upload_image(
                     user_id=current_user.id,
                     image=filtered_data["avatar"]
                 )
+                filtered_data["avatar"] = key
 
             profile = await self.profile_repository.aupdate_by_user_id(
                 db=db,
