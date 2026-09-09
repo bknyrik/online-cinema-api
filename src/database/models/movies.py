@@ -65,6 +65,10 @@ class Director(Base):
 
     id = Column(Integer, nullable=False, primary_key=True, index=True)
     name = Column(String(128), nullable=False, unique=True)
+    movies = relationship(
+        secondary=MovieDirectorsModel,
+        back_populates="stars"
+    )
 
 
 class Certification(Base):
