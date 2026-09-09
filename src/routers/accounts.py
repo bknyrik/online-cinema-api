@@ -177,10 +177,11 @@ async def reset_password(
 )
 async def reset_password_complete(
     data: ResetPasswordCompleteRequestSchema,
+    user_service: UserService = Depends(services.get_user_service),
     db: AsyncSession = Depends(get_db),
     pss: PasswordSecurityService = Depends(services.get_password_secure_service)
 ) -> dict:
-    return await UserService.reset_password_complete(
+    return await user_service.reset_password_complete(
         db=db,
         data=data.model_dump(),
         pss=pss
