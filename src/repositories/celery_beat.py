@@ -1,4 +1,4 @@
-from src.repositories.base import AsyncBaseRepository
+from src.repositories.base import SyncBaseRepository
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy_celery_beat.models import PeriodicTask, ClockedSchedule
 
 
-class PeriodicTaskRepository(AsyncBaseRepository):
+class PeriodicTaskRepository(SyncBaseRepository):
 
     def __init__(self) -> None:
         super().__init__(PeriodicTask)
@@ -37,7 +37,7 @@ class PeriodicTaskRepository(AsyncBaseRepository):
         return instance
 
 
-class ClockedScheduleRepository(AsyncBaseRepository):
+class ClockedScheduleRepository(SyncBaseRepository):
 
     def __init__(self) -> None:
         super().__init__(ClockedSchedule)
