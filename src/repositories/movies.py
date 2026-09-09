@@ -19,3 +19,9 @@ class DirectorRepository(AsyncBaseRepository[movies.Director]):
 
     def __init__(self) -> None:
         super().__init__(movies.Director)
+
+
+class CertificationRepository(AsyncBaseRepository[movies.Certification]):
+
+    def __init__(self) -> None:
+        super().__init__(movies.Certification)
