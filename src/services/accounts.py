@@ -470,10 +470,6 @@ class UserService:
 
         if user and user.is_active:
             try:
-                reset_password_link = (
-                    "http://localhost:8000/accounts/me/reset_password/complete/"
-                )
-
                 data = {
                     "token": self.prt_repository.generate_token(),
                     "expires_at": self.prt_repository.get_expiration_date()
@@ -502,7 +498,7 @@ class UserService:
                 background_tasks.add_task(
                     ess.send_reset_password_email,
                     user.email,
-                    reset_password_link,
+                    settings.LINK_RESET_PASSWORD,
                     token_instance.token
                 )
 
