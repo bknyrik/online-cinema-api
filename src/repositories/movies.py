@@ -15,10 +15,10 @@ class StarRepository(AsyncBaseRepository[movies.StarModel]):
         super().__init__(movies.StarModel)
 
 
-class DirectorRepository(AsyncBaseRepository[movies.Director]):
+class DirectorRepository(AsyncBaseRepository[movies.DirectorModel]):
 
     def __init__(self) -> None:
-        super().__init__(movies.Director)
+        super().__init__(movies.DirectorModel)
 
 
 class CertificationRepository(AsyncBaseRepository[movies.Certification]):

@@ -62,7 +62,7 @@ class StarModel(Base):
     )
 
 
-class Director(Base):
+class DirectorModel(Base):
     __tablename__ = "directors"
 
     id = Column(Integer, nullable=False, primary_key=True, index=True)
@@ -113,7 +113,7 @@ class Movie(Base):
         back_populates="movies"
     )
     directors = relationship(
-        Director,
+        DirectorModel,
         secondary=MovieDirectorsModel,
         back_populates="movies"
     )
