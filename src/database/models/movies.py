@@ -50,7 +50,7 @@ class GenreModel(Base):
     )
 
 
-class Star(Base):
+class StarModel(Base):
     __tablename__ = "stars"
 
     id = Column(Integer, nullable=False, primary_key=True, index=True)
@@ -108,7 +108,7 @@ class Movie(Base):
         back_populates="movies"
     )
     stars = relationship(
-        Star,
+        StarModel,
         secondary=MovieStarsModel,
         back_populates="movies"
     )
