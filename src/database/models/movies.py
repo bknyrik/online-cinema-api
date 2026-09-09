@@ -41,6 +41,7 @@ class Certification(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(10), nullable=False, unique=True)
+    movies = relationship("Movie", back_populates="certification")
 
 
 class Movie(Base):
