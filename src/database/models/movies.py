@@ -108,6 +108,7 @@ class Movie(Base):
         back_populates="movies"
     )
     stars = relationship(
+        Star,
         secondary=MovieStarsModel,
         back_populates="movies"
     )
