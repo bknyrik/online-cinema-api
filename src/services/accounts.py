@@ -348,9 +348,7 @@ class UserService:
         user_id: int,
         db: AsyncSession,
     ) -> dict:
-        user_repository = UserRepository()
-
-        user = await user_repository.aget_by_id(
+        user = await self.user_repository.aget_by_id(
             db=db,
             id_=user_id
         )
@@ -368,7 +366,7 @@ class UserService:
             )
 
         try:
-            await user_repository.aupdate(
+            await self.user_repository.aupdate(
                 db=db,
                 instance=user,
                 data={
