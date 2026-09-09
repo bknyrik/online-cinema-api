@@ -17,9 +17,8 @@ class UserProfileService:
         db: AsyncSession,
         current_user: UserModel
     ) -> UserProfileModel:
-        user_profile_repository = UserProfileRepository()
 
-        profile = await user_profile_repository.aget_by_user_id(
+        profile = await self.profile_repository.aget_by_user_id(
             db=db,
             user_id=current_user.id
         )
