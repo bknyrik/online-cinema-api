@@ -82,11 +82,12 @@ async def reactivate_user_account(
 @router.post("/login/", response_model=LoginResponseSchema)
 async def login(
     data: LoginRequestSchema,
+    user_service: UserService = Depends(services.get_user_service),
     pss: PasswordSecurityService = Depends(services.get_password_secure_service),
     jwt_service: JWTAuthService = Depends(services.get_jwt_auth_service),
     db: AsyncSession = Depends(get_db),
 ) -> dict:
-    return await UserService.login(
+    return await user_service.login(
         data=data.model_dump(),
         db=db,
         jwt_service=jwt_service,
