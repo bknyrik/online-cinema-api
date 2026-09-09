@@ -93,7 +93,7 @@ class UserProfileService:
         data: dict,
         current_user: UserModel,
         s3_service: S3Service
-    ) -> UserProfileModel:
+    ) -> dict:
         try:
             filtered_data = dict(
                 filter(lambda item: item[1] is not None, data.items())
@@ -126,7 +126,15 @@ class UserProfileService:
                 detail="An error occurred while updating profile"
             )
         else:
-            return profile
+            return {
+                "id": profile.id,
+                "first_name": profile.first_name,
+                "last_name": profile.last_name,
+                "gender": profile.gender,
+                "date_of_birth": profile.date_of_birth,
+                "avatar": f"{s3_service.root_image_url}{profile.avatar}",
+                "info": profile.info
+            }
 
     async def delete_current_user_profile(
         self,
