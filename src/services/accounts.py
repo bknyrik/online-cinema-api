@@ -391,7 +391,6 @@ class UserService:
         current_user: accounts.UserModel,
         pss: PasswordSecurityService
     ) -> dict:
-        user_repository = UserRepository()
         password_is_verified = pss.verify_password(
             raw_password=data["old_password"],
             hashed_password=current_user.hashed_password
@@ -404,7 +403,7 @@ class UserService:
             )
 
         try:
-            await user_repository.aupdate(
+            await self.user_repository.aupdate(
                 db=db,
                 instance=current_user,
                 data={
