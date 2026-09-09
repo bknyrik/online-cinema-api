@@ -32,8 +32,8 @@ class UserService:
         self.rt_repository = rt_repository
         self.prt_repository = prt_repository
 
-    @staticmethod
     async def register_user(
+        self,
         db: AsyncSession,
         data: dict,
         pss: PasswordSecurityService,
