@@ -57,7 +57,7 @@ class UserProfileService:
                 status_code=status.HTTP_409_CONFLICT,
                 detail="User already has a profile"
             )
-        url, key = s3_service.upload_image(
+        key = s3_service.upload_image(
             user_id=current_user.id,
             image=data["avatar"]
         )
@@ -83,7 +83,7 @@ class UserProfileService:
             "last_name": profile.last_name,
             "gender": profile.gender,
             "date_of_birth": profile.date_of_birth,
-            "avatar": url,
+            "avatar": f"{s3_service.root_image_url}{profile.avatar}",
             "info": profile.info
         }
 
