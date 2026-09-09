@@ -272,10 +272,8 @@ class UserService:
         db: AsyncSession,
         data: dict,
     ) -> None:
-        token_repository = TokenRepository(accounts.RefreshTokenModel)
-
         try:
-            token_instance = await token_repository.aget_by_token(
+            token_instance = await self.rt_repository.aget_by_token(
                 db=db,
                 token=data["refresh_token"]
             )
@@ -286,7 +284,7 @@ class UserService:
                     detail="Token is invalid"
                 )
 
-            await token_repository.adelete(
+            await self.rt_repository.adelete(
                 db=db,
                 instance=token_instance
             )
