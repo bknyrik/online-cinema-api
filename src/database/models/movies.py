@@ -1,4 +1,5 @@
 from sqlalchemy import (
+    Table,
     Column,
     String,
     Integer,
@@ -68,3 +69,11 @@ class Movie(Base):
     __table_args__ = (
         UniqueConstraint("name", "year", "time", name="name_year_time_unique"),
     )
+
+
+MovieGenresModel = Table(
+    "movie_genres",
+    Base.metadata,
+    Column("movie_id", ForeignKey("movies.id"), primary_key=True),
+    Column("genre_id", ForeignKey("genres.id"), primary_key=True)
+)
