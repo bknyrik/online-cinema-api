@@ -302,11 +302,8 @@ class UserService:
         data: dict,
         user_id: int
     ) -> dict:
-        user_repository = UserRepository()
-        user_group_repository = UserGroupRepository()
-
         try:
-            group = await user_group_repository.aget_by_name(
+            group = await self.user_group_repository.aget_by_name(
                 db=db,
                 name=data["group"]
             )
@@ -317,7 +314,7 @@ class UserService:
                     detail=f"Group {data["group"]} not found"
                 )
 
-            user = await user_repository.aupdate_by_id(
+            user = await self.user_repository.aupdate_by_id(
                 db=db,
                 id_=user_id,
                 data={
