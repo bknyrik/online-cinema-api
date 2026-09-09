@@ -522,10 +522,7 @@ class UserService:
         data: dict,
         pss: PasswordSecurityService
     ) -> dict:
-        user_repository = UserRepository()
-        token_repository = TokenRepository(accounts.PasswordResetTokenModel)
-
-        user = await user_repository.aget_by_email(db, data["email"])
+        user = await self.user_repository.aget_by_email(db, data["email"])
 
         if not user:
             raise HTTPException(
@@ -533,7 +530,7 @@ class UserService:
                 detail="User not found"
             )
 
-        token_instance = await token_repository.aget_by_user_id(
+        token_instance = await self.prt_repository.aget_by_user_id(
             db=db,
             user_id=user.id,
         )
@@ -551,7 +548,7 @@ class UserService:
             )
 
         try:
-            await user_repository.aupdate(
+            await self.user_repository.aupdate(
                 db=db,
                 instance=user,
                 data={
@@ -559,7 +556,7 @@ class UserService:
                     "hashed_password": pss.hash_password(data["password"])
                 }
             )
-            await token_repository.adelete(
+            await self.prt_repository.adelete(
                 db=db,
                 instance=token_instance
             )
