@@ -15,6 +15,7 @@ class UserProfileService:
     async def read_current_user_profile(
         self,
         db: AsyncSession,
+        s3_service: S3Service,
         current_user: UserModel
     ) -> dict:
 
@@ -35,7 +36,7 @@ class UserProfileService:
             "last_name": profile.last_name,
             "gender": profile.gender,
             "date_of_birth": profile.date_of_birth,
-            "avatar": url,
+            "avatar": f"{s3_service.root_image_url}{profile.avatar}",
             "info": profile.info
         }
 

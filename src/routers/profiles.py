@@ -20,11 +20,13 @@ router = APIRouter()
 @router.get("/me/", response_model=ProfileDetailResponseSchema)
 async def read_current_user_profile(
     db: AsyncSession = Depends(get_db),
+    s3_service: S3Service = Depends(get_s3_service),
     user_profile_service: UserProfileService = Depends(get_profile_service),
     current_user: UserModel = Depends(get_current_user)
 ) -> dict:
     return await user_profile_service.read_current_user_profile(
         db=db,
+        s3_service=s3_service,
         current_user=current_user
     )
 
