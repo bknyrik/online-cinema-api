@@ -1,6 +1,7 @@
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
+from boto3.exceptions import Boto3Error
 
 from src.database.models.accounts import UserModel, UserProfileModel
 from src.repositories.profiles import UserProfileRepository
@@ -47,30 +48,31 @@ class UserProfileService:
         current_user: UserModel,
         data: dict
     ) -> dict:
-        profile = await self.profile_repository.aget_by_user_id(
-            db=db,
-            user_id=current_user.id
-        )
-
-        if profile:
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail="User already has a profile"
-            )
-        key = s3_service.upload_image(
-            user_id=current_user.id,
-            image=data["avatar"]
-        )
-        data["avatar"] = key
-        data["user_id"] = current_user.id
-
         try:
+            profile = await self.profile_repository.aget_by_user_id(
+                db=db,
+                user_id=current_user.id
+            )
+
+            if profile:
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail="User already has a profile"
+                )
+
+            key = s3_service.upload_image(
+                user_id=current_user.id,
+                image=data["avatar"]
+            )
+            data["avatar"] = key
+            data["user_id"] = current_user.id
+
             profile = await self.profile_repository.acreate(
                 db=db,
                 data=data
             )
             await db.commit()
-        except SQLAlchemyError:
+        except (SQLAlchemyError, Boto3Error):
             await db.rollback()
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
