@@ -40,11 +40,8 @@ class UserService:
         email_sender_service: EmailSenderService,
         background_tasks: BackgroundTasks
     ) -> accounts.UserModel:
-        user_repository = UserRepository()
-        user_group_repository = UserGroupRepository()
-        token_repository = TokenRepository(accounts.ActivationTokenModel)
 
-        user = await user_repository.aget_by_email(db, data["email"])
+        user = await self.user_repository.aget_by_email(db, data["email"])
 
         if user:
             raise HTTPException(
@@ -54,7 +51,10 @@ class UserService:
 
         try:
             group_name = "USER"
-            group = await user_group_repository.aget_by_name(db, group_name)
+            group = await self.user_group_repository.aget_by_name(
+                db=db,
+                name=group_name
+            )
 
             if not group:
                 raise HTTPException(
@@ -65,14 +65,14 @@ class UserService:
             data["group_id"] = group.id
             data["hashed_password"] = pss.hash_password(data.pop("password"))
 
-            user = await user_repository.acreate(db, data)
+            user = await self.user_repository.acreate(db, data)
 
-            activation_token = await token_repository.acreate(
+            activation_token = await self.at_repository.acreate(
                 db=db,
                 data={
                     "user_id": user.id,
-                    "token": token_repository.generate_token(),
-                    "expires_at": token_repository.get_expiration_date()
+                    "token": self.at_repository.generate_token(),
+                    "expires_at": self.at_repository.get_expiration_date()
                 },
             )
 
