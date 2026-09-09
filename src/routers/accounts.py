@@ -98,10 +98,11 @@ async def login(
 @router.post("/logout/")
 async def logout(
     data: LogoutRequestSchema,
+    user_service: UserService = Depends(services.get_user_service),
     db: AsyncSession = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
 ) -> None:
-    return await UserService.logout(
+    return await user_service.logout(
         db=db,
         data=data.model_dump()
     )
