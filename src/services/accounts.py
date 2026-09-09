@@ -158,8 +158,8 @@ class UserService:
 
         return {"message": "Your account is activated"}
 
-    @staticmethod
     async def reactivate_user_account(
+        self,
         data: dict,
         db: AsyncSession,
         background_tasks: BackgroundTasks,
