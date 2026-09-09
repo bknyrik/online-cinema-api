@@ -343,8 +343,8 @@ class UserService:
             "group": group.name
         }
 
-    @staticmethod
     async def admin_activate_user_account(
+        self,
         user_id: int,
         db: AsyncSession,
     ) -> dict:
