@@ -469,10 +469,7 @@ class UserService:
         ess: EmailSenderService,
         background_tasks: BackgroundTasks
     ) -> dict:
-        user_repository = UserRepository()
-        token_repository = TokenRepository(accounts.PasswordResetTokenModel)
-
-        user = await user_repository.aget_by_email(db, data["email"])
+        user = await self.user_repository.aget_by_email(db, data["email"])
 
         if user and user.is_active:
             try:
@@ -481,11 +478,11 @@ class UserService:
                 )
 
                 data = {
-                    "token": token_repository.generate_token(),
-                    "expires_at": token_repository.get_expiration_date()
+                    "token": self.prt_repository.generate_token(),
+                    "expires_at": self.prt_repository.get_expiration_date()
                 }
 
-                token_instance = await token_repository.aupdate_by_user_id(
+                token_instance = await self.prt_repository.aupdate_by_user_id(
                     db=db,
                     user_id=user.id,
                     data=data
@@ -493,7 +490,7 @@ class UserService:
 
                 if not token_instance:
                     data["user_id"] = user.id
-                    token_instance = await token_repository.acreate(
+                    token_instance = await self.prt_repository.acreate(
                         db=db,
                         data=data
                     )
