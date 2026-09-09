@@ -103,6 +103,7 @@ class Movie(Base):
     )
     certification = relationship(Certification, back_populates="movies")
     genres = relationship(
+        Genre,
         secondary=MovieGenresModel,
         back_populates="movies"
     )
