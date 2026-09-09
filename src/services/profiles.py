@@ -38,9 +38,7 @@ class UserProfileService:
         current_user: UserModel,
         data: dict
     ) -> UserProfileModel:
-        user_profile_repository = UserProfileRepository()
-
-        profile = await user_profile_repository.aget_by_user_id(
+        profile = await self.profile_repository.aget_by_user_id(
             db=db,
             user_id=current_user.id
         )
@@ -58,7 +56,7 @@ class UserProfileService:
         data["user_id"] = current_user.id
 
         try:
-            profile = await user_profile_repository.acreate(
+            profile = await self.profile_repository.acreate(
                 db=db,
                 data=data
             )
