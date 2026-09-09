@@ -64,10 +64,12 @@ async def update_current_user_profile(
 @router.delete("/me/")
 async def delete_current_user_profile(
     db: AsyncSession = Depends(get_db),
+    s3_service = Depends(get_s3_service),
     user_profile_service: UserProfileService = Depends(get_profile_service),
     current_user: UserModel = Depends(get_current_user)
 ) -> None:
     return await user_profile_service.delete_current_user_profile(
         db=db,
+        s3_service=s3_service,
         current_user=current_user
     )
