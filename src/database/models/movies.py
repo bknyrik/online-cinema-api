@@ -113,6 +113,7 @@ class Movie(Base):
         back_populates="movies"
     )
     directors = relationship(
+        Director,
         secondary=MovieDirectorsModel,
         back_populates="movies"
     )
