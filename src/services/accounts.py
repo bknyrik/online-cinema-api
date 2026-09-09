@@ -516,8 +516,8 @@ class UserService:
             )
         }
 
-    @staticmethod
     async def reset_password_complete(
+        self,
         db: AsyncSession,
         data: dict,
         pss: PasswordSecurityService
