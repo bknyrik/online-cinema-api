@@ -3,10 +3,10 @@ from src.repositories.base import AsyncBaseRepository
 from src.database.models import movies
 
 
-class GenreRepository(AsyncBaseRepository[movies.Genre]):
+class GenreRepository(AsyncBaseRepository[movies.GenreModel]):
 
     def __init__(self) -> None:
-        super().__init__(movies.Genre)
+        super().__init__(movies.GenreModel)
 
 
 class StarRepository(AsyncBaseRepository[movies.Star]):

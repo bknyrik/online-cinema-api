@@ -38,7 +38,7 @@ MovieDirectorsModel = Table(
 )
 
 
-class Genre(Base):
+class GenreModel(Base):
     __tablename__ = "genres"
 
     id = Column(Integer, nullable=False, primary_key=True, index=True)
@@ -103,7 +103,7 @@ class Movie(Base):
     )
     certification = relationship(Certification, back_populates="movies")
     genres = relationship(
-        Genre,
+        GenreModel,
         secondary=MovieGenresModel,
         back_populates="movies"
     )
