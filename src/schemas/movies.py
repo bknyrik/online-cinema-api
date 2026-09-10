@@ -1,7 +1,7 @@
 from pydantic import BaseModel, UUID4
 
 
-class MovieDetailResponseSchema(BaseModel):
+class MovieDetailBaseSchema(BaseModel):
     id: int
     uuid: UUID4
     name: str
