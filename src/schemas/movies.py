@@ -6,6 +6,16 @@ class GenreDetailBaseSchema(BaseModel):
     name: str
 
 
+class StarDetailBaseSchema(BaseModel):
+    id: int
+    name: str
+
+
+class DirectorDetailBaseSchema(BaseModel):
+    id: int
+    name: str
+
+
 class MovieDetailBaseSchema(BaseModel):
     id: int
     uuid: UUID4
