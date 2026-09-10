@@ -132,3 +132,21 @@ class MovieService:
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while creating movie"
             )
+
+    async def delete_movie(self, db: AsyncSession, movie_id: int) -> None:
+        try:
+            movie = await self.movie_repository.aget_by_id(
+                db=db,
+                id_=movie_id
+            )
+
+            if not movie:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Movie with id {movie_id} not found"
+                )
+
+            await self.movie_repository.adelete(db, movie)
+            await db.commit()
+        except SQLAlchemyError:
+            await db.rollback()
