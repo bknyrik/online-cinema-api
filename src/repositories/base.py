@@ -10,9 +10,21 @@ class AsyncBaseRepository[T]:
     def __init__(self, model_type: type[T]) -> None:
         self._model_type = model_type
 
-    async def aget_all(self, db: AsyncSession) -> Sequence[T]:
-        result = await db.execute(select(self._model_type))
-        return result.scalars().all()
+    async def aget_all(
+        self,
+        db: AsyncSession,
+        join_relationships: list[str] | None = None
+    ) -> Sequence[T]:
+        stmt = select(self._model_type)
+
+        if join_relationships:
+            for relationship in join_relationships:
+                stmt = stmt.options(
+                    joinedload(getattr(self._model_type, relationship))
+                )
+
+        result = await db.execute(stmt)
+        return result.unique().scalars().all()
 
     async def aget_by_ids(self, db: AsyncSession, ids: list[int]) -> Sequence[T]:
         result = await db.execute(
