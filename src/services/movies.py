@@ -58,7 +58,28 @@ class MovieService:
                 detail="An error occurred while getting list with movies"
             )
         else:
-            return {"movies": movies_list}
+            return {
+                "movies": [
+                    {
+                        "id": movie.id,
+                        "uuid": movie.uuid,
+                        "name": movie.name,
+                        "year": movie.year,
+                        "time": movie.time,
+                        "imdb": movie.imdb,
+                        "votes": movie.votes,
+                        "meta_score": movie.meta_score,
+                        "gross": movie.gross,
+                        "description": movie.description,
+                        "price": movie.price,
+                        "certification": movie.certification.name,
+                        "genres": [genre.name for genre in movie.genres],
+                        "stars": [star.name for star in movie.stars],
+                        "directors": [director.name for director in movie.directors],
+                    }
+                    for movie in movies_list
+                ]
+            }
 
     async def get_detail_movie(self, db: AsyncSession, movie_id: int) -> MovieModel:
         try:
