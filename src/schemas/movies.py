@@ -42,6 +42,12 @@ class MovieDetailItemSchema(MovieDetailBaseSchema):
     directors: list[str]
 
 
+class MovieListResponseSchema(BaseModel):
+    movies: list[MovieDetailItemSchema]
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 class MovieDetailResponseSchema(MovieDetailBaseSchema):
     certification: CertificationDetailBaseSchema
     genres: list[GenreDetailBaseSchema]
