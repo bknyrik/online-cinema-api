@@ -41,7 +41,17 @@ class MovieService:
 
     async def get_movie_list(self, db: AsyncSession) -> dict:
         try:
-            movies_list = list(await self.movie_repository.aget_all(db))
+            movies_list = list(
+                await self.movie_repository.aget_all(
+                    db=db,
+                    join_relationships=[
+                        "genres",
+                        "stars",
+                        "directors",
+                        "certification"
+                    ]
+                ),
+            )
         except SQLAlchemyError:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
