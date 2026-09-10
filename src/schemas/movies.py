@@ -49,8 +49,6 @@ class MovieListResponseSchema(BaseModel):
     next: str | None
     prev: str | None
 
-    model_config = ConfigDict(from_attributes=True)
-
 
 class MovieDetailResponseSchema(MovieDetailBaseSchema):
     certification: CertificationDetailBaseSchema
