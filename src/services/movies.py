@@ -41,6 +41,7 @@ class MovieService:
 
     async def get_movie_list(self, db: AsyncSession) -> dict:
         try:
+            total_movies = self.movie_repository.acount(db)
             movies_list = list(
                 await self.movie_repository.aget_all(
                     db=db,
@@ -78,7 +79,8 @@ class MovieService:
                         "directors": [director.name for director in movie.directors],
                     }
                     for movie in movies_list
-                ]
+                ],
+                "total_movies": total_movies
             }
 
     async def get_detail_movie(self, db: AsyncSession, movie_id: int) -> MovieModel:
