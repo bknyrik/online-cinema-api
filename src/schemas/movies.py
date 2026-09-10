@@ -1,6 +1,11 @@
 from pydantic import BaseModel, UUID4
 
 
+class CertificationDetailBaseSchema(BaseModel):
+    id: int
+    name: str
+
+
 class GenreDetailBaseSchema(BaseModel):
     id: int
     name: str
