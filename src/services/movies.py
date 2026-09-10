@@ -27,12 +27,12 @@ class MovieService:
             movie = await self.movie_repository.aget_by_id(
                 db=db,
                 id_=movie_id,
-                join_relationships=(
+                join_relationships=[
                     "genres",
                     "stars",
                     "directors",
                     "certification"
-                )
+                ]
             )
 
             if not movie:
@@ -76,12 +76,12 @@ class MovieService:
             created_movie = await self.movie_repository.aget_by_id(
                 db=db,
                 id_=created_movie.id,
-                join_relationships=(
+                join_relationships=[
                     "genres",
                     "stars",
                     "directors",
                     "certification"
-                )
+                ]
             )
 
             created_movie.genres = genres

@@ -25,7 +25,7 @@ class AsyncBaseRepository[T]:
         self,
         db: AsyncSession,
         id_: int,
-        join_relationships: tuple[str] | None = None
+        join_relationships: list[str] | None = None
     ) -> T | None:
         stmt = (
             select(self._model_type)
