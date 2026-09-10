@@ -1,4 +1,23 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.schemas.movies import MovieDetailResponseSchema
+from src.dependencies.database import get_db
+from src.services.movies import MovieService
+from src.database.models.movies import MovieModel
+from src.dependencies.services import get_movie_service
 
 
 router = APIRouter()
+
+
+@router.get("/{movie_id}/", response_model=MovieDetailResponseSchema)
+async def get_detail_movie(
+    movie_id: int,
+    db: AsyncSession = Depends(get_db),
+    movie_service: MovieService = Depends(get_movie_service)
+) -> MovieModel:
+    return await movie_service.get_detail_movie(
+        db=db,
+        movie_id=movie_id
+    )
