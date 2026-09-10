@@ -52,7 +52,6 @@ class MovieDetailResponseSchema(MovieDetailBaseSchema):
 
 
 class MovieCreateRequestSchema(BaseModel):
-    id: int
     name: str
     year: int
     time: int
