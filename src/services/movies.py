@@ -22,6 +22,15 @@ class MovieService:
         self.director_repository = director_repository
         self.certification_repository = certification_repository
 
+    @staticmethod
+    def all_ids_in_db(ids: list[int], items: list, item_type: str) -> None:
+        for id_ in ids:
+            if id_ not in items:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"{item_type} with id {id_} not found"
+                )
+
     async def get_detail_movie(self, db: AsyncSession, movie_id: int) -> MovieModel:
         try:
             movie = await self.movie_repository.aget_by_id(
