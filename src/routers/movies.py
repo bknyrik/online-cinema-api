@@ -39,3 +39,16 @@ async def create_movie(
         db=db,
         data=data.model_dump()
     )
+
+
+@router.delete("/{movie_id/}")
+async def delete_movie(
+    movie_id: int,
+    db: AsyncSession = Depends(get_db),
+    movie_service: MovieService = Depends(get_movie_service),
+    current_user: UserModel = Depends(get_current_moderator_user)
+) -> None:
+    return await movie_service.delete_movie(
+        db=db,
+        movie_id=movie_id
+    )
