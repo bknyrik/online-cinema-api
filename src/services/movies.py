@@ -47,3 +47,52 @@ class MovieService:
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while getting movie"
             )
+
+    async def create_movie(self, db: AsyncSession, data: dict) -> MovieModel:
+        try:
+            movie = await self.movie_repository.aget_by_name_year_time(
+                db=db,
+                name=data["name"],
+                year=data["year"],
+                time=data["time"]
+            )
+
+            if movie:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Move with this name, year and time exists"
+                )
+
+            genres = await self.genre_repository.aget_by_ids(db, data.pop("genres"))
+            stars = await self.star_repository.aget_by_ids(db, data.pop("stars"))
+            directors = await self.director_repository.aget_by_ids(db, data.pop("directors"))
+            data["certification_id"] = data.pop("certification")
+
+            created_movie = await self.movie_repository.acreate(
+                db=db,
+                data=data
+            )
+
+            created_movie = await self.movie_repository.aget_by_id(
+                db=db,
+                id_=created_movie.id,
+                join_relationships=(
+                    "genres",
+                    "stars",
+                    "directors",
+                    "certification"
+                )
+            )
+
+            created_movie.genres = genres
+            created_movie.stars = stars
+            created_movie.directors = directors
+
+            await db.commit()
+            return created_movie
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while creating movie"
+            )
