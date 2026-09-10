@@ -1,7 +1,7 @@
 from typing import Sequence
 
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -21,12 +21,25 @@ class AsyncBaseRepository[T]:
         )
         return result.scalars().all()
 
-    async def aget_by_id(self, db: AsyncSession, id_: int) -> T | None:
-        result = await db.execute(
+    async def aget_by_id(
+        self,
+        db: AsyncSession,
+        id_: int,
+        join_relationships: tuple[str] | None = None
+    ) -> T | None:
+        stmt = (
             select(self._model_type)
             .where(self._model_type.id == id_)
         )
-        return result.scalar_one_or_none()
+
+        if join_relationships:
+            for relationship in join_relationships:
+                stmt = stmt.options(
+                    joinedload(getattr(self._model_type, relationship))
+                )
+
+        result = await db.execute(stmt)
+        return result.unique().scalar_one_or_none()
 
     async def acreate(self, db: AsyncSession, data: dict) -> T:
         instance = self._model_type(**data)
