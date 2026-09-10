@@ -72,10 +72,31 @@ class MovieService:
                     detail="Move with this name, year and time exists"
                 )
 
-            genres = await self.genre_repository.aget_by_ids(db, data.pop("genres"))
-            stars = await self.star_repository.aget_by_ids(db, data.pop("stars"))
-            directors = await self.director_repository.aget_by_ids(db, data.pop("directors"))
+            genres_ids = data.pop("genres")
+            stars_ids = data.pop("stars")
+            directors_ids = data.pop("directors")
+
+            genres = await self.genre_repository.aget_by_ids(db, genres_ids)
+            self.all_ids_in_db(genres_ids, genres, "Genre")
+
+            stars = await self.star_repository.aget_by_ids(db, stars_ids)
+            self.all_ids_in_db(stars_ids, stars, "Star")
+
+            directors = await self.director_repository.aget_by_ids(db, directors_ids)
+            self.all_ids_in_db(directors_ids, directors, "Director")
+
             data["certification_id"] = data.pop("certification")
+
+            certification = await self.certification_repository.aget_by_id(
+                db=db,
+                id_=data["certification_id"]
+            )
+
+            if not certification:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Certification with id {data['certification_id']} not found"
+                )
 
             created_movie = await self.movie_repository.acreate(
                 db=db,
