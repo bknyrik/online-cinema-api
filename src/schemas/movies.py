@@ -1,6 +1,11 @@
 from pydantic import BaseModel, UUID4
 
 
+class GenreDetailBaseSchema(BaseModel):
+    id: int
+    name: str
+
+
 class MovieDetailBaseSchema(BaseModel):
     id: int
     uuid: UUID4
