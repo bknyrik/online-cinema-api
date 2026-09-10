@@ -62,3 +62,7 @@ class MovieCreateRequestSchema(BaseModel):
     gross: float
     description: str
     price: float
+    certification: int
+    genres: list[int]
+    stars: list[int]
+    directors: list[int]
