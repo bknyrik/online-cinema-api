@@ -49,3 +49,16 @@ class MovieDetailResponseSchema(MovieDetailBaseSchema):
     directors: list[DirectorDetailBaseSchema]
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class MovieCreateRequestSchema(BaseModel):
+    id: int
+    name: str
+    year: int
+    time: int
+    imdb: float
+    votes: float
+    meta_score: int
+    gross: float
+    description: str
+    price: float
