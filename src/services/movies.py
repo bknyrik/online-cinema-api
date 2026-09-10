@@ -47,6 +47,9 @@ class MovieService:
     ) -> dict:
         try:
             total_movies = await self.movie_repository.acount(db)
+            total_pages = total_movies // per_page
+            offset = per_page * page - 1
+
             movies_list = list(
                 await self.movie_repository.aget_all(
                     db=db,
@@ -55,7 +58,9 @@ class MovieService:
                         "stars",
                         "directors",
                         "certification"
-                    ]
+                    ],
+                    offset=offset,
+                    limit=per_page
                 ),
             )
         except SQLAlchemyError:
@@ -85,7 +90,8 @@ class MovieService:
                     }
                     for movie in movies_list
                 ],
-                "total_movies": total_movies
+                "total_movies": total_movies,
+                "total_pages": total_pages
             }
 
     async def get_detail_movie(self, db: AsyncSession, movie_id: int) -> MovieModel:
