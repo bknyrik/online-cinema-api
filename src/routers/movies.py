@@ -8,7 +8,9 @@ from src.schemas.movies import (
 from src.dependencies.database import get_db
 from src.services.movies import MovieService
 from src.database.models.movies import MovieModel
+from src.database.models.accounts import UserModel
 from src.dependencies.services import get_movie_service
+from src.dependencies.authentication import get_current_moderator_user
 
 
 router = APIRouter()
@@ -31,6 +33,7 @@ async def create_movie(
     data: MovieCreateRequestSchema,
     movie_service: MovieService = Depends(get_movie_service),
     db: AsyncSession = Depends(get_db),
+    current_user: UserModel = Depends(get_current_moderator_user)
 ) -> MovieModel:
     return await movie_service.create_movie(
         db=db,
