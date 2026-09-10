@@ -13,6 +13,8 @@ class AsyncBaseRepository[T]:
     async def aget_all(
         self,
         db: AsyncSession,
+        offset: int | None = None,
+        limit: int | None = None,
         join_relationships: list[str] | None = None
     ) -> Sequence[T]:
         stmt = select(self._model_type)
@@ -22,6 +24,12 @@ class AsyncBaseRepository[T]:
                 stmt = stmt.options(
                     joinedload(getattr(self._model_type, relationship))
                 )
+
+        if limit is not None:
+            stmt = stmt.limit(limit)
+
+        if offset is not None:
+            stmt = stmt.offset(offset)
 
         result = await db.execute(stmt)
         return result.unique().scalars().all()
