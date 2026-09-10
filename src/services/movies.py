@@ -37,6 +37,17 @@ class MovieService:
                     detail=f"{item_type} with id {id_} not found"
                 )
 
+    async def get_movie_list(self, db: AsyncSession) -> dict:
+        try:
+            movies_list = list(await self.movie_repository.aget_all(db))
+        except SQLAlchemyError:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while getting list with movies"
+            )
+        else:
+            return {"movies": movies_list}
+
     async def get_detail_movie(self, db: AsyncSession, movie_id: int) -> MovieModel:
         try:
             movie = await self.movie_repository.aget_by_id(
