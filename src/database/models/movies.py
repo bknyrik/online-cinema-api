@@ -70,7 +70,7 @@ class DirectorModel(Base):
     movies = relationship(
         "MovieModel",
         secondary=MovieDirectorsModel,
-        back_populates="stars"
+        back_populates="directors"
     )
 
 
