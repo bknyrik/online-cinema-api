@@ -13,3 +13,10 @@ class MovieDetailBaseSchema(BaseModel):
     gross: float
     description: str
     price: float
+
+
+class MovieDetailItemSchema(MovieDetailBaseSchema):
+    certification: str
+    genres: list[str]
+    stars: list[str]
+    directors: list[str]
