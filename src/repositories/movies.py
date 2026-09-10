@@ -1,5 +1,7 @@
-from src.repositories.base import AsyncBaseRepository
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.repositories.base import AsyncBaseRepository
 from src.database.models import movies
 
 
@@ -31,3 +33,18 @@ class MovieRepository(AsyncBaseRepository[movies.MovieModel]):
 
     def __init__(self) -> None:
         super().__init__(movies.MovieModel)
+
+    async def aget_by_name_year_time(
+        self,
+        db: AsyncSession,
+        name: str,
+        year: int,
+        time: int
+    ) -> movies.MovieModel | None:
+        result = await db.execute(
+            select(self._model_type)
+            .where(self._model_type.name == name)
+            .where(self._model_type.year == year)
+            .where(self._model_type.time == time)
+        )
+        return result.scalar_one_or_none()
