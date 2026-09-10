@@ -1,6 +1,6 @@
 from typing import Sequence
 
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -9,6 +9,12 @@ class AsyncBaseRepository[T]:
 
     def __init__(self, model_type: type[T]) -> None:
         self._model_type = model_type
+
+    async def acount(self, db: AsyncSession) -> int:
+        result = await db.execute(
+            select(func.count()).select_from(self._model_type)
+        )
+        return result.scalar_one()
 
     async def aget_all(
         self,
