@@ -1,4 +1,4 @@
-from pydantic import BaseModel, UUID4
+from pydantic import BaseModel, UUID4, ConfigDict
 
 
 class CertificationDetailBaseSchema(BaseModel):
@@ -40,3 +40,12 @@ class MovieDetailItemSchema(MovieDetailBaseSchema):
     genres: list[str]
     stars: list[str]
     directors: list[str]
+
+
+class MovieDetailResponseSchema(MovieDetailBaseSchema):
+    certification: CertificationDetailBaseSchema
+    genres: list[GenreDetailBaseSchema]
+    stars: list[StarDetailBaseSchema]
+    directors: list[DirectorDetailBaseSchema]
+
+    model_config = ConfigDict(from_attributes=True)
