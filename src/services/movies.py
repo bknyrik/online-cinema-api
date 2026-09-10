@@ -39,7 +39,12 @@ class MovieService:
                     detail=f"{item_type} with id {id_} not found"
                 )
 
-    async def get_movie_list(self, db: AsyncSession) -> dict:
+    async def get_movie_list(
+        self,
+        db: AsyncSession,
+        page: int,
+        per_page: int
+    ) -> dict:
         try:
             total_movies = self.movie_repository.acount(db)
             movies_list = list(
