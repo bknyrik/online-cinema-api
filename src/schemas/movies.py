@@ -44,6 +44,10 @@ class MovieDetailItemSchema(MovieDetailBaseSchema):
 
 class MovieListResponseSchema(BaseModel):
     movies: list[MovieDetailItemSchema]
+    total_movies: int
+    total_pages: int
+    next: str | None
+    prev: str | None
 
     model_config = ConfigDict(from_attributes=True)
 
