@@ -23,7 +23,7 @@ class MovieService:
         self.certification_repository = certification_repository
 
     @staticmethod
-    def all_ids_in_db(ids: list[int], items: list, item_type: str) -> None:
+    def check_all_ids_exist(ids: list[int], items: list, item_type: str) -> None:
         for id_ in ids:
             if id_ not in items:
                 raise HTTPException(
@@ -77,13 +77,13 @@ class MovieService:
             directors_ids = data.pop("directors")
 
             genres = await self.genre_repository.aget_by_ids(db, genres_ids)
-            self.all_ids_in_db(genres_ids, genres, "Genre")
+            self.check_all_ids_exist(genres_ids, genres, "Genre")
 
             stars = await self.star_repository.aget_by_ids(db, stars_ids)
-            self.all_ids_in_db(stars_ids, stars, "Star")
+            self.check_all_ids_exist(stars_ids, stars, "Star")
 
             directors = await self.director_repository.aget_by_ids(db, directors_ids)
-            self.all_ids_in_db(directors_ids, directors, "Director")
+            self.check_all_ids_exist(directors_ids, directors, "Director")
 
             data["certification_id"] = data.pop("certification")
 
