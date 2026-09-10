@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.schemas.movies import (
@@ -19,6 +19,8 @@ router = APIRouter()
 
 @router.get("/", response_model=MovieListResponseSchema)
 async def get_movie_list(
+    page: int = Query(default=1, ge=1),
+    per_page: int = Query(default=10, ge=1, le=10),
     db: AsyncSession = Depends(get_db),
     movie_service: MovieService = Depends(get_movie_service)
 ) -> dict:
