@@ -46,7 +46,7 @@ class MovieService:
         per_page: int
     ) -> dict:
         try:
-            total_movies = self.movie_repository.acount(db)
+            total_movies = await self.movie_repository.acount(db)
             movies_list = list(
                 await self.movie_repository.aget_all(
                     db=db,
