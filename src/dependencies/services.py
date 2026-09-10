@@ -13,7 +13,13 @@ from src.repositories.accounts import (
     UserGroupRepository
 )
 from src.repositories.profiles import UserProfileRepository
-from src.repositories.movies import MovieRepository
+from src.repositories.movies import (
+    MovieRepository,
+    GenreRepository,
+    StarRepository,
+    DirectorRepository,
+    CertificationRepository
+)
 from src.database.models import accounts
 
 
@@ -68,5 +74,9 @@ def get_profile_service() -> UserProfileService:
 
 def get_movie_service() -> MovieService:
     return MovieService(
-        movie_repository=MovieRepository()
+        movie_repository=MovieRepository(),
+        genre_repository=GenreRepository(),
+        star_repository=StarRepository(),
+        director_repository=DirectorRepository(),
+        certification_repository=CertificationRepository()
     )
