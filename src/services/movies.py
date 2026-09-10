@@ -30,8 +30,10 @@ class MovieService:
         items: Sequence,
         item_type: str
     ) -> None:
+        items_ids = tuple(item.id for item in items)
+
         for id_ in ids:
-            if id_ not in items:
+            if id_ not in items_ids:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail=f"{item_type} with id {id_} not found"
