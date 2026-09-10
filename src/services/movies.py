@@ -1,3 +1,5 @@
+from typing import Sequence
+
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
@@ -23,7 +25,11 @@ class MovieService:
         self.certification_repository = certification_repository
 
     @staticmethod
-    def check_all_ids_exist(ids: list[int], items: list, item_type: str) -> None:
+    def check_all_ids_exist(
+        ids: list[int],
+        items: Sequence,
+        item_type: str
+    ) -> None:
         for id_ in ids:
             if id_ not in items:
                 raise HTTPException(
