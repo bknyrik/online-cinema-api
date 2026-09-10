@@ -24,7 +24,16 @@ class MovieService:
 
     async def get_detail_movie(self, db: AsyncSession, movie_id: int) -> MovieModel:
         try:
-            movie = await self.movie_repository.aget_by_id(db, movie_id)
+            movie = await self.movie_repository.aget_by_id(
+                db=db,
+                id_=movie_id,
+                join_relationships=(
+                    "genres",
+                    "stars",
+                    "directors",
+                    "certification"
+                )
+            )
 
             if not movie:
                 raise HTTPException(
