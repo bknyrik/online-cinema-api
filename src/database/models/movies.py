@@ -1,3 +1,5 @@
+import uuid
+
 from sqlalchemy import (
     Table,
     Column,
@@ -86,7 +88,12 @@ class MovieModel(Base):
     __tablename__ = "movies"
 
     id = Column(Integer, primary_key=True, index=True)
-    uuid = Column(Uuid, nullable=True, unique=True)
+    uuid = Column(
+        Uuid,
+        nullable=False,
+        unique=True,
+        default=uuid.uuid4
+    )
     name = Column(String(255), nullable=False)
     year = Column(Integer, nullable=False)
     time = Column(Integer, nullable=False)
