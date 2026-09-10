@@ -14,6 +14,13 @@ class AsyncBaseRepository[T]:
         result = await db.execute(select(self._model_type))
         return result.scalars().all()
 
+    async def aget_by_ids(self, db: AsyncSession, ids: list[int]) -> Sequence[T]:
+        result = await db.execute(
+            select(self._model_type)
+            .where(self._model_type.id.in_(ids))
+        )
+        return result.scalars().all()
+
     async def aget_by_id(self, db: AsyncSession, id_: int) -> T | None:
         result = await db.execute(
             select(self._model_type)
