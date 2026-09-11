@@ -26,7 +26,12 @@ async def get_movie_list(
     db: AsyncSession = Depends(get_db),
     movie_service: MovieService = Depends(get_movie_service)
 ) -> dict:
-    return await movie_service.get_movie_list(db, page, per_page)
+    return await movie_service.get_movie_list(
+        db=db,
+        page=page,
+        per_page=per_page,
+        movie_filter_data=movie_filter_data
+    )
 
 
 @router.get("/{movie_id}/", response_model=MovieDetailResponseSchema)

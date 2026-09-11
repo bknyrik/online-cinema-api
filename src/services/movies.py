@@ -43,6 +43,7 @@ class MovieService:
     async def get_movie_list(
         self,
         db: AsyncSession,
+        movie_filter_data: dict,
         page: int,
         per_page: int
     ) -> dict:
