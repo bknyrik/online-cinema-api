@@ -40,6 +40,45 @@ class MovieService:
                     detail=f"{item_type} with id {id_} not found"
                 )
 
+    @staticmethod
+    def get_filter_expressions(filter_data: dict) -> list:
+        def _get_min_max_expression(
+            min_value: int | None,
+            max_value: int | None,
+            column_name: str
+        ):
+            if min_value is not None and max_value is not None:
+                return (
+                    getattr(MovieModel, column_name)
+                    .between(
+                        min_value,
+                        max_value
+                    )
+                )
+
+            elif min_value is not None:
+                return getattr(MovieModel, column_name) >= min_value
+
+            elif max_value is not None:
+                return getattr(MovieModel, column_name) <= max_value
+
+            return None
+
+        column_names = ("year", "time", "imdb", "price")
+
+        return [
+            expression for expression
+            in tuple(
+                _get_min_max_expression(
+                    filter_data[f"min_{column_name}"],
+                    filter_data[f"max_{column_name}"],
+                    column_name
+                )
+                for column_name in column_names
+            )
+            if expression is not None
+        ]
+
     async def get_movie_list(
         self,
         db: AsyncSession,
