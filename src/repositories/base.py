@@ -1,6 +1,7 @@
 from typing import Sequence
 
 from sqlalchemy import select, func
+from sqlalchemy.sql.elements import ColumnElement
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -21,7 +22,8 @@ class AsyncBaseRepository[T]:
         db: AsyncSession,
         offset: int | None = None,
         limit: int | None = None,
-        join_relationships: list[str] | None = None
+        join_relationships: list[str] | None = None,
+        conditions: list[ColumnElement[T]] | None = None,
     ) -> Sequence[T]:
         stmt = select(self._model_type)
 
@@ -30,6 +32,10 @@ class AsyncBaseRepository[T]:
                 stmt = stmt.options(
                     joinedload(getattr(self._model_type, relationship))
                 )
+
+        if conditions is not None:
+            for condition in conditions:
+                stmt = stmt.where(condition)
 
         if limit is not None:
             stmt = stmt.limit(limit)
