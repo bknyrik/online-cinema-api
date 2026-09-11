@@ -12,6 +12,7 @@ from src.database.models.movies import MovieModel
 from src.database.models.accounts import UserModel
 from src.dependencies.services import get_movie_service
 from src.dependencies.authentication import get_current_moderator_or_admin_user
+from src.dependencies.movies import MovieFilterDep
 
 
 router = APIRouter()
@@ -19,6 +20,7 @@ router = APIRouter()
 
 @router.get("/", response_model=MovieListResponseSchema)
 async def get_movie_list(
+    movie_filter_data: MovieFilterDep,
     page: int = Query(default=1, ge=1),
     per_page: int = Query(default=10, ge=1, le=10),
     db: AsyncSession = Depends(get_db),
