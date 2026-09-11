@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.schemas.movies import (
@@ -39,7 +39,11 @@ async def get_detail_movie(
     )
 
 
-@router.post("/", response_model=MovieDetailResponseSchema)
+@router.post(
+    "/",
+    response_model=MovieDetailResponseSchema,
+    status_code=status.HTTP_201_CREATED
+)
 async def create_movie(
     data: MovieCreateRequestSchema,
     movie_service: MovieService = Depends(get_movie_service),
