@@ -24,6 +24,7 @@ class AsyncBaseRepository[T]:
         limit: int | None = None,
         join_relationships: list[str] | None = None,
         conditions: list[ColumnElement[T]] | None = None,
+        order_by_columns: list[ColumnElement[T]] | None = None
     ) -> Sequence[T]:
         stmt = select(self._model_type)
 
@@ -36,6 +37,10 @@ class AsyncBaseRepository[T]:
         if conditions is not None:
             for condition in conditions:
                 stmt = stmt.where(condition)
+
+        if order_by_columns is not None:
+            for column in order_by_columns:
+                stmt = stmt.order_by(column)
 
         if limit is not None:
             stmt = stmt.limit(limit)
