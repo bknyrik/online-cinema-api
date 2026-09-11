@@ -1,3 +1,4 @@
+import math
 from typing import Sequence
 
 from fastapi import HTTPException, status
@@ -47,7 +48,7 @@ class MovieService:
     ) -> dict:
         try:
             total_movies = await self.movie_repository.acount(db)
-            total_pages = total_movies // per_page
+            total_pages = math.ceil(total_movies / per_page)
             offset = per_page * (page - 1)
 
             if page > total_pages:
