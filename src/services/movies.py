@@ -97,6 +97,8 @@ class MovieService:
                     detail="Page not found"
                 )
 
+            filter_expressions = self.get_filter_expressions(movie_filter_data)
+
             movies_list = list(
                 await self.movie_repository.aget_all(
                     db=db,
@@ -107,7 +109,8 @@ class MovieService:
                         "certification"
                     ],
                     offset=offset,
-                    limit=per_page
+                    limit=per_page,
+                    conditions=filter_expressions
                 ),
             )
         except SQLAlchemyError:
