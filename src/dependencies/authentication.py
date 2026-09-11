@@ -49,10 +49,10 @@ async def get_current_admin_user(
 async def get_current_moderator_or_admin_user(
     current_user: UserModel = Depends(get_current_user)
 ) -> UserModel:
-    if current_user.group.name != "moderator":
+    if current_user.group.name not in ("moderator", "admin"):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="User is not a moderator to perform this action"
+            detail="User is not a moderator/admin to perform this action"
         )
 
     return current_user
