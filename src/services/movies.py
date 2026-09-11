@@ -50,6 +50,12 @@ class MovieService:
             total_pages = total_movies // per_page
             offset = per_page * (page - 1)
 
+            if page > total_pages:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Page not found"
+                )
+
             movies_list = list(
                 await self.movie_repository.aget_all(
                     db=db,
