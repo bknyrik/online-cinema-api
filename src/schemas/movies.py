@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from pydantic import BaseModel, UUID4, ConfigDict
 
 
@@ -73,3 +75,19 @@ class MovieCreateRequestSchema(BaseModel):
     genres: list[int]
     stars: list[int]
     directors: list[int]
+
+
+class MovieUpdateRequestSchema(BaseModel):
+    name: str | None = None
+    year: int | None = None
+    time: int | None = None
+    imdb: float | None = None
+    votes: int | None = None
+    meta_score: float | None = None
+    gross: float | None = None
+    description: str | None = None
+    price: Decimal | None = None
+    certification: int | None = None
+    genres: list[int] | None = None
+    stars: list[int] | None = None
+    directors: list[int] | None = None
