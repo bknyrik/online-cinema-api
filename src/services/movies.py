@@ -76,11 +76,11 @@ class MovieService:
             )
         else:
             prev = (
-                f"/movies/per_page={per_page}&page={page - 1}"
+                f"/api/movies/?per_page={per_page}&page={page - 1}"
                 if page > 1 else None
             )
             next_ = (
-                f"/movies/per_page={per_page}&page={page + 1}"
+                f"/api/movies/?per_page={per_page}&page={page + 1}"
                 if page < total_pages else None
             )
             return {
