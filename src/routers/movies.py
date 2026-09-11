@@ -56,7 +56,10 @@ async def create_movie(
     )
 
 
-@router.delete("/{movie_id/}")
+@router.delete(
+    "/{movie_id/}",
+    status_code=status.HTTP_204_NO_CONTENT
+)
 async def delete_movie(
     movie_id: int,
     db: AsyncSession = Depends(get_db),
