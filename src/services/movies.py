@@ -69,6 +69,14 @@ class MovieService:
                 detail="An error occurred while getting list with movies"
             )
         else:
+            prev = (
+                f"/movies/per_page={per_page}&page={page - 1}"
+                if page > 1 else None
+            )
+            next_ = (
+                f"/movies/per_page={per_page}&page={page + 1}"
+                if page < total_pages else None
+            )
             return {
                 "movies": [
                     {
@@ -91,7 +99,9 @@ class MovieService:
                     for movie in movies_list
                 ],
                 "total_movies": total_movies,
-                "total_pages": total_pages
+                "total_pages": total_pages,
+                "prev": prev,
+                "next": next_
             }
 
     async def get_detail_movie(self, db: AsyncSession, movie_id: int) -> MovieModel:
