@@ -57,7 +57,7 @@ async def create_movie(
 
 
 @router.delete(
-    "/{movie_id/}",
+    "/{movie_id}/",
     status_code=status.HTTP_204_NO_CONTENT
 )
 async def delete_movie(
