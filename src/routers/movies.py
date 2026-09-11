@@ -1,11 +1,7 @@
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.schemas.movies import (
-    MovieListResponseSchema,
-    MovieDetailResponseSchema,
-    MovieCreateRequestSchema
-)
+from src.schemas import movies as movies_schemas
 from src.dependencies.database import get_db
 from src.services.movies import MovieService
 from src.database.models.movies import MovieModel
@@ -18,7 +14,7 @@ from src.dependencies.movies import MovieFilterDep
 router = APIRouter()
 
 
-@router.get("/", response_model=MovieListResponseSchema)
+@router.get("/", response_model=movies_schemas.MovieListResponseSchema)
 async def get_movie_list(
     movie_filter_data: MovieFilterDep,
     page: int = Query(default=1, ge=1),
@@ -34,7 +30,10 @@ async def get_movie_list(
     )
 
 
-@router.get("/{movie_id}/", response_model=MovieDetailResponseSchema)
+@router.get(
+    "/{movie_id}/",
+    response_model=movies_schemas.MovieDetailResponseSchema
+)
 async def get_detail_movie(
     movie_id: int,
     db: AsyncSession = Depends(get_db),
@@ -48,11 +47,11 @@ async def get_detail_movie(
 
 @router.post(
     "/",
-    response_model=MovieDetailResponseSchema,
+    response_model=movies_schemas.MovieDetailResponseSchema,
     status_code=status.HTTP_201_CREATED
 )
 async def create_movie(
-    data: MovieCreateRequestSchema,
+    data: movies_schemas.MovieCreateRequestSchema,
     movie_service: MovieService = Depends(get_movie_service),
     db: AsyncSession = Depends(get_db),
     current_user: UserModel = Depends(get_current_moderator_or_admin_user)
