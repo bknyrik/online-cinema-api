@@ -48,7 +48,7 @@ class MovieService:
         try:
             total_movies = await self.movie_repository.acount(db)
             total_pages = total_movies // per_page
-            offset = per_page * page - 1
+            offset = per_page * (page - 1)
 
             movies_list = list(
                 await self.movie_repository.aget_all(
