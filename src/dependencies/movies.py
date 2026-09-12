@@ -4,6 +4,7 @@ from fastapi import Depends, Query
 
 
 async def movie_filter_parameters(
+    genres_ids: list[int] = Query(default=None),
     min_year: int = Query(default=None),
     max_year: int = Query(default=None),
     min_time: int = Query(default=None),
@@ -14,6 +15,7 @@ async def movie_filter_parameters(
     max_price: int = Query(default=None)
 ) -> dict:
     return {
+        "genres_ids": genres_ids,
         "min_year": min_year,
         "max_year": max_year,
         "min_time": min_time,
