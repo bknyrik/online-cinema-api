@@ -23,7 +23,7 @@ class AsyncBaseRepository[T]:
         offset: int | None = None,
         limit: int | None = None,
         join_relationships: list[str] | None = None,
-        conditions: list[ColumnElement[bool]] | None = None,
+        expressions: list[ColumnElement[bool]] | None = None,
         order_by_columns: list[ColumnElement[T]] | None = None
     ) -> Sequence[T]:
         stmt = select(self._model_type)
@@ -34,8 +34,8 @@ class AsyncBaseRepository[T]:
                     joinedload(getattr(self._model_type, relationship))
                 )
 
-        if conditions is not None:
-            for condition in conditions:
+        if expressions is not None:
+            for condition in expressions:
                 stmt = stmt.where(condition)
 
         if order_by_columns is not None:

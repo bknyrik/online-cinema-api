@@ -110,7 +110,7 @@ class MovieService:
                     ],
                     offset=offset,
                     limit=per_page,
-                    conditions=filter_expressions
+                    expressions=filter_expressions
                 ),
             )
         except SQLAlchemyError:
