@@ -35,8 +35,7 @@ class AsyncBaseRepository[T]:
                 )
 
         if expressions is not None:
-            for condition in expressions:
-                stmt = stmt.where(condition)
+            stmt = stmt.where(*expressions)
 
         if order_by_columns is not None:
             for column in order_by_columns:
