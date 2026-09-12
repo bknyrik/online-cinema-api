@@ -2,10 +2,11 @@ import math
 from typing import Sequence
 
 from fastapi import HTTPException, status
+from sqlalchemy import ColumnElement
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 
-from src.database.models.movies import MovieModel
+from src.database.models.movies import MovieModel, GenreModel
 from src.repositories import movies
 
 
@@ -64,18 +65,45 @@ class MovieService:
 
             return None
 
-        column_names = ("year", "time", "imdb", "price")
+        def _get_ids_expression(
+            ids: list[int],
+            column_name: str,
+            column_type
+        ) -> ColumnElement[bool] | None:
+            if ids:
+                return (
+                    getattr(MovieModel, column_name)
+                    .any(column_type.id.in_(ids))
+                )
+
+            return None
+
+        min_max_columns = ("year", "time", "imdb", "price")
+        ids_columns_models = {
+            "genres": GenreModel
+        }
+
+        min_max_expressions = tuple(
+            _get_min_max_expression(
+                filter_data[f"min_{column_name}"],
+                filter_data[f"max_{column_name}"],
+                column_name
+            )
+            for column_name in min_max_columns
+        )
+        ids_expressions = tuple(
+            _get_ids_expression(
+                filter_data[f"{column_name}_ids"],
+                column_name,
+                model
+            )
+            for column_name, model in ids_columns_models.items()
+        )
+
+        expressions = min_max_expressions + ids_expressions
 
         return [
-            expression for expression
-            in tuple(
-                _get_min_max_expression(
-                    filter_data[f"min_{column_name}"],
-                    filter_data[f"max_{column_name}"],
-                    column_name
-                )
-                for column_name in column_names
-            )
+            expression for expression in expressions
             if expression is not None
         ]
 
