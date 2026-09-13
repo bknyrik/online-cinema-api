@@ -210,11 +210,13 @@ class MovieService:
 
     async def create_movie(self, db: AsyncSession, data: dict) -> MovieModel:
         try:
-            movie = await self.movie_repository.aget_by_name_year_time(
+            movie = await self.movie_repository.aget_by(
                 db=db,
-                name=data["name"],
-                year=data["year"],
-                time=data["time"]
+                expressions=[
+                    MovieModel.name == data["name"],
+                    MovieModel.year == data["year"],
+                    MovieModel.time == data["time"]
+                ]
             )
 
             if movie:
