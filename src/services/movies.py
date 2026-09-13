@@ -285,7 +285,16 @@ class MovieService:
         data: dict
     ) -> MovieModel:
         try:
-            movie = await self.movie_repository.aget_by_id(db, movie_id)
+            movie = await self.movie_repository.aget_by_id(
+                db=db,
+                id_=movie_id,
+                join_relationships=[
+                    "certification",
+                    "genres",
+                    "stars",
+                    "directors"
+                ]
+            )
             filtered_data = dict(
                 filter(lambda item: item[1] is not None, data.items())
             )
@@ -319,7 +328,6 @@ class MovieService:
                         detail="Movie with this name, year and time exists"
                     )
 
-            print(filtered_data)
             await self.movie_repository.aupdate(
                 db=db,
                 instance=movie,
