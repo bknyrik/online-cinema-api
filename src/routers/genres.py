@@ -17,4 +17,7 @@ async def get_genre_list(
     db: AsyncSession = Depends(get_db),
     genre_service: GenreService = Depends(get_genre_service)
 ) -> dict:
-    return await genre_service.get_genre_list(db)
+    return await genre_service.get_genre_list(
+        db=db,
+        pagination_data=pagination_data
+    )
