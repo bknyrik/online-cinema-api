@@ -110,11 +110,14 @@ class MovieService:
     async def get_movie_list(
         self,
         db: AsyncSession,
+        pagination_data: dict,
         movie_filter_data: dict,
-        page: int,
-        per_page: int
     ) -> dict:
         try:
+            page, per_page = (
+                pagination_data["page"],
+                pagination_data["per_page"]
+            )
             total_movies = await self.movie_repository.acount(db)
             total_pages = math.ceil(total_movies / per_page)
             offset = per_page * (page - 1)

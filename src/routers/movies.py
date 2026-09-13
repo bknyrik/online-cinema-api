@@ -24,8 +24,7 @@ async def get_movie_list(
 ) -> dict:
     return await movie_service.get_movie_list(
         db=db,
-        page=pagination_data["page"],
-        per_page=pagination_data["per_page"],
+        pagination_data=pagination_data,
         movie_filter_data=movie_filter_data
     )
 
