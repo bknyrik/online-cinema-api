@@ -77,6 +77,26 @@ class AsyncBaseRepository[T]:
         result = await db.execute(stmt)
         return result.unique().scalar_one_or_none()
 
+    async def aget_by(
+        self,
+        db: AsyncSession,
+        expressions: list[ColumnElement[bool]],
+        join_relationships: list[str] | None = None
+    ) -> T | None:
+        stmt = select(self._model_type)
+
+        if join_relationships:
+            for relationship in join_relationships:
+                stmt = stmt.options(
+                    joinedload(getattr(self._model_type, relationship))
+                )
+
+        stmt = stmt.where(*expressions)
+
+        result = await db.execute(stmt)
+        return result.unique().scalar_one_or_none()
+
+
     async def acreate(self, db: AsyncSession, data: dict) -> T:
         instance = self._model_type(**data)
 
