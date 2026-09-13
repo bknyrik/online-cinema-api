@@ -111,7 +111,7 @@ class MovieService:
         self,
         db: AsyncSession,
         pagination_data: dict,
-        movie_filter_data: dict,
+        filter_data: dict,
     ) -> dict:
         try:
             page, per_page = (
@@ -128,7 +128,7 @@ class MovieService:
                     detail="Page not found"
                 )
 
-            filter_expressions = self.get_filter_expressions(movie_filter_data)
+            filter_expressions = self.get_filter_expressions(filter_data)
 
             movies_list = list(
                 await self.movie_repository.aget_all(
