@@ -7,6 +7,9 @@ from pydantic import (
     field_validator,
     Field
 )
+from pydantic.types import (
+    StrictFloat
+)
 
 
 class CertificationDetailBaseSchema(BaseModel):
@@ -71,7 +74,7 @@ class MovieDataRequestBaseSchema(BaseModel):
     name: str = Field(min_length=3)
     year: int = Field(ge=1)
     time: int = Field(ge=1)
-    imdb: float = Field(ge=1)
+    imdb: StrictFloat = Field(ge=1)
     votes: int = Field(ge=1)
     meta_score: float = Field(ge=1)
     gross: float = Field(ge=1)
