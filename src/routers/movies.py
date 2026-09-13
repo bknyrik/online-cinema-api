@@ -19,14 +19,14 @@ router = APIRouter()
 async def get_movie_list(
     pagination_data: PaginationDep,
     search_data: MovieSearchDep,
-    movie_filter_data: MovieFilterDep,
+    filter_data: MovieFilterDep,
     db: AsyncSession = Depends(get_db),
     movie_service: MovieService = Depends(get_movie_service)
 ) -> dict:
     return await movie_service.get_movie_list(
         db=db,
         pagination_data=pagination_data,
-        movie_filter_data=movie_filter_data
+        movie_filter_data=filter_data
     )
 
 
