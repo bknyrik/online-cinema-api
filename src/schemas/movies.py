@@ -90,21 +90,8 @@ class MovieDataRequestBaseSchema(BaseModel):
         return value
 
 
-class MovieCreateRequestSchema(BaseModel):
-    name: str
-    year: int
-    time: int
-    imdb: float
-    votes: float
-    meta_score: int
-    gross: float
-    description: str
-    price: float
-    certification: int
-    genres: list[int]
-    stars: list[int]
-    directors: list[int]
-
+class MovieCreateRequestSchema(MovieDataRequestBaseSchema):
+    ...
 
 class MovieUpdateRequestSchema(BaseModel):
     name: str | None = None
