@@ -81,7 +81,7 @@ class MovieDataRequestBaseSchema(BaseModel):
     gross: StrictFloat = Field(ge=1)
     description: str = Field(min_length=10)
     price: Decimal = Field(ge=1, max_digits=10, decimal_places=2)
-    certification: int
+    certification: StrictInt
     genres: list[int]
     stars: list[int]
     directors: list[int]
