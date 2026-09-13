@@ -1,6 +1,7 @@
 import math
 
 from fastapi import HTTPException, status
+from sqlalchemy import func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -30,7 +31,8 @@ class GenreService:
                 await self.genre_repository.aget_all(
                     db=db,
                     offset=offset,
-                    limit=per_page
+                    limit=per_page,
+                    join_relationships=["movies"]
                 )
             )
         except SQLAlchemyError:
