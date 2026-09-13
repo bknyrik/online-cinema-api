@@ -312,11 +312,13 @@ class MovieService:
                 and filtered_data.get("year")
                 and filtered_data.get("time")
             ):
-                another_movie = await self.movie_repository.aget_by_name_year_time(
+                another_movie = await self.movie_repository.aget_by(
                     db=db,
-                    name=filtered_data["name"],
-                    year=filtered_data["year"],
-                    time=filtered_data["time"]
+                    expressions=[
+                        MovieModel.name == filtered_data["name"],
+                        MovieModel.year == filtered_data["year"],
+                        MovieModel.time == filtered_data["time"]
+                    ]
                 )
 
                 if (
