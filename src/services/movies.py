@@ -141,7 +141,8 @@ class MovieService:
                     ],
                     offset=offset,
                     limit=per_page,
-                    expressions=filter_expressions
+                    expressions=filter_expressions,
+                    order_by_columns=[MovieModel.id]
                 ),
             )
         except SQLAlchemyError:
