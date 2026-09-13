@@ -1,6 +1,12 @@
 from decimal import Decimal
 
-from pydantic import BaseModel, UUID4, ConfigDict
+from pydantic import (
+    BaseModel,
+    UUID4,
+    ConfigDict,
+    field_validator,
+    Field
+)
 
 
 class CertificationDetailBaseSchema(BaseModel):
@@ -59,6 +65,29 @@ class MovieDetailResponseSchema(MovieDetailBaseSchema):
     directors: list[DirectorDetailBaseSchema]
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class MovieDataRequestBaseSchema(BaseModel):
+    name: str = Field(min_length=3)
+    year: int = Field(max_digits=4, ge=1)
+    time: int = Field(ge=1)
+    imdb: float = Field(ge=1)
+    votes: int = Field(ge=1)
+    meta_score: float = Field(ge=1)
+    gross: float = Field(ge=1)
+    description: str = Field(min_length=10)
+    price: Decimal = Field(ge=1)
+    certification: int
+    genres: list[int]
+    stars: list[int]
+    directors: list[int]
+
+    @field_validator("genres", "stars", "directors", mode="before")
+    def validate_unique_ids(self, value: list[int]) -> list[int]:
+        if len(value) != len(set(value)):
+            raise ValueError("Ids must be unique")
+
+        return value
 
 
 class MovieCreateRequestSchema(BaseModel):
