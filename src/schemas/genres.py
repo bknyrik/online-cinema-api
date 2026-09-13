@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class GenreDetailBaseSchema(BaseModel):
@@ -16,3 +16,5 @@ class GenreListResponseSchema(BaseModel):
     total_pages: int
     prev: str | None
     next: str | None
+
+    model_config = ConfigDict(from_attributes=True)
