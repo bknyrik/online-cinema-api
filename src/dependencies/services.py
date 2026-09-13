@@ -2,7 +2,7 @@ from datetime import timedelta
 
 from src.settings import settings
 from src.services.accounts import UserService
-from src.services.movies import MovieService
+from src.services.movies import MovieService, GenreService
 from src.services.profiles import UserProfileService
 from src.services.security import PasswordSecurityService, JWTAuthService
 from src.services.email_sender import EmailSenderService
@@ -79,4 +79,10 @@ def get_movie_service() -> MovieService:
         star_repository=StarRepository(),
         director_repository=DirectorRepository(),
         certification_repository=CertificationRepository()
+    )
+
+
+def get_genre_service() -> GenreService:
+    return GenreService(
+        genre_repository=GenreRepository()
     )
