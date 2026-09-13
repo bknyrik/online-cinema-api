@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.schemas import movies as movies_schemas
@@ -9,6 +9,7 @@ from src.database.models.accounts import UserModel
 from src.dependencies.services import get_movie_service
 from src.dependencies.authentication import get_current_moderator_or_admin
 from src.dependencies.movies import MovieFilterDep
+from src.dependencies.pagination import PaginationDep
 
 
 router = APIRouter()
@@ -16,16 +17,15 @@ router = APIRouter()
 
 @router.get("/", response_model=movies_schemas.MovieListResponseSchema)
 async def get_movie_list(
+    pagination_data: PaginationDep,
     movie_filter_data: MovieFilterDep,
-    page: int = Query(default=1, ge=1),
-    per_page: int = Query(default=10, ge=1, le=10),
     db: AsyncSession = Depends(get_db),
     movie_service: MovieService = Depends(get_movie_service)
 ) -> dict:
     return await movie_service.get_movie_list(
         db=db,
-        page=page,
-        per_page=per_page,
+        page=pagination_data["page"],
+        per_page=pagination_data["per_page"],
         movie_filter_data=movie_filter_data
     )
 
