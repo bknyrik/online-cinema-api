@@ -8,3 +8,11 @@ class GenreDetailBaseSchema(BaseModel):
 
 class GenreDetailItemSchema(GenreDetailBaseSchema):
     movies: int
+
+
+class GenreListResponseSchema(BaseModel):
+    genres: list[GenreDetailItemSchema]
+    total_genres: int
+    total_pages: int
+    prev: str | None
+    next: str | None
