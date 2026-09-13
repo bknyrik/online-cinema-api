@@ -337,6 +337,10 @@ class MovieService:
             return movie
         except SQLAlchemyError:
             await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while updating movie"
+            )
 
     async def delete_movie(self, db: AsyncSession, movie_id: int) -> None:
         try:
