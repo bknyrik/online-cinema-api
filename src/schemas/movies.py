@@ -14,13 +14,10 @@ from pydantic.types import (
     StrictStr
 )
 
+from src.schemas.genres import GenreDetailBaseSchema
+
 
 class CertificationDetailBaseSchema(BaseModel):
-    id: int
-    name: str
-
-
-class GenreDetailBaseSchema(BaseModel):
     id: int
     name: str
 
