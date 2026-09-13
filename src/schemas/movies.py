@@ -76,7 +76,7 @@ class MovieDataRequestBaseSchema(BaseModel):
     year: StrictInt = Field(ge=1)
     time: StrictInt = Field(ge=1)
     imdb: StrictFloat = Field(ge=1, max_digits=1, le=10)
-    votes: int = Field(ge=1)
+    votes: StrictInt = Field(ge=1)
     meta_score: float = Field(ge=1)
     gross: float = Field(ge=1)
     description: str = Field(min_length=10)
