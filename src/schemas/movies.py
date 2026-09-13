@@ -77,7 +77,7 @@ class MovieDataRequestBaseSchema(BaseModel):
     time: StrictInt = Field(ge=1)
     imdb: StrictFloat = Field(ge=1, max_digits=1, le=10)
     votes: StrictInt = Field(ge=1)
-    meta_score: StrictFloat = Field(ge=1)
+    meta_score: StrictFloat = Field(ge=1, le=100)
     gross: StrictFloat = Field(ge=1)
     description: str = Field(min_length=10)
     price: Decimal = Field(ge=1)
