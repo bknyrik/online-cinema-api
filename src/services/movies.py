@@ -278,6 +278,57 @@ class MovieService:
                 detail="An error occurred while creating movie"
             )
 
+    async def update_movie(
+        self,
+        db: AsyncSession,
+        movie_id: int,
+        data: dict
+    ) -> MovieModel:
+        try:
+            movie = await self.movie_repository.aget_by_id(db, movie_id)
+            filtered_data = dict(
+                filter(lambda item: item is not None, data.items())
+            )
+
+            if not movie:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Movie with id {movie_id} not found"
+                )
+
+            if (
+                filtered_data.get("name")
+                and filtered_data.get("year")
+                and filtered_data.get("time")
+            ):
+                another_movie = await self.movie_repository.aget_by_name_year_time(
+                    db=db,
+                    name=filtered_data["name"],
+                    year=filtered_data["year"],
+                    time=filtered_data["time"]
+                )
+
+                if (
+                    another_movie
+                    and another_movie.name != movie.name
+                    and another_movie.year != movie.year
+                    and another_movie.time != movie.time
+                ):
+                    raise HTTPException(
+                        status_code=status.HTTP_400_BAD_REQUEST,
+                        detail="Movie with this name, year and time exists"
+                    )
+
+            await self.movie_repository.aupdate(
+                db=db,
+                instance=movie,
+                data=filtered_data
+            )
+            await db.commit()
+            return movie
+        except SQLAlchemyError:
+            await db.rollback()
+
     async def delete_movie(self, db: AsyncSession, movie_id: int) -> None:
         try:
             movie = await self.movie_repository.aget_by_id(
