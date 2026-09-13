@@ -90,7 +90,7 @@ class MovieDataRequestBaseSchema(BaseModel):
     @classmethod
     def validate_unique_identifiers(cls, value: list[int]) -> list[int]:
         if len(value) != len(set(value)):
-            raise ValueError("Ids must be unique")
+            raise ValueError("Identifiers must be unique")
 
         return value
 
