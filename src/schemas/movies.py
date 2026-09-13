@@ -9,7 +9,8 @@ from pydantic import (
 )
 from pydantic.types import (
     StrictFloat,
-    StrictInt
+    StrictInt,
+    StrictStr
 )
 
 
@@ -72,14 +73,14 @@ class MovieDetailResponseSchema(MovieDetailBaseSchema):
 
 
 class MovieDataRequestBaseSchema(BaseModel):
-    name: str = Field(min_length=3)
+    name: StrictStr = Field(min_length=3)
     year: StrictInt = Field(ge=1)
     time: StrictInt = Field(ge=1)
     imdb: StrictFloat = Field(ge=1, le=10)
     votes: StrictInt = Field(ge=1)
     meta_score: StrictFloat = Field(ge=1, le=100)
     gross: StrictFloat = Field(ge=1)
-    description: str = Field(min_length=10)
+    description: StrictStr = Field(min_length=10)
     price: Decimal = Field(ge=1, max_digits=10, decimal_places=2)
     certification: StrictInt
     genres: list[StrictInt]
