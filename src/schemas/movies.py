@@ -83,7 +83,8 @@ class MovieDataRequestBaseSchema(BaseModel):
     directors: list[int]
 
     @field_validator("genres", "stars", "directors", mode="before")
-    def validate_unique_ids(self, value: list[int]) -> list[int]:
+    @classmethod
+    def validate_unique_ids(cls, value: list[int]) -> list[int]:
         if len(value) != len(set(value)):
             raise ValueError("Ids must be unique")
 
