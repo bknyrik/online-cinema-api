@@ -344,3 +344,9 @@ class MovieService:
             await db.commit()
         except SQLAlchemyError:
             await db.rollback()
+
+
+class GenreService:
+
+    def __init__(self, genre_repository: movies.GenreRepository) -> None:
+        self.genre_repository = genre_repository
