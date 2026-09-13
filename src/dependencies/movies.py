@@ -27,4 +27,19 @@ async def movie_filter_parameters(
     }
 
 
+async def movie_search_params(
+    name: str = Query(default=None),
+    description: str = Query(default=None),
+    stars_ids: list[int] = Query(default=None),
+    directors_ids: list[int] = Query(default=None)
+) -> dict:
+    return {
+        "name": name,
+        "description": description,
+        "stars_ids": stars_ids,
+        "directors_ids": directors_ids
+    }
+
+
 MovieFilterDep = Annotated[dict, Depends(movie_filter_parameters)]
+MovieSearchDep = Annotated[dict, Depends(movie_search_params)]
