@@ -6,7 +6,7 @@ class GenreDetailBaseSchema(BaseModel):
     name: str
 
 
-class GenreDetailItemSchema(GenreDetailBaseSchema):
+class GenreListItemSchema(GenreDetailBaseSchema):
     movies: list
 
     @field_serializer("movies", when_used="json")
@@ -15,7 +15,7 @@ class GenreDetailItemSchema(GenreDetailBaseSchema):
 
 
 class GenreListResponseSchema(BaseModel):
-    genres: list[GenreDetailItemSchema]
+    genres: list[GenreListItemSchema]
     total_genres: int
     total_pages: int
     prev: str | None
