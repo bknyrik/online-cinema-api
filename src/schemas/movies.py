@@ -69,7 +69,7 @@ class MovieDetailResponseSchema(MovieDetailBaseSchema):
 
 class MovieDataRequestBaseSchema(BaseModel):
     name: str = Field(min_length=3)
-    year: int = Field(max_digits=4, ge=1)
+    year: int = Field(ge=1)
     time: int = Field(ge=1)
     imdb: float = Field(ge=1)
     votes: int = Field(ge=1)
