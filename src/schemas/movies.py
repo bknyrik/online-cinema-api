@@ -51,9 +51,9 @@ class MovieDetailBaseSchema(BaseModel):
 
 class MovieDetailItemSchema(MovieDetailBaseSchema):
     certification: CertificationDetailBaseSchema
-    genres: list[str]
-    stars: list[str]
-    directors: list[str]
+    genres: list[GenreDetailBaseSchema]
+    stars: list[StarDetailBaseSchema]
+    directors: list[DirectorDetailBaseSchema]
 
     @field_serializer("certification", when_used="json")
     def serialize_into_str_name(
@@ -61,6 +61,22 @@ class MovieDetailItemSchema(MovieDetailBaseSchema):
         item: CertificationDetailBaseSchema
     ) -> str:
         return item.name
+
+    @field_serializer(
+        "genres",
+        "stars",
+        "directors",
+        when_used="json"
+    )
+    def serialize_into_str_names(
+        self,
+        items: list[
+            GenreDetailBaseSchema
+            | StarDetailBaseSchema
+            | DirectorDetailBaseSchema
+        ]
+    ) -> list[str]:
+        return [item.name for item in items]
 
 
 class MovieListResponseSchema(BaseModel):
