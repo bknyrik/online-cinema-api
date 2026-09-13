@@ -5,6 +5,7 @@ from pydantic import (
     UUID4,
     ConfigDict,
     field_validator,
+    field_serializer,
     Field
 )
 from pydantic.types import (
@@ -49,10 +50,17 @@ class MovieDetailBaseSchema(BaseModel):
 
 
 class MovieDetailItemSchema(MovieDetailBaseSchema):
-    certification: str
+    certification: CertificationDetailBaseSchema
     genres: list[str]
     stars: list[str]
     directors: list[str]
+
+    @field_serializer("certification", when_used="json")
+    def serialize_into_str_name(
+        self,
+        item: CertificationDetailBaseSchema
+    ) -> str:
+        return item.name
 
 
 class MovieListResponseSchema(BaseModel):
