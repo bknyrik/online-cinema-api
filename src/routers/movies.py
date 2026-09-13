@@ -62,6 +62,23 @@ async def create_movie(
     )
 
 
+@router.patch(
+    "/{movie_id}/",
+    response_model=movies_schemas.MovieDetailResponseSchema
+)
+async def update_movie(
+    movie_id: int,
+    data: movies_schemas.MovieUpdateRequestSchema,
+    db: AsyncSession = Depends(get_db),
+    movie_service: MovieService = Depends(get_movie_service)
+) -> MovieModel:
+    return await movie_service.update_movie(
+        db=db,
+        data=data.model_dump(),
+        movie_id=movie_id
+    )
+
+
 @router.delete(
     "/{movie_id}/",
     status_code=status.HTTP_204_NO_CONTENT
