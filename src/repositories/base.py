@@ -38,8 +38,7 @@ class AsyncBaseRepository[T]:
             stmt = stmt.where(*expressions)
 
         if order_by_columns is not None:
-            for column in order_by_columns:
-                stmt = stmt.order_by(column)
+            stmt = stmt.order_by(*order_by_columns)
 
         if limit is not None:
             stmt = stmt.limit(limit)
