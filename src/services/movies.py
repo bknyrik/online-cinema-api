@@ -2,11 +2,13 @@ import math
 from typing import Sequence
 
 from fastapi import HTTPException, status
-from sqlalchemy import ColumnElement
+from sqlalchemy import ColumnElement, UnaryExpression
+from sqlalchemy.orm.attributes import InstrumentedAttribute
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 
 from src.database.models.movies import MovieModel, GenreModel
+from src.dependencies.movies import SortingOrderEnum
 from src.repositories import movies
 
 
@@ -42,13 +44,18 @@ class MovieService:
                 )
 
     @staticmethod
-    def get_sort_columns(sort_data: dict[str, bool]) -> list:
+    def get_sort_columns(
+        sort_data: dict[str, SortingOrderEnum | None]
+    ) -> list[InstrumentedAttribute | UnaryExpression]:
         sort_columns = []
 
-        for name, value in sort_data.items():
-            if value is not None:
+        for name, order in sort_data.items():
+            if order is not None:
                 column = getattr(MovieModel, name.replace("sort_by_", ""))
-                sort_columns.append(column if value else column.desc())
+                sort_columns.append(
+                    column if order == SortingOrderEnum.ASC
+                    else column.desc()
+                )
 
         return sort_columns
 
