@@ -41,5 +41,26 @@ async def movie_search_params(
     }
 
 
+async def movie_sort_params(
+    sort_by_year: bool = Query(default=None),
+    sort_by_time: bool = Query(default=None),
+    sort_by_imdb: bool = Query(default=None),
+    sort_by_votes: bool = Query(default=None),
+    sort_by_meta_score: bool = Query(default=None),
+    sort_by_gross: bool = Query(default=None),
+    sort_by_price: bool = Query(default=None)
+) -> dict[str, bool]:
+    return {
+        "sort_by_year": sort_by_year,
+        "sort_by_time": sort_by_time,
+        "sort_by_imdb": sort_by_imdb,
+        "sort_by_votes": sort_by_votes,
+        "sort_by_meta_score": sort_by_meta_score,
+        "sort_by_gross": sort_by_gross,
+        "sort_by_price": sort_by_price
+    }
+
+
 MovieFilterDep = Annotated[dict, Depends(movie_filter_parameters)]
 MovieSearchDep = Annotated[dict, Depends(movie_search_params)]
+MovieSortDep = Annotated[dict[str, bool], Depends(movie_sort_params)]
