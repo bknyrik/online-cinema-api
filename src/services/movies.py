@@ -42,6 +42,17 @@ class MovieService:
                 )
 
     @staticmethod
+    def get_sort_columns(sort_data: dict[str, bool]) -> list:
+        sort_columns = []
+
+        for name, value in sort_data.items():
+            if value is not None:
+                column = getattr(MovieModel, name.replace("sort_by_", ""))
+                sort_columns.append(column if value else column.desc())
+
+        return sort_columns
+
+    @staticmethod
     def get_filter_expressions(filter_data: dict) -> list:
         def _get_min_max_expression(
             min_value: int | None,
