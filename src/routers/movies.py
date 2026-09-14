@@ -8,7 +8,11 @@ from src.database.models.movies import MovieModel
 from src.database.models.accounts import UserModel
 from src.dependencies.services import get_movie_service
 from src.dependencies.authentication import get_current_moderator_or_admin
-from src.dependencies.movies import MovieFilterDep, MovieSearchDep
+from src.dependencies.movies import (
+    MovieFilterDep,
+    MovieSearchDep,
+    MovieSortDep
+)
 from src.dependencies.pagination import PaginationDep
 
 
@@ -20,6 +24,7 @@ async def get_movie_list(
     pagination_data: PaginationDep,
     search_data: MovieSearchDep,
     filter_data: MovieFilterDep,
+    sort_data: MovieSortDep,
     db: AsyncSession = Depends(get_db),
     movie_service: MovieService = Depends(get_movie_service)
 ) -> dict:
