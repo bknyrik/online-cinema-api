@@ -130,6 +130,7 @@ class MovieService:
         db: AsyncSession,
         pagination_data: dict,
         filter_data: dict,
+        sort_data: dict[str, SortingOrderEnum | None]
     ) -> dict:
         try:
             page, per_page = (
@@ -147,6 +148,10 @@ class MovieService:
                 )
 
             filter_expressions = self.get_filter_expressions(filter_data)
+            sort_columns = (
+                self.get_sort_columns(sort_data)
+                if sort_data else [MovieModel.id]
+            )
 
             movies_list = list(
                 await self.movie_repository.aget_all(
@@ -160,7 +165,7 @@ class MovieService:
                     offset=offset,
                     limit=per_page,
                     expressions=filter_expressions,
-                    order_by_columns=[MovieModel.id]
+                    order_by_columns=sort_columns
                 ),
             )
         except SQLAlchemyError:

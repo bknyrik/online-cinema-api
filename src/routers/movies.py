@@ -31,7 +31,8 @@ async def get_movie_list(
     return await movie_service.get_movie_list(
         db=db,
         pagination_data=pagination_data,
-        filter_data=filter_data
+        filter_data=filter_data,
+        sort_data=sort_data
     )
 
 
