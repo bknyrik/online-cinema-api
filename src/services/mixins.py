@@ -1,3 +1,4 @@
+import math
 
 
 class PaginationLimitOffsetMixin:
@@ -8,3 +9,7 @@ class PaginationLimitOffsetMixin:
             pagination_data["per_page"],
             (pagination_data["page"] - 1) * pagination_data["per_page"]
         )
+
+    @staticmethod
+    def get_total_pages(total_items: int, per_page: int) -> int:
+        return math.ceil(total_items / per_page)
