@@ -48,6 +48,7 @@ async def movie_search_params(
 
 
 async def movie_sort_params(
+    sort_by_name: SortingOrderEnum = Query(default=None),
     sort_by_year: SortingOrderEnum = Query(default=None),
     sort_by_time: SortingOrderEnum = Query(default=None),
     sort_by_imdb: SortingOrderEnum = Query(default=None),
@@ -57,6 +58,7 @@ async def movie_sort_params(
     sort_by_price: SortingOrderEnum = Query(default=None)
 ) -> dict[str, SortingOrderEnum | None]:
     return {
+        "sort_by_name": sort_by_name,
         "sort_by_year": sort_by_year,
         "sort_by_time": sort_by_time,
         "sort_by_imdb": sort_by_imdb,
