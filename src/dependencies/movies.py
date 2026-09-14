@@ -48,14 +48,14 @@ async def movie_search_params(
 
 
 async def movie_sort_params(
-    sort_by_year: bool = Query(default=None),
-    sort_by_time: bool = Query(default=None),
-    sort_by_imdb: bool = Query(default=None),
-    sort_by_votes: bool = Query(default=None),
-    sort_by_meta_score: bool = Query(default=None),
-    sort_by_gross: bool = Query(default=None),
-    sort_by_price: bool = Query(default=None)
-) -> dict[str, bool]:
+    sort_by_year: SortingOrderEnum = Query(default=None),
+    sort_by_time: SortingOrderEnum = Query(default=None),
+    sort_by_imdb: SortingOrderEnum = Query(default=None),
+    sort_by_votes: SortingOrderEnum = Query(default=None),
+    sort_by_meta_score: SortingOrderEnum = Query(default=None),
+    sort_by_gross: SortingOrderEnum = Query(default=None),
+    sort_by_price: SortingOrderEnum = Query(default=None)
+) -> dict[str, SortingOrderEnum | None]:
     return {
         "sort_by_year": sort_by_year,
         "sort_by_time": sort_by_time,
@@ -69,4 +69,7 @@ async def movie_sort_params(
 
 MovieFilterDep = Annotated[dict, Depends(movie_filter_parameters)]
 MovieSearchDep = Annotated[dict, Depends(movie_search_params)]
-MovieSortDep = Annotated[dict[str, bool], Depends(movie_sort_params)]
+MovieSortDep = Annotated[
+    dict[str, SortingOrderEnum | None],
+    Depends(movie_sort_params)
+]
