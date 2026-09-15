@@ -10,26 +10,26 @@ class SortingOrderEnum(StrEnum):
 
 
 async def movie_filter_params(
-    genres_ids: list[int] = Query(default=None),
-    min_year: int = Query(default=None),
-    max_year: int = Query(default=None),
-    min_time: int = Query(default=None),
-    max_time: int = Query(default=None),
-    min_imdb: int = Query(default=None),
-    max_imdb: int = Query(default=None),
-    min_price: int = Query(default=None),
-    max_price: int = Query(default=None)
+    filter_by_genres_ids: list[int] = Query(default=None),
+    filter_by_min_year: int = Query(default=None),
+    filter_by_max_year: int = Query(default=None),
+    filter_by_min_time: int = Query(default=None),
+    filter_by_max_time: int = Query(default=None),
+    filter_by_min_imdb: int = Query(default=None),
+    filter_by_max_imdb: int = Query(default=None),
+    filter_by_min_price: int = Query(default=None),
+    filter_by_max_price: int = Query(default=None)
 ) -> dict:
     return {
-        "genres_ids": genres_ids,
-        "min_year": min_year,
-        "max_year": max_year,
-        "min_time": min_time,
-        "max_time": max_time,
-        "min_imdb": min_imdb,
-        "max_imdb": max_imdb,
-        "min_price": min_price,
-        "max_price": max_price
+        "genres_ids": filter_by_genres_ids,
+        "min_year": filter_by_min_year,
+        "max_year": filter_by_max_year,
+        "min_time": filter_by_min_time,
+        "max_time": filter_by_max_time,
+        "min_imdb": filter_by_min_imdb,
+        "max_imdb": filter_by_max_imdb,
+        "min_price": filter_by_min_price,
+        "max_price": filter_by_max_price
     }
 
 
