@@ -77,7 +77,8 @@ async def update_movie(
     movie_id: int,
     data: movies_schemas.MovieUpdateRequestSchema,
     db: AsyncSession = Depends(get_db),
-    movie_service: MovieService = Depends(get_movie_service)
+    movie_service: MovieService = Depends(get_movie_service),
+    current_user: UserModel = Depends(get_current_moderator_or_admin)
 ) -> MovieModel:
     return await movie_service.update_movie(
         db=db,
