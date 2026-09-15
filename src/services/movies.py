@@ -6,7 +6,7 @@ from sqlalchemy.orm.attributes import InstrumentedAttribute
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 
-from src.database.models.movies import MovieModel, GenreModel
+from src.database.models.movies import MovieModel
 from src.dependencies.movies import SortingOrderEnum
 from src.repositories import movies
 from src.services import mixins
