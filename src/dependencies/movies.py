@@ -10,6 +10,7 @@ class SortingOrderEnum(StrEnum):
 
 
 async def movie_filter_params(
+    filter_by_certification_id: int = Query(default=None),
     filter_by_genres_ids: list[int] = Query(default=None),
     filter_by_min_year: int = Query(default=None),
     filter_by_max_year: int = Query(default=None),
@@ -21,6 +22,7 @@ async def movie_filter_params(
     filter_by_max_price: int = Query(default=None)
 ) -> dict:
     return {
+        "certification": filter_by_certification_id,
         "genres_ids": filter_by_genres_ids,
         "min_year": filter_by_min_year,
         "max_year": filter_by_max_year,
