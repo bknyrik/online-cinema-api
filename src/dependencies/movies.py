@@ -34,16 +34,16 @@ async def movie_filter_parameters(
 
 
 async def movie_search_params(
-    name: str = Query(default=None),
-    description: str = Query(default=None),
-    stars_ids: list[int] = Query(default=None),
-    directors_ids: list[int] = Query(default=None)
+    search_by_name: str = Query(default=None),
+    search_by_description: str = Query(default=None),
+    search_by_stars_ids: list[int] = Query(default=None),
+    search_by_directors_ids: list[int] = Query(default=None)
 ) -> dict:
     return {
-        "name": name,
-        "description": description,
-        "stars_ids": stars_ids,
-        "directors_ids": directors_ids
+        "search_by_name": search_by_name,
+        "search_by_description": search_by_description,
+        "search_by_stars_ids": search_by_stars_ids,
+        "search_by_directors_ids": search_by_directors_ids
     }
 
 
