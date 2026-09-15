@@ -44,8 +44,8 @@ async def movie_search_params(
     return {
         "name": search_by_name,
         "description": search_by_description,
-        "stars": search_by_stars_ids,
-        "directors": search_by_directors_ids
+        "stars_ids": search_by_stars_ids,
+        "directors_ids": search_by_directors_ids
     }
 
 
