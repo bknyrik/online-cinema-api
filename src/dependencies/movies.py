@@ -23,7 +23,7 @@ async def movie_filter_params(
 ) -> dict:
     return {
         "certification_id": filter_by_certification_id,
-        "genres": filter_by_genres_ids,
+        "genres_ids": filter_by_genres_ids,
         "min_year": filter_by_min_year,
         "max_year": filter_by_max_year,
         "min_time": filter_by_min_time,
