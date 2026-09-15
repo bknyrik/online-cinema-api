@@ -1,6 +1,7 @@
 from typing import Sequence
 
 from fastapi import HTTPException, status
+from rsa import key
 from sqlalchemy import ColumnElement, UnaryExpression
 from sqlalchemy.orm.attributes import InstrumentedAttribute
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -77,6 +78,34 @@ class MovieService(mixins.PaginationLimitOffsetMixin):
                     )
 
         return search_expressions
+
+    @staticmethod
+    def _get_min_max_filter_expressions(
+        filter_data: dict
+    ) -> list[ColumnElement[bool]]:
+        min_max_keys = tuple(
+            (min_key, max_key) for min_key, max_key in zip(
+                (key for key in filter_data.keys() if key.startswith("min_")),
+                (key for key in filter_data.keys() if key.startswith("max_"))
+            )
+        )
+
+        expressions = []
+
+        for min_key, max_key in min_max_keys:
+            column = getattr(MovieModel, min_key.replace("min_", ""))
+            min_value, max_value = filter_data[min_key], filter_data[max_key]
+
+            if min_value is not None and max_value is not None:
+                expressions.append(column.between(min_value, max_value))
+
+            elif min_value is not None:
+                expressions.append(column >= min_value)
+
+            elif max_value is not None:
+                expressions.append(column <= max_value)
+
+        return expressions
 
     @staticmethod
     def get_filter_expressions(filter_data: dict) -> list:
