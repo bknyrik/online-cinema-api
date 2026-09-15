@@ -51,10 +51,9 @@ class MovieService(mixins.PaginationLimitOffsetMixin):
 
         for name, order in sort_data.items():
             if order is not None:
-                column = getattr(MovieModel, name.replace("sort_by_", ""))
+                column = getattr(MovieModel, name)
                 sort_columns.append(
-                    column if order == SortingOrderEnum.ASC
-                    else column.desc()
+                    column if order == SortingOrderEnum.ASC else column.desc()
                 )
 
         return sort_columns
