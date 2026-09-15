@@ -155,6 +155,7 @@ class MovieService(mixins.PaginationLimitOffsetMixin):
         db: AsyncSession,
         pagination_data: dict,
         filter_data: dict,
+        search_data: dict,
         sort_data: dict[str, SortingOrderEnum | None]
     ) -> dict:
         try:
@@ -172,6 +173,7 @@ class MovieService(mixins.PaginationLimitOffsetMixin):
                 )
 
             filter_expressions = self.get_filter_expressions(filter_data)
+            search_expressions = self.get_search_expressions(search_data)
             sort_columns = (
                 self.get_sort_columns(sort_data)
                 if any(sort_data.values()) else [MovieModel.id]
@@ -188,7 +190,7 @@ class MovieService(mixins.PaginationLimitOffsetMixin):
                     ],
                     offset=offset,
                     limit=limit,
-                    expressions=filter_expressions,
+                    expressions=filter_expressions + search_expressions,
                     order_by_columns=sort_columns
                 ),
             )

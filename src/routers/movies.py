@@ -32,6 +32,7 @@ async def get_movie_list(
         db=db,
         pagination_data=pagination_data,
         filter_data=filter_data,
+        search_data=search_data,
         sort_data=sort_data
     )
 
