@@ -108,6 +108,16 @@ class MovieService(mixins.PaginationLimitOffsetMixin):
         return expressions
 
     @staticmethod
+    def _get_single_id_expressions(
+        filter_data: dict
+    ) -> list[ColumnElement[bool]]:
+        return [
+            getattr(MovieModel, name) == filter_data[name]
+            for name, value in filter_data.items()
+            if name.endswith("_id") and value is not None
+        ]
+
+    @staticmethod
     def get_filter_expressions(filter_data: dict) -> list:
         def _get_min_max_expression(
             min_value: int | None,
