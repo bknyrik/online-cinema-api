@@ -124,8 +124,8 @@ class MovieService(mixins.PaginationLimitOffsetMixin):
         expressions = []
 
         for name, value in filter_data.items():
-            if isinstance(value, list):
-                column = getattr(MovieModel, name)
+            if name.endswith("_ids") and value is not None:
+                column = getattr(MovieModel, name.replace("_ids", ""))
                 child_model = column.prop.argument
 
                 expressions.append(column.any(child_model.id.in_(value)))
