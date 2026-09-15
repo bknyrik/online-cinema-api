@@ -70,11 +70,11 @@ class MovieService(mixins.PaginationLimitOffsetMixin):
                         getattr(MovieModel, name).icontains(value)
                     )
 
-                if isinstance(value, list):
-                    child_model = getattr(MovieModel, name).prop.argument
+                if name.endswith("_ids"):
+                    column = getattr(MovieModel, name.replace("_ids", ""))
+                    child_model = column.prop.argument
                     search_expressions.append(
-                        getattr(MovieModel, name)
-                        .any(child_model.id.in_(value))
+                        column.any(child_model.id.in_(value))
                     )
 
         return search_expressions
