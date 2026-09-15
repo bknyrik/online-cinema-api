@@ -169,11 +169,11 @@ class MovieService(mixins.PaginationLimitOffsetMixin):
                 pagination_data["per_page"]
             )
 
-            if pagination_data["page"] > total_pages:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="Page not found"
-                )
+            self.validate_page_not_found(
+                page=pagination_data["page"],
+                total_pages=total_pages,
+                total_items=total_movies
+            )
 
             filter_expressions = self.get_filter_expressions(filter_data)
             search_expressions = self.get_search_expressions(search_data)
