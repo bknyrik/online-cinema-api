@@ -9,7 +9,7 @@ class SortingOrderEnum(StrEnum):
     DESC = auto()
 
 
-async def movie_filter_parameters(
+async def movie_filter_params(
     genres_ids: list[int] = Query(default=None),
     min_year: int = Query(default=None),
     max_year: int = Query(default=None),
@@ -69,7 +69,7 @@ async def movie_sort_params(
     }
 
 
-MovieFilterDep = Annotated[dict, Depends(movie_filter_parameters)]
+MovieFilterDep = Annotated[dict, Depends(movie_filter_params)]
 MovieSearchDep = Annotated[dict, Depends(movie_search_params)]
 MovieSortDep = Annotated[
     dict[str, SortingOrderEnum | None],
