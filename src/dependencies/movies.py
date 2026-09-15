@@ -40,10 +40,10 @@ async def movie_search_params(
     search_by_directors_ids: list[int] = Query(default=None)
 ) -> dict:
     return {
-        "search_by_name": search_by_name,
-        "search_by_description": search_by_description,
-        "search_by_stars_ids": search_by_stars_ids,
-        "search_by_directors_ids": search_by_directors_ids
+        "name": search_by_name,
+        "description": search_by_description,
+        "stars_ids": search_by_stars_ids,
+        "directors_ids": search_by_directors_ids
     }
 
 
