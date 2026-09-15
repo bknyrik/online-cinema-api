@@ -132,71 +132,13 @@ class MovieService(mixins.PaginationLimitOffsetMixin):
 
         return expressions
 
-    @staticmethod
-    def get_filter_expressions(filter_data: dict) -> list:
-        def _get_min_max_expression(
-            min_value: int | None,
-            max_value: int | None,
-            column_name: str
-        ):
-            if min_value is not None and max_value is not None:
-                return (
-                    getattr(MovieModel, column_name)
-                    .between(
-                        min_value,
-                        max_value
-                    )
-                )
-
-            elif min_value is not None:
-                return getattr(MovieModel, column_name) >= min_value
-
-            elif max_value is not None:
-                return getattr(MovieModel, column_name) <= max_value
-
-            return None
-
-        def _get_ids_expression(
-            ids: list[int],
-            column_name: str,
-            column_type
-        ) -> ColumnElement[bool] | None:
-            if ids:
-                return (
-                    getattr(MovieModel, column_name)
-                    .any(column_type.id.in_(ids))
-                )
-
-            return None
-
-        min_max_columns = ("year", "time", "imdb", "price")
-        ids_columns_models = {
-            "genres": GenreModel
-        }
-
-        min_max_expressions = tuple(
-            _get_min_max_expression(
-                filter_data[f"min_{column_name}"],
-                filter_data[f"max_{column_name}"],
-                column_name
-            )
-            for column_name in min_max_columns
+    @classmethod
+    def get_filter_expressions(cls, filter_data: dict) -> list[ColumnElement[bool]]:
+        return (
+            cls._get_min_max_filter_expressions(filter_data) +
+            cls._get_single_id_expressions(filter_data) +
+            cls._get_multiple_ids_expressions(filter_data)
         )
-        ids_expressions = tuple(
-            _get_ids_expression(
-                filter_data[f"{column_name}_ids"],
-                column_name,
-                model
-            )
-            for column_name, model in ids_columns_models.items()
-        )
-
-        expressions = min_max_expressions + ids_expressions
-
-        return [
-            expression for expression in expressions
-            if expression is not None
-        ]
 
     async def get_movie_list(
         self,
