@@ -60,6 +60,31 @@ class MovieService(mixins.PaginationLimitOffsetMixin):
         return sort_columns
 
     @staticmethod
+    def get_search_expressions(filter_data: dict) -> list[ColumnElement[bool]]:
+        search_expressions = []
+
+        for name, value in filter_data.items():
+            column_name = name.replace("search_by_", "")
+
+            if value is not None:
+                if isinstance(value, str):
+                    search_expressions.append(
+                        getattr(MovieModel, column_name)
+                        .icontains(value)
+                    )
+
+                if isinstance(value, list):
+                    child_model = (
+                        getattr(MovieModel, column_name).prop.argument
+                    )
+                    search_expressions.append(
+                        getattr(MovieModel, column_name)
+                        .any(child_model.id.in_(value))
+                    )
+
+        return search_expressions
+
+    @staticmethod
     def get_filter_expressions(filter_data: dict) -> list:
         def _get_min_max_expression(
             min_value: int | None,
