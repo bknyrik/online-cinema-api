@@ -1,4 +1,3 @@
-import math
 from typing import Sequence
 
 from fastapi import HTTPException, status
@@ -10,9 +9,10 @@ from sqlalchemy.exc import SQLAlchemyError
 from src.database.models.movies import MovieModel, GenreModel
 from src.dependencies.movies import SortingOrderEnum
 from src.repositories import movies
+from src.services import mixins
 
 
-class MovieService:
+class MovieService(mixins.PaginationLimitOffsetMixin):
 
     def __init__(
         self,
@@ -133,15 +133,14 @@ class MovieService:
         sort_data: dict[str, SortingOrderEnum | None]
     ) -> dict:
         try:
-            page, per_page = (
-                pagination_data["page"],
+            limit, offset = self.get_limit_offset(pagination_data)
+            total_movies = await self.movie_repository.acount(db)
+            total_pages = self.get_total_pages(
+                total_movies,
                 pagination_data["per_page"]
             )
-            total_movies = await self.movie_repository.acount(db)
-            total_pages = math.ceil(total_movies / per_page)
-            offset = per_page * (page - 1)
 
-            if page > total_pages:
+            if pagination_data["page"] > total_pages:
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
                     detail="Page not found"
@@ -150,7 +149,7 @@ class MovieService:
             filter_expressions = self.get_filter_expressions(filter_data)
             sort_columns = (
                 self.get_sort_columns(sort_data)
-                if sort_data else [MovieModel.id]
+                if any(sort_data.values()) else [MovieModel.id]
             )
 
             movies_list = list(
@@ -163,7 +162,7 @@ class MovieService:
                         "certification"
                     ],
                     offset=offset,
-                    limit=per_page,
+                    limit=limit,
                     expressions=filter_expressions,
                     order_by_columns=sort_columns
                 ),
@@ -175,12 +174,12 @@ class MovieService:
             )
         else:
             prev = (
-                f"/api/movies/?per_page={per_page}&page={page - 1}"
-                if page > 1 else None
+                f"/api/movies/?per_page={pagination_data["per_page"]}&page={pagination_data["page"] - 1}"
+                if pagination_data["page"] > 1 else None
             )
             next_ = (
-                f"/api/movies/?per_page={per_page}&page={page + 1}"
-                if page < total_pages else None
+                f"/api/movies/?per_page={pagination_data["per_page"]}&page={pagination_data["page"] + 1}"
+                if pagination_data["page"] < total_pages else None
             )
             return {
                 "movies": movies_list,
