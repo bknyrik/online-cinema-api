@@ -30,7 +30,7 @@ class MovieService(mixins.PaginationLimitOffsetMixin):
         self.certification_repository = certification_repository
 
     @staticmethod
-    def check_all_ids_exist(
+    def validate_all_ids_exist(
         ids: list[int],
         items: Sequence,
         item_type: str
@@ -254,13 +254,13 @@ class MovieService(mixins.PaginationLimitOffsetMixin):
             directors_ids = data.pop("directors")
 
             genres = await self.genre_repository.aget_by_ids(db, genres_ids)
-            self.check_all_ids_exist(genres_ids, genres, "Genre")
+            self.validate_all_ids_exist(genres_ids, genres, "Genre")
 
             stars = await self.star_repository.aget_by_ids(db, stars_ids)
-            self.check_all_ids_exist(stars_ids, stars, "Star")
+            self.validate_all_ids_exist(stars_ids, stars, "Star")
 
             directors = await self.director_repository.aget_by_ids(db, directors_ids)
-            self.check_all_ids_exist(directors_ids, directors, "Director")
+            self.validate_all_ids_exist(directors_ids, directors, "Director")
 
             data["certification_id"] = data.pop("certification")
 
