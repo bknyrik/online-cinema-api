@@ -64,24 +64,16 @@ class MovieService(mixins.PaginationLimitOffsetMixin):
         search_expressions = []
 
         for name, value in filter_data.items():
-            column_name = (
-                name.replace("search_by_", "")
-                .replace("_ids", "")
-            )
-
             if value is not None:
                 if isinstance(value, str):
                     search_expressions.append(
-                        getattr(MovieModel, column_name)
-                        .icontains(value)
+                        getattr(MovieModel, name).icontains(value)
                     )
 
                 if isinstance(value, list):
-                    child_model = (
-                        getattr(MovieModel, column_name).prop.argument
-                    )
+                    child_model = getattr(MovieModel, name).prop.argument
                     search_expressions.append(
-                        getattr(MovieModel, column_name)
+                        getattr(MovieModel, name)
                         .any(child_model.id.in_(value))
                     )
 
