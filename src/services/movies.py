@@ -64,7 +64,10 @@ class MovieService(mixins.PaginationLimitOffsetMixin):
         search_expressions = []
 
         for name, value in filter_data.items():
-            column_name = name.replace("search_by_", "")
+            column_name = (
+                name.replace("search_by_", "")
+                .replace("_ids", "")
+            )
 
             if value is not None:
                 if isinstance(value, str):
