@@ -121,21 +121,68 @@ class MovieCreateRequestSchema(MovieDataRequestBaseSchema):
     ...
 
 class MovieUpdateRequestSchema(MovieDataRequestBaseSchema):
-    name: StrictStr | None = Field(min_length=3, default=None)
-    year: StrictInt | None = Field(ge=1, default=None)
-    time: StrictInt | None = Field(ge=1, default=None)
-    imdb: StrictFloat | None = Field(ge=1, le=10, default=None)
-    votes: StrictInt| None = Field(ge=1, default=None)
-    meta_score: StrictFloat | None = Field(ge=1, le=100, default=None)
-    gross: StrictFloat | None = Field(ge=1, default=None)
-    description: StrictStr | None = Field(min_length=10, default=None)
+    name: StrictStr | None = Field(
+        min_length=3,
+        default=None,
+        exclude_if=lambda value: value is None
+    )
+    year: StrictInt | None = Field(
+        ge=1,
+        default=None,
+        exclude_if=lambda value: value is None
+    )
+    time: StrictInt | None = Field(
+        ge=1,
+        default=None,
+        exclude_if=lambda value: value is None
+    )
+    imdb: StrictFloat | None = Field(
+        ge=1,
+        le=10,
+        default=None,
+        exclude_if=lambda value: value is None
+    )
+    votes: StrictInt| None = Field(
+        ge=1,
+        default=None,
+        exclude_if=lambda value: value is None
+    )
+    meta_score: StrictFloat | None = Field(
+        ge=1,
+        le=100,
+        default=None,
+        exclude_if=lambda value: value is None
+    )
+    gross: StrictFloat | None = Field(
+        ge=1,
+        default=None,
+        exclude_if=lambda value: value is None
+    )
+    description: StrictStr | None = Field(
+        min_length=10,
+        default=None,
+        exclude_if=lambda value: value is None
+    )
     price: Decimal | None = Field(
         ge=1,
         max_digits=10,
         decimal_places=2,
-        default=None
+        default=None,
+        exclude_if=lambda value: value is None
     )
-    certification: StrictInt | None = Field(default=None)
-    genres: list[StrictInt] | None = Field(default=None)
-    stars: list[StrictInt] | None = Field(default=None)
-    directors: list[StrictInt] | None = Field(default=None)
+    certification: StrictInt | None = Field(
+        default=None,
+        exclude_if=lambda value: value is None
+    )
+    genres: list[StrictInt] | None = Field(
+        default=None,
+        exclude_if=lambda value: value is None
+    )
+    stars: list[StrictInt] | None = Field(
+        default=None,
+        exclude_if=lambda value: value is None
+    )
+    directors: list[StrictInt] | None = Field(
+        default=None,
+        exclude_if=lambda value: value is None
+    )
