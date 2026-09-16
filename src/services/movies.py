@@ -320,9 +320,6 @@ class MovieService(mixins.PaginationLimitOffsetMixin):
                     "directors"
                 ]
             )
-            filtered_data = dict(
-                filter(lambda item: item[1] is not None, data.items())
-            )
 
             if not movie:
                 raise HTTPException(
@@ -330,17 +327,13 @@ class MovieService(mixins.PaginationLimitOffsetMixin):
                     detail=f"Movie with id {movie_id} not found"
                 )
 
-            if (
-                filtered_data.get("name")
-                and filtered_data.get("year")
-                and filtered_data.get("time")
-            ):
+            if data.get("name") and data.get("year") and data.get("time"):
                 another_movie = await self.movie_repository.aget_by(
                     db=db,
                     expressions=[
-                        MovieModel.name == filtered_data["name"],
-                        MovieModel.year == filtered_data["year"],
-                        MovieModel.time == filtered_data["time"]
+                        MovieModel.name == data["name"],
+                        MovieModel.year == data["year"],
+                        MovieModel.time == data["time"]
                     ]
                 )
 
@@ -358,7 +351,7 @@ class MovieService(mixins.PaginationLimitOffsetMixin):
             await self.movie_repository.aupdate(
                 db=db,
                 instance=movie,
-                data=filtered_data
+                data=data
             )
             await db.commit()
             return movie
