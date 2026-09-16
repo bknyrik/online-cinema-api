@@ -364,7 +364,7 @@ class MovieService(mixins.PaginationLimitOffsetMixin):
 
     async def delete_movie(self, db: AsyncSession, movie_id: int) -> None:
         try:
-            movie = await self.movie_repository.aget_by_id(
+            movie = await self.movie_repository.adelete_by_id(
                 db=db,
                 id_=movie_id
             )
@@ -375,7 +375,6 @@ class MovieService(mixins.PaginationLimitOffsetMixin):
                     detail=f"Movie with id {movie_id} not found"
                 )
 
-            await self.movie_repository.adelete(db, movie)
             await db.commit()
         except SQLAlchemyError:
             await db.rollback()
