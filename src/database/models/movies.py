@@ -18,7 +18,7 @@ from sqlalchemy.orm import relationship
 from src.database.models.base import Base
 
 
-MovieGenresModel = Table(
+MoviesGenresModel = Table(
     "movie_genres",
     Base.metadata,
     Column("movie_id", ForeignKey("movies.id"), primary_key=True),
@@ -47,7 +47,7 @@ class GenreModel(Base):
     name = Column(String(64), nullable=False, unique=True)
     movies = relationship(
         "MovieModel",
-        secondary=MovieGenresModel,
+        secondary=MoviesGenresModel,
         back_populates="genres"
     )
 
@@ -111,7 +111,7 @@ class MovieModel(Base):
     certification = relationship(CertificationModel, back_populates="movies")
     genres = relationship(
         GenreModel,
-        secondary=MovieGenresModel,
+        secondary=MoviesGenresModel,
         back_populates="movies"
     )
     stars = relationship(
