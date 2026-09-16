@@ -25,7 +25,7 @@ MoviesGenresModel = Table(
     Column("genre_id", ForeignKey("genres.id"), primary_key=True)
 )
 
-MovieStarsModel = Table(
+MoviesStarsModel = Table(
     "movie_stars",
     Base.metadata,
     Column("movie_id", ForeignKey("movies.id"), primary_key=True),
@@ -59,7 +59,7 @@ class StarModel(Base):
     name = Column(String(64), nullable=False, unique=True)
     movies = relationship(
         "MovieModel",
-        secondary=MovieStarsModel,
+        secondary=MoviesStarsModel,
         back_populates="stars"
     )
 
@@ -116,7 +116,7 @@ class MovieModel(Base):
     )
     stars = relationship(
         StarModel,
-        secondary=MovieStarsModel,
+        secondary=MoviesStarsModel,
         back_populates="movies"
     )
     directors = relationship(
