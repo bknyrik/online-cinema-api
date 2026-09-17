@@ -47,6 +47,10 @@ class MovieService(mixins.PaginationLimitOffsetMixin):
     def get_sort_columns(
         sort_data: dict[str, SortingOrderEnum | None]
     ) -> list[InstrumentedAttribute | UnaryExpression]:
+        sort_data = {
+            key.replace("sort_by_", ""): value
+            for key, value in sort_data.items()
+        }
         sort_columns = []
 
         for name, order in sort_data.items():
