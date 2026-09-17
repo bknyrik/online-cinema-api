@@ -59,10 +59,10 @@ class MovieService(mixins.PaginationLimitOffsetMixin):
         return sort_columns
 
     @staticmethod
-    def get_search_expressions(filter_data: dict) -> list[ColumnElement[bool]]:
+    def get_search_expressions(search_data: dict) -> list[ColumnElement[bool]]:
         search_data = {
             key.replace("search_by_", ""): value
-            for key, value in filter_data.items()
+            for key, value in search_data.items()
         }
 
         search_expressions = []
