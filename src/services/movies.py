@@ -133,6 +133,11 @@ class MovieService(mixins.PaginationLimitOffsetMixin):
 
     @classmethod
     def get_filter_expressions(cls, filter_data: dict) -> list[ColumnElement[bool]]:
+        filter_data = {
+            key.replace("filter_by_", ""): value
+            for key, value in filter_data.items()
+        }
+
         return (
             cls._get_min_max_filter_expressions(filter_data) +
             cls._get_single_id_expressions(filter_data) +
