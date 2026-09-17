@@ -29,10 +29,10 @@ class AsyncBaseRepository[T]:
         order_by_columns: list[ColumnElement[T]] | None = None,
         group_by_columns: list | None = None
     ) -> Sequence[T]:
-        stmt = select(
-            self._model_type if select_columns is None
-            else select_columns
-        )
+        if select_columns is not None:
+            stmt = select(*select_columns)
+        else:
+            stmt = select(self._model_type)
 
         if m2m_tables is not None:
             for table in m2m_tables:
