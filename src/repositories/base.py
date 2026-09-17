@@ -1,6 +1,6 @@
-from typing import Sequence
+from typing import Sequence, Literal
 
-from sqlalchemy import select, func, Table
+from sqlalchemy import select, func, Table, Row
 from sqlalchemy.sql.elements import ColumnElement
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -27,8 +27,9 @@ class AsyncBaseRepository[T]:
         join_relationships: list[str] | None = None,
         expressions: list[ColumnElement[bool]] | None = None,
         order_by_columns: list[ColumnElement[T]] | None = None,
-        group_by_columns: list | None = None
-    ) -> Sequence[T]:
+        group_by_columns: list | None = None,
+        result_type: Literal["scalar", "fetch"] = "scalar"
+    ) -> Sequence[T] | Sequence[Row[T]]:
         if select_columns is not None:
             stmt = select(*select_columns)
         else:
@@ -60,7 +61,12 @@ class AsyncBaseRepository[T]:
             stmt = stmt.offset(offset)
 
         result = await db.execute(stmt)
-        return result.unique().scalars().all()
+
+        return (
+            result.unique().scalars().all()
+            if result_type == "scalar"
+            else result.unique().fetchall()
+        )
 
     async def aget_by_ids(self, db: AsyncSession, ids: list[int]) -> Sequence[T]:
         result = await db.execute(
