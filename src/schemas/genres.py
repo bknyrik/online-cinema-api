@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, field_serializer
+from pydantic import BaseModel, ConfigDict
 
 
 class GenreDetailBaseSchema(BaseModel):
@@ -7,11 +7,7 @@ class GenreDetailBaseSchema(BaseModel):
 
 
 class GenreListItemSchema(GenreDetailBaseSchema):
-    movies: list
-
-    @field_serializer("movies", when_used="json")
-    def serialize_movies_into_count(self, movies: list) -> int:
-        return len(movies)
+    movies: int
 
 
 class GenreListResponseSchema(BaseModel):
