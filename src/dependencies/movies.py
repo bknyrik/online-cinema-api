@@ -22,16 +22,16 @@ async def movie_filter_params(
     filter_by_max_price: int = Query(default=None)
 ) -> dict:
     return {
-        "certification_id": filter_by_certification_id,
-        "genres_ids": filter_by_genres_ids,
-        "min_year": filter_by_min_year,
-        "max_year": filter_by_max_year,
-        "min_time": filter_by_min_time,
-        "max_time": filter_by_max_time,
-        "min_imdb": filter_by_min_imdb,
-        "max_imdb": filter_by_max_imdb,
-        "min_price": filter_by_min_price,
-        "max_price": filter_by_max_price
+        "filter_by_certification_id": filter_by_certification_id,
+        "filter_by_genres_ids": filter_by_genres_ids,
+        "filter_by_min_year": filter_by_min_year,
+        "filter_by_max_year": filter_by_max_year,
+        "filter_by_min_time": filter_by_min_time,
+        "filter_by_max_time": filter_by_max_time,
+        "filter_by_min_imdb": filter_by_min_imdb,
+        "filter_by_max_imdb": filter_by_max_imdb,
+        "filter_by_min_price": filter_by_min_price,
+        "filter_by_max_price": filter_by_max_price
     }
 
 
