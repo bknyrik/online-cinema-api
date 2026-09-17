@@ -33,7 +33,7 @@ async def movie_filter_params(
         "filter_by_min_price": filter_by_min_price,
         "filter_by_max_price": filter_by_max_price
     }
-search_by_
+
 
 async def movie_search_params(
     search_by_name: str = Query(default=None),
@@ -60,14 +60,14 @@ async def movie_sort_params(
     sort_by_price: SortingOrderEnum = Query(default=None)
 ) -> dict[str, SortingOrderEnum | None]:
     return {
-        "name": sort_by_name,
-        "year": sort_by_year,
-        "time": sort_by_time,
-        "imdb": sort_by_imdb,
-        "votes": sort_by_votes,
-        "meta_score": sort_by_meta_score,
-        "gross": sort_by_gross,
-        "price": sort_by_price
+        "sort_by_name": sort_by_name,
+        "sort_by_year": sort_by_year,
+        "sort_by_time": sort_by_time,
+        "sort_by_imdb": sort_by_imdb,
+        "sort_by_votes": sort_by_votes,
+        "sort_by_meta_score": sort_by_meta_score,
+        "sort_by_gross": sort_by_gross,
+        "sort_by_price": sort_by_price
     }
 
 
