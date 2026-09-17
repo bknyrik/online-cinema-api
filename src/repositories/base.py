@@ -1,6 +1,6 @@
 from typing import Sequence
 
-from sqlalchemy import select, func
+from sqlalchemy import select, func, Table
 from sqlalchemy.sql.elements import ColumnElement
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -21,6 +21,7 @@ class AsyncBaseRepository[T]:
         self,
         db: AsyncSession,
         select_columns: list | None = None,
+        m2m_tables: list[Table] | None = None,
         offset: int | None = None,
         limit: int | None = None,
         join_relationships: list[str] | None = None,
@@ -31,6 +32,10 @@ class AsyncBaseRepository[T]:
             self._model_type if select_columns is None
             else select_columns
         )
+
+        if m2m_tables is not None:
+            for table in m2m_tables:
+                stmt = stmt.join(table)
 
         if join_relationships:
             for relationship in join_relationships:
