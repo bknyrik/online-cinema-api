@@ -26,7 +26,8 @@ class AsyncBaseRepository[T]:
         limit: int | None = None,
         join_relationships: list[str] | None = None,
         expressions: list[ColumnElement[bool]] | None = None,
-        order_by_columns: list[ColumnElement[T]] | None = None
+        order_by_columns: list[ColumnElement[T]] | None = None,
+        group_by_columns: list | None = None
     ) -> Sequence[T]:
         stmt = select(
             self._model_type if select_columns is None
@@ -48,6 +49,9 @@ class AsyncBaseRepository[T]:
 
         if order_by_columns is not None:
             stmt = stmt.order_by(*order_by_columns)
+
+        if group_by_columns is not None:
+            stmt = stmt.group_by(*group_by_columns)
 
         if limit is not None:
             stmt = stmt.limit(limit)
