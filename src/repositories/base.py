@@ -97,7 +97,10 @@ class AsyncBaseRepository[T]:
 
 
     async def acreate(self, db: AsyncSession, data: dict) -> T:
-        instance = self._model_type(**data)
+        instance = self._model_type()
+
+        for name, value in data.items():
+            setattr(instance, name, value)
 
         db.add(instance)
         await db.flush()
