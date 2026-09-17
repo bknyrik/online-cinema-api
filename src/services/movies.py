@@ -293,6 +293,10 @@ class MovieService(mixins.PaginationLimitOffsetMixin):
                     detail=f"Certification with id {data['certification_id']} not found"
                 )
 
+            data["genres"] = genres
+            data["stars"] = stars
+            data["directors"] = directors
+
             created_movie = await self.movie_repository.acreate(
                 db=db,
                 data=data
@@ -308,10 +312,6 @@ class MovieService(mixins.PaginationLimitOffsetMixin):
                     "certification"
                 ]
             )
-
-            created_movie.genres = genres
-            created_movie.stars = stars
-            created_movie.directors = directors
 
             await db.commit()
             return created_movie
