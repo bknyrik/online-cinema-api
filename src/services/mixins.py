@@ -24,9 +24,19 @@ class PaginationLimitOffsetMixin:
         total_pages: int,
         query_params: dict
     ) -> tuple[str | None, str | None]:
-        prev_page = url + parse.urlencode(query_params) if page > 1 else None
+        query_params = {
+            key: value for key, value in query_params.items()
+            if value is not None
+        }
+
+        query_params["page"] = page - 1 if page > 1 else page
+        prev_page = (
+            f"{url}?{parse.urlencode(query_params)}" if page > 1 else None
+        )
+
+        query_params["page"] = page + 1
         next_page = (
-            url + parse.urlencode(query_params)
+            f"{url}?{parse.urlencode(query_params)}"
             if page < total_pages else None
         )
         return prev_page, next_page
