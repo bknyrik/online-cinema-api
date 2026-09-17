@@ -60,9 +60,14 @@ class MovieService(mixins.PaginationLimitOffsetMixin):
 
     @staticmethod
     def get_search_expressions(filter_data: dict) -> list[ColumnElement[bool]]:
+        search_data = {
+            key.replace("search_by_", ""): value
+            for key, value in filter_data.items()
+        }
+
         search_expressions = []
 
-        for name, value in filter_data.items():
+        for name, value in search_data.items():
             if value is not None:
                 if isinstance(value, str):
                     search_expressions.append(
