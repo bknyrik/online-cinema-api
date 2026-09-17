@@ -189,20 +189,25 @@ class MovieService(mixins.PaginationLimitOffsetMixin):
                 detail="An error occurred while getting list with movies"
             )
         else:
-            prev = (
-                f"/api/movies/?per_page={pagination_data["per_page"]}&page={pagination_data["page"] - 1}"
-                if pagination_data["page"] > 1 else None
-            )
-            next_ = (
-                f"/api/movies/?per_page={pagination_data["per_page"]}&page={pagination_data["page"] + 1}"
-                if pagination_data["page"] < total_pages else None
+            prev_page, next_page = (
+                self.get_prev_next_urls_pages(
+                    "/api/movies/",
+                    page=pagination_data["page"],
+                    total_pages=total_pages,
+                    query_params={
+                        **pagination_data,
+                        **filter_data,
+                        **search_data,
+                        **sort_data
+                    }
+                )
             )
             return {
                 "movies": movies_list,
                 "total_movies": total_movies,
                 "total_pages": total_pages,
-                "prev": prev,
-                "next": next_
+                "prev": prev_page,
+                "next": next_page
             }
 
     async def get_detail_movie(self, db: AsyncSession, movie_id: int) -> MovieModel:
