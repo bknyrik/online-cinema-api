@@ -27,3 +27,9 @@ class GenreDetailMoviesSchema(BaseModel):
     time: int
     imdb: int
     description: str
+
+
+class GenreDetailResponseSchema(GenreDetailBaseSchema):
+    movies: list[GenreDetailMoviesSchema]
+
+    model_config = ConfigDict(from_attributes=True)
