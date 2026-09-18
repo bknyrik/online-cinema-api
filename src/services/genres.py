@@ -31,6 +31,7 @@ class GenreService(PaginationLimitOffsetMixin):
                     limit=limit,
                 )
             )
+            count_movies = await self.genre_repository.acount_movies(db)
         except SQLAlchemyError:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -43,6 +44,10 @@ class GenreService(PaginationLimitOffsetMixin):
                 total_pages=total_pages,
                 query_params=pagination_data
             )
+            genres = [
+                {"id": genre.id, "name": genre.name, "movies": count}
+                for genre, count in zip(genres, count_movies)
+            ]
             return {
                 "genres": genres,
                 "total_genres": total_genres,
