@@ -1,5 +1,3 @@
-import math
-
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
@@ -31,7 +29,6 @@ class GenreService(PaginationLimitOffsetMixin):
                     db=db,
                     offset=offset,
                     limit=limit,
-                    join_relationships=["movies"]
                 )
             )
         except SQLAlchemyError:
