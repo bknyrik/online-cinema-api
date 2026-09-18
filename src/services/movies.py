@@ -179,7 +179,8 @@ class MovieService(mixins.PaginationLimitOffsetMixin):
             search_expressions = self.get_search_expressions(search_data)
             sort_columns = (
                 self.get_sort_columns(sort_data)
-                if any(sort_data.values()) else [MovieModel.id]
+                if any(value is not None for value in sort_data.values())
+                else [MovieModel.id]
             )
 
             movies_list = list(
