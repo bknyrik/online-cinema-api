@@ -29,7 +29,7 @@ MoviesStarsModel = Table(
     "movie_stars",
     Base.metadata,
     Column("movie_id", ForeignKey("movies.id"), primary_key=True),
-    Column("genre_id", ForeignKey("stars.id"), primary_key=True)
+    Column("star_id", ForeignKey("stars.id"), primary_key=True)
 )
 
 MoviesDirectorsModel = Table(
