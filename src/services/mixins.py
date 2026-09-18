@@ -67,3 +67,20 @@ class ModelItemsMixin[T]:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"{item_type} with id {id_} not found"
             )
+
+    @staticmethod
+    def validate_item_by_attrs_exists(
+        item: T | None,
+        attrs: dict,
+        item_type: str
+    ) -> None:
+        if item:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=(
+                    f"{item_type} with " +
+                    ", ".join(
+                        f"{key} '{value}'" for key, value in attrs.items()
+                    ) + " exists"
+                )
+            )
