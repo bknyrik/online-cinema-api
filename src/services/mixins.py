@@ -86,6 +86,24 @@ class ModelItemsMixin[T]:
             )
 
     @staticmethod
+    def validate_item_by_attrs_with_another_item_exists(
+        item: T | None,
+        another_item: T | None,
+        attrs: dict,
+        item_type: str
+    ) -> None:
+        if another_item and another_item != item:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=(
+                    f"{item_type} with " +
+                    ", ".join(
+                        f"{key} '{value}'" for key, value in attrs.items()
+                    ) + " exists"
+                )
+            )
+
+    @staticmethod
     def validate_items_by_ids_not_found(
         items: list,
         ids: list[int],
