@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from pydantic.types import StrictStr
 
 
@@ -37,4 +37,4 @@ class GenreDetailResponseSchema(GenreDetailBaseSchema):
 
 
 class GenreCreateUpdateRequestSchema(BaseModel):
-    name: StrictStr
+    name: StrictStr = Field(max_length=6)
