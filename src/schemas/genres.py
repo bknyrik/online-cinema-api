@@ -37,4 +37,4 @@ class GenreDetailResponseSchema(GenreDetailBaseSchema):
 
 
 class GenreCreateUpdateRequestSchema(BaseModel):
-    name: StrictStr = Field(max_length=6)
+    name: StrictStr = Field(min_length=6)
