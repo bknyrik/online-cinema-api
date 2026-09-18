@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.dependencies.database import get_db
@@ -34,6 +34,18 @@ async def get_genre_detail(
     genre_service: GenreService = Depends(get_genre_service)
 ) -> GenreModel:
     return await genre_service.get_genre_detail(
+        db=db,
+        genre_id=genre_id
+    )
+
+
+@router.delete("/{genre_id}/", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_genre(
+    genre_id: int,
+    db: AsyncSession = Depends(get_db),
+    genre_service: GenreService = Depends(get_genre_service)
+) -> None:
+    return await genre_service.delete_genre(
         db=db,
         genre_id=genre_id
     )
