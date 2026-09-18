@@ -109,8 +109,10 @@ class GenreService(PaginationLimitOffsetMixin):
                 db=db,
                 data=data
             )
+            await db.commit()
             return created_genre
         except SQLAlchemyError:
+            await db.rollback()
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while genre creation"
