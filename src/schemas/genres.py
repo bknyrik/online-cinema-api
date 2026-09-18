@@ -25,7 +25,7 @@ class GenreDetailMoviesSchema(BaseModel):
     name: str
     year: int
     time: int
-    imdb: int
+    imdb: float
     description: str
 
 
