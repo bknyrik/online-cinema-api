@@ -39,7 +39,7 @@ class AsyncBaseRepository[T]:
             for params in join_params:
                 stmt = stmt.join(**params)
 
-        if join_relationships:
+        if join_relationships is not None:
             for relationship in join_relationships:
                 stmt = stmt.options(
                     joinedload(getattr(self._model_type, relationship))
