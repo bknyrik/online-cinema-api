@@ -88,6 +88,34 @@ class GenreService(PaginationLimitOffsetMixin):
                 detail="An error occurred while getting the genre"
             )
 
+    async def create_genre(
+        self,
+        db: AsyncSession,
+        data: dict,
+    ) -> GenreModel:
+        try:
+            genre = await self.genre_repository.aget_by(
+                db=db,
+                expressions=[GenreModel.name == data["name"]]
+            )
+
+            if genre:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Genre with name {repr(data["name"])} exists"
+                )
+
+            created_genre = await self.genre_repository.acreate(
+                db=db,
+                data=data
+            )
+            return created_genre
+        except SQLAlchemyError:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while genre creation"
+            )
+
     async def delete_genre(
         self,
         db: AsyncSession,
