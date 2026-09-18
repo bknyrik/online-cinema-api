@@ -52,3 +52,18 @@ class PaginationLimitOffsetMixin:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Page not found"
             )
+
+
+class ModelItemsMixin[T]:
+
+    @staticmethod
+    def validate_item_by_id_not_found(
+        item: T | None,
+        id_: int,
+        item_type: str
+    ) -> None:
+        if not item:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"{item_type} with id {id_} not found"
+            )
