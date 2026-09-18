@@ -37,20 +37,16 @@ class GenreService(PaginationLimitOffsetMixin):
                 detail="An error occurred while getting list with genres"
             )
         else:
-            page, per_page = (
-                pagination_data["page"],
-                pagination_data["per_page"]
+            prev_page, next_page = self.get_prev_next_urls_pages(
+                "/api/genres/",
+                page=pagination_data["page"],
+                total_pages=total_pages,
+                query_params=pagination_data
             )
             return {
                 "genres": genres,
                 "total_genres": total_genres,
                 "total_pages": total_pages,
-                "prev": (
-                    f"/api/genres/?per_page={per_page}&page={page - 1}"
-                    if page > 1 else None
-                ),
-                "next": (
-                    f"/api/genres/?per_page={per_page}&page={page + 1}"
-                    if page < total_pages else None
-                )
+                "prev": prev_page,
+                "next": next_page
             }
