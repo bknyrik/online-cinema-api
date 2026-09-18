@@ -73,7 +73,4 @@ async def movie_sort_params(
 
 MovieFilterDep = Annotated[dict, Depends(movie_filter_params)]
 MovieSearchDep = Annotated[dict, Depends(movie_search_params)]
-MovieSortDep = Annotated[
-    dict[str, SortingOrderEnum | None],
-    Depends(movie_sort_params)
-]
+MovieSortDep = Annotated[dict, Depends(movie_sort_params)]
