@@ -24,6 +24,12 @@ class GenreService(PaginationLimitOffsetMixin):
             )
             limit, offset = self.get_limit_offset(pagination_data)
 
+            self.validate_page_not_found(
+                page=pagination_data["page"],
+                total_pages=total_pages,
+                total_items=total_genres
+            )
+
             genres = list(
                 await self.genre_repository.aget_all(
                     db=db,
