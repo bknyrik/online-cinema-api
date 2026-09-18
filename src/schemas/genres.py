@@ -1,4 +1,5 @@
 from pydantic import BaseModel, ConfigDict
+from pydantic.types import StrictStr
 
 
 class GenreDetailBaseSchema(BaseModel):
@@ -33,3 +34,7 @@ class GenreDetailResponseSchema(GenreDetailBaseSchema):
     movies: list[GenreDetailMoviesSchema]
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class GenreCreateUpdateRequestSchema(BaseModel):
+    name: StrictStr
