@@ -18,3 +18,12 @@ class GenreListResponseSchema(BaseModel):
     next: str | None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class GenreDetailMoviesSchema(BaseModel):
+    id: int
+    name: str
+    year: int
+    time: int
+    imdb: int
+    description: str
