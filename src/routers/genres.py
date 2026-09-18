@@ -7,7 +7,9 @@ from src.dependencies.services import get_genre_service
 from src.dependencies.pagination import PaginationDep
 from src.schemas.genres import (
     GenreListResponseSchema,
-    GenreDetailResponseSchema
+    GenreDetailResponseSchema,
+    GenreCreateUpdateRequestSchema,
+    GenreDetailBaseSchema
 )
 from src.database.models.movies import GenreModel
 
@@ -36,6 +38,22 @@ async def get_genre_detail(
     return await genre_service.get_genre_detail(
         db=db,
         genre_id=genre_id
+    )
+
+
+@router.post(
+    "/",
+    status_code=status.HTTP_201_CREATED,
+    response_model=GenreDetailBaseSchema
+)
+async def create_genre(
+    data: GenreCreateUpdateRequestSchema,
+    db: AsyncSession = Depends(get_db),
+    genre_service: GenreService = Depends(get_genre_service)
+) -> GenreModel:
+    return await genre_service.create_genre(
+        db=db,
+        data=data.model_dump()
     )
 
 
