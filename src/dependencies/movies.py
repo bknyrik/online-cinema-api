@@ -58,7 +58,7 @@ async def movie_sort_params(
     sort_by_meta_score: SortingOrderEnum = Query(default=None),
     sort_by_gross: SortingOrderEnum = Query(default=None),
     sort_by_price: SortingOrderEnum = Query(default=None)
-) -> dict[str, SortingOrderEnum | None]:
+) -> dict:
     return {
         "sort_by_name": sort_by_name,
         "sort_by_year": sort_by_year,
