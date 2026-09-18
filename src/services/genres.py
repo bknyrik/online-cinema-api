@@ -4,6 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from src.repositories.movies import GenreRepository
 from src.services.mixins import PaginationLimitOffsetMixin
+from src.database.models.movies import GenreModel
 
 
 class GenreService(PaginationLimitOffsetMixin):
@@ -61,3 +62,28 @@ class GenreService(PaginationLimitOffsetMixin):
                 "prev": prev_page,
                 "next": next_page
             }
+
+    async def get_genre_detail(
+        self,
+        db: AsyncSession,
+        genre_id: int
+    ) -> GenreModel:
+        try:
+            genre = await self.genre_repository.aget_by_id(
+                db=db,
+                id_=genre_id,
+                join_relationships=["movies"]
+            )
+
+            if not genre:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Genre with id {genre_id} not found"
+                )
+
+            return genre
+        except SQLAlchemyError:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while getting the genre"
+            )
