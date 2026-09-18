@@ -57,6 +57,23 @@ async def create_genre(
     )
 
 
+@router.put(
+    "/{genre_id}/",
+    response_model=GenreDetailBaseSchema
+)
+async def update_genre(
+    genre_id: int,
+    data: GenreCreateUpdateRequestSchema,
+    db: AsyncSession = Depends(get_db),
+    genre_service: GenreService = Depends(get_genre_service)
+) -> GenreModel:
+    return await genre_service.update_genre(
+        db=db,
+        genre_id=genre_id,
+        data=data.model_dump()
+    )
+
+
 @router.delete("/{genre_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_genre(
     genre_id: int,
