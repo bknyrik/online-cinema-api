@@ -21,7 +21,7 @@ class AsyncBaseRepository[T]:
         self,
         db: AsyncSession,
         select_columns: list | None = None,
-        join_params: list[Table] | None = None,
+        join_params: list[dict] | None = None,
         offset: int | None = None,
         limit: int | None = None,
         join_relationships: list[str] | None = None,
@@ -36,8 +36,8 @@ class AsyncBaseRepository[T]:
             stmt = select(self._model_type)
 
         if join_params is not None:
-            for table in join_params:
-                stmt = stmt.join(table, isouter=True)
+            for params in join_params:
+                stmt = stmt.join(**params)
 
         if join_relationships:
             for relationship in join_relationships:
