@@ -21,7 +21,7 @@ class AsyncBaseRepository[T]:
         self,
         db: AsyncSession,
         select_columns: list | None = None,
-        m2m_tables: list[Table] | None = None,
+        join_params: list[Table] | None = None,
         offset: int | None = None,
         limit: int | None = None,
         join_relationships: list[str] | None = None,
@@ -35,9 +35,9 @@ class AsyncBaseRepository[T]:
         else:
             stmt = select(self._model_type)
 
-        if m2m_tables is not None:
-            for table in m2m_tables:
-                stmt = stmt.join(table)
+        if join_params is not None:
+            for table in join_params:
+                stmt = stmt.join(table, isouter=True)
 
         if join_relationships:
             for relationship in join_relationships:
