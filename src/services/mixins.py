@@ -84,3 +84,16 @@ class ModelItemsMixin[T]:
                     ) + " exists"
                 )
             )
+
+    @staticmethod
+    def validate_items_by_ids_not_found(
+        items: list,
+        ids: list[int],
+        item_type: str
+    ) -> None:
+        for id_ in ids:
+            if not all(item.id != id_ for item in items):
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"{item_type} with id {id_} not found"
+                )
