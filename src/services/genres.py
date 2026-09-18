@@ -87,3 +87,28 @@ class GenreService(PaginationLimitOffsetMixin):
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while getting the genre"
             )
+
+    async def delete_genre(
+        self,
+        db: AsyncSession,
+        genre_id: int
+    ) -> None:
+        try:
+            genre = await self.genre_repository.adelete_by_id(
+                db=db,
+                id_=genre_id
+            )
+
+            if not genre:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Genre with id {genre_id} not found"
+                )
+
+            await db.commit()
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while genre deletion"
+            )
