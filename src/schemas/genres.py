@@ -41,11 +41,3 @@ class GenreDataRequestSchema(BaseModel):
 
 class GenreDataResponseSchema(GenreBaseSchema):
     ...
-
-
-class GenreCreateRequestSchema(GenreDataRequestSchema):
-    ...
-
-
-class GenreUpdateRequestSchema(GenreDataRequestSchema):
-    ...
