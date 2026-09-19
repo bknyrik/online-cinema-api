@@ -31,7 +31,7 @@ async def get_certification_list(
 
 @router.get(
     "/{certification_id}/",
-    response_model=certifications.CertificationDetailResponseSchema
+    response_model=certifications.CertificationBaseSchema
 )
 async def get_certification_detail(
     certification_id: int,
