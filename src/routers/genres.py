@@ -82,7 +82,8 @@ async def update_genre(
 async def delete_genre(
     genre_id: int,
     db: AsyncSession = Depends(get_db),
-    genre_service: GenreService = Depends(get_genre_service)
+    genre_service: GenreService = Depends(get_genre_service),
+    current_user: UserModel = Depends(get_current_moderator_or_admin)
 ) -> None:
     return await genre_service.delete_genre(
         db=db,
