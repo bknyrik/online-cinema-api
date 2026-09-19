@@ -35,5 +35,5 @@ class GenreDetailResponseSchema(GenreBaseSchema):
     model_config = ConfigDict(from_attributes=True)
 
 
-class GenreCreateUpdateRequestSchema(BaseModel):
+class GenreDataRequestSchema(BaseModel):
     name: str = Field(min_length=5, strict=True)

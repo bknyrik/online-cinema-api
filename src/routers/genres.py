@@ -9,7 +9,7 @@ from src.dependencies.pagination import PaginationDep
 from src.schemas.genres import (
     GenreListResponseSchema,
     GenreDetailResponseSchema,
-    GenreCreateUpdateRequestSchema,
+    GenreDataRequestSchema,
     GenreBaseSchema
 )
 from src.database.models.movies import GenreModel
@@ -49,7 +49,7 @@ async def get_genre_detail(
     response_model=GenreBaseSchema
 )
 async def create_genre(
-    data: GenreCreateUpdateRequestSchema,
+    data: GenreDataRequestSchema,
     db: AsyncSession = Depends(get_db),
     genre_service: GenreService = Depends(get_genre_service),
     current_user: UserModel = Depends(get_current_moderator_or_admin)
@@ -66,7 +66,7 @@ async def create_genre(
 )
 async def update_genre(
     genre_id: int,
-    data: GenreCreateUpdateRequestSchema,
+    data: GenreDataRequestSchema,
     db: AsyncSession = Depends(get_db),
     genre_service: GenreService = Depends(get_genre_service),
     current_user: UserModel = Depends(get_current_moderator_or_admin)
