@@ -33,5 +33,6 @@ app.include_router(
 )
 app.include_router(
     certifications.router,
-    prefix=f"{api_prefix}/certifications"
+    prefix=f"{api_prefix}/certifications",
+    tags=["certifications"]
 )
