@@ -60,3 +60,23 @@ class StarService(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while getting list with stars"
             )
+
+    async def get_star_detail(
+        self,
+        db: AsyncSession,
+        star_id: int
+    ) -> StarModel:
+        try:
+            star = await self.star_repository.aget_by_id(
+                db=db,
+                id_=star_id
+            )
+
+            self.validate_item_by_id_not_found(star, star_id, "Star")
+
+            return star
+        except SQLAlchemyError:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while getting the star"
+            )
