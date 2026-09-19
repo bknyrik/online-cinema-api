@@ -31,7 +31,7 @@ async def get_certification_list(
 
 @router.get(
     "/{certification_id}/",
-    response_model=certifications.CertificationDetailBaseSchema
+    response_model=certifications.CertificationBaseSchema
 )
 async def get_certification_detail(
     certification_id: int,
@@ -47,7 +47,7 @@ async def get_certification_detail(
 @router.post(
     "/",
     status_code=status.HTTP_201_CREATED,
-    response_model=certifications.CertificationDetailBaseSchema
+    response_model=certifications.CertificationBaseSchema
 )
 async def create_certification(
     data: certifications.CertificationDataRequestSchema,
@@ -63,7 +63,7 @@ async def create_certification(
 
 @router.put(
     "/{certification_id}/",
-    response_model=certifications.CertificationDetailBaseSchema
+    response_model=certifications.CertificationBaseSchema
 )
 async def update_certification(
     certification_id: int,

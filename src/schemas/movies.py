@@ -15,7 +15,7 @@ from pydantic.types import (
 )
 
 from src.schemas.genres import GenreDetailBaseSchema
-from src.schemas.certifications import CertificationDetailBaseSchema
+from src.schemas.certifications import CertificationBaseSchema
 
 
 class StarDetailBaseSchema(BaseModel):
@@ -43,7 +43,7 @@ class MovieDetailBaseSchema(BaseModel):
 
 
 class MovieDetailItemSchema(MovieDetailBaseSchema):
-    certification: CertificationDetailBaseSchema
+    certification: CertificationBaseSchema
     genres: list[GenreDetailBaseSchema]
     stars: list[StarDetailBaseSchema]
     directors: list[DirectorDetailBaseSchema]
@@ -51,7 +51,7 @@ class MovieDetailItemSchema(MovieDetailBaseSchema):
     @field_serializer("certification", when_used="json")
     def serialize_into_str_name(
         self,
-        item: CertificationDetailBaseSchema
+        item: CertificationBaseSchema
     ) -> str:
         return item.name
 
@@ -81,7 +81,7 @@ class MovieListResponseSchema(BaseModel):
 
 
 class MovieDetailResponseSchema(MovieDetailBaseSchema):
-    certification: CertificationDetailBaseSchema
+    certification: CertificationBaseSchema
     genres: list[GenreDetailBaseSchema]
     stars: list[StarDetailBaseSchema]
     directors: list[DirectorDetailBaseSchema]
