@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 
 from src.services import mixins
+from src.database.models.movies import CertificationModel
 from src.repositories.movies import CertificationRepository
 
 
@@ -63,4 +64,28 @@ class CertificationService(
                     "An error occurred while getting"
                     "list with certifications"
                 )
+            )
+
+    async def get_certification_detail(
+        self,
+        db: AsyncSession,
+        certification_id: int
+    ) -> CertificationModel:
+        try:
+            certification = self.certification_repository.aget_by_id(
+                db=db,
+                id_=certification_id
+            )
+
+            self.validate_item_by_id_not_found(
+                item=certification,
+                id_=certification_id,
+                item_type="Certification"
+            )
+
+            return certification
+        except SQLAlchemyError:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while getting the certification"
             )
