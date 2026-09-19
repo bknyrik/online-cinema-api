@@ -3,11 +3,17 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 
 from src.repositories.movies import GenreRepository
-from src.services.mixins import PaginationLimitOffsetMixin
+from src.services.mixins import (
+    PaginationLimitOffsetMixin,
+    ModelItemsMixin
+)
 from src.database.models.movies import GenreModel
 
 
-class GenreService(PaginationLimitOffsetMixin):
+class GenreService(
+    ModelItemsMixin,
+    PaginationLimitOffsetMixin
+):
 
     def __init__(self, genre_repository: GenreRepository) -> None:
         self.genre_repository = genre_repository
