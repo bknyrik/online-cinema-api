@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.dependencies.database import get_db
+from src.dependencies.authentication import get_current_moderator_or_admin
 from src.services.genres import GenreService
 from src.dependencies.services import get_genre_service
 from src.dependencies.pagination import PaginationDep
@@ -12,6 +13,7 @@ from src.schemas.genres import (
     GenreDetailBaseSchema
 )
 from src.database.models.movies import GenreModel
+from src.database.models.accounts import UserModel
 
 
 router = APIRouter()
@@ -49,7 +51,8 @@ async def get_genre_detail(
 async def create_genre(
     data: GenreCreateUpdateRequestSchema,
     db: AsyncSession = Depends(get_db),
-    genre_service: GenreService = Depends(get_genre_service)
+    genre_service: GenreService = Depends(get_genre_service),
+    current_user: UserModel = Depends(get_current_moderator_or_admin)
 ) -> GenreModel:
     return await genre_service.create_genre(
         db=db,
