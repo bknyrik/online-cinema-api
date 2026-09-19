@@ -2,12 +2,12 @@ from pydantic import BaseModel, ConfigDict, Field
 from pydantic.types import StrictStr
 
 
-class GenreDetailBaseSchema(BaseModel):
+class GenreBaseSchema(BaseModel):
     id: int
     name: str
 
 
-class GenreListItemSchema(GenreDetailBaseSchema):
+class GenreListItemSchema(GenreBaseSchema):
     movies: int
 
 
@@ -30,7 +30,7 @@ class GenreDetailMoviesSchema(BaseModel):
     description: str
 
 
-class GenreDetailResponseSchema(GenreDetailBaseSchema):
+class GenreDetailResponseSchema(GenreBaseSchema):
     movies: list[GenreDetailMoviesSchema]
 
     model_config = ConfigDict(from_attributes=True)

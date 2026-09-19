@@ -10,7 +10,7 @@ from src.schemas.genres import (
     GenreListResponseSchema,
     GenreDetailResponseSchema,
     GenreCreateUpdateRequestSchema,
-    GenreDetailBaseSchema
+    GenreBaseSchema
 )
 from src.database.models.movies import GenreModel
 from src.database.models.accounts import UserModel
@@ -46,7 +46,7 @@ async def get_genre_detail(
 @router.post(
     "/",
     status_code=status.HTTP_201_CREATED,
-    response_model=GenreDetailBaseSchema
+    response_model=GenreBaseSchema
 )
 async def create_genre(
     data: GenreCreateUpdateRequestSchema,
@@ -62,7 +62,7 @@ async def create_genre(
 
 @router.put(
     "/{genre_id}/",
-    response_model=GenreDetailBaseSchema
+    response_model=GenreBaseSchema
 )
 async def update_genre(
     genre_id: int,

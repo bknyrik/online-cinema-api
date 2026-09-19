@@ -14,7 +14,7 @@ from pydantic.types import (
     StrictStr
 )
 
-from src.schemas.genres import GenreDetailBaseSchema
+from src.schemas.genres import GenreBaseSchema
 from src.schemas.certifications import CertificationBaseSchema
 
 
@@ -44,7 +44,7 @@ class MovieDetailBaseSchema(BaseModel):
 
 class MovieDetailItemSchema(MovieDetailBaseSchema):
     certification: CertificationBaseSchema
-    genres: list[GenreDetailBaseSchema]
+    genres: list[GenreBaseSchema]
     stars: list[StarDetailBaseSchema]
     directors: list[DirectorDetailBaseSchema]
 
@@ -64,10 +64,10 @@ class MovieDetailItemSchema(MovieDetailBaseSchema):
     def serialize_into_str_names(
         self,
         items: list[
-            GenreDetailBaseSchema
+            GenreBaseSchema
             | StarDetailBaseSchema
             | DirectorDetailBaseSchema
-        ]
+            ]
     ) -> list[str]:
         return [item.name for item in items]
 
@@ -82,7 +82,7 @@ class MovieListResponseSchema(BaseModel):
 
 class MovieDetailResponseSchema(MovieDetailBaseSchema):
     certification: CertificationBaseSchema
-    genres: list[GenreDetailBaseSchema]
+    genres: list[GenreBaseSchema]
     stars: list[StarDetailBaseSchema]
     directors: list[DirectorDetailBaseSchema]
 
