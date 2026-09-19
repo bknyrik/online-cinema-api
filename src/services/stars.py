@@ -111,3 +111,43 @@ class StarService(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while star creation"
             )
+
+    async def update_star(
+        self,
+        db: AsyncSession,
+        data: dict,
+        star_id: int
+    ) -> StarModel:
+        try:
+            star = await self.star_repository.aget_by_id(
+                db=db,
+                id_=star_id
+            )
+
+            self.validate_item_by_id_not_found(
+                item=star,
+                id_=star_id,
+                item_type="Star"
+            )
+
+            another_star = await self.star_repository.aget_by(
+                db=db,
+                expressions=[StarModel.name == data["name"]]
+            )
+
+            self.validate_item_by_attrs_with_another_item_exists(
+                item=star,
+                another_item=another_star,
+                attrs=data,
+                item_type="Star"
+            )
+
+            await self.star_repository.aupdate(db, star, data)
+            await db.commit()
+            return star
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while star updating"
+            )
