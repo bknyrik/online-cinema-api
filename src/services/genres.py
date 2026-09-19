@@ -168,11 +168,7 @@ class GenreService(
                 id_=genre_id
             )
 
-            if not genre:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail=f"Genre with id {genre_id} not found"
-                )
+            self.validate_item_by_id_not_found(genre, genre_id, "Genre")
 
             await db.commit()
         except SQLAlchemyError:
