@@ -80,3 +80,34 @@ class StarService(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while getting the star"
             )
+
+    async def create_star(
+        self,
+        db: AsyncSession,
+        data: dict
+    ) -> StarModel:
+        try:
+            star = await self.star_repository.aget_by(
+                db=db,
+                expressions=[StarModel.name == data["name"]]
+            )
+
+            self.validate_item_by_attrs_exists(
+                item=star,
+                attrs=data,
+                item_type="Star"
+            )
+
+            star = await self.star_repository.acreate(
+                db=db,
+                data=data
+            )
+
+            await db.commit()
+            return star
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while star creation"
+            )
