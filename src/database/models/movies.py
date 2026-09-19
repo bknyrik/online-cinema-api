@@ -140,3 +140,10 @@ class MovieModel(Base):
     __table_args__ = (
         UniqueConstraint("name", "year", "time", name="name_year_time_unique"),
     )
+
+    def __eq__(self, other: "MovieModel") -> bool:
+        return (
+            self.name == other.name
+            and self.year == other.year
+            and self.time == other.time
+        )
