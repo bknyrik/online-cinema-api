@@ -6,12 +6,7 @@ from src.dependencies.authentication import get_current_moderator_or_admin
 from src.services.genres import GenreService
 from src.dependencies.services import get_genre_service
 from src.dependencies.pagination import PaginationDep
-from src.schemas.genres import (
-    GenreListResponseSchema,
-    GenreDetailResponseSchema,
-    GenreDataRequestSchema,
-    GenreBaseSchema
-)
+from src.schemas import genres as genres_schemas
 from src.database.models.movies import GenreModel
 from src.database.models.accounts import UserModel
 
@@ -19,7 +14,10 @@ from src.database.models.accounts import UserModel
 router = APIRouter()
 
 
-@router.get("/", response_model=GenreListResponseSchema)
+@router.get(
+    "/",
+    response_model=genres_schemas.GenreListResponseSchema
+)
 async def get_genre_list(
     pagination_data: PaginationDep,
     db: AsyncSession = Depends(get_db),
@@ -31,7 +29,10 @@ async def get_genre_list(
     )
 
 
-@router.get("/{genre_id}/", response_model=GenreDetailResponseSchema)
+@router.get(
+    "/{genre_id}/",
+    response_model=genres_schemas.GenreDetailResponseSchema
+)
 async def get_genre_detail(
     genre_id: int,
     db: AsyncSession = Depends(get_db),
@@ -46,10 +47,10 @@ async def get_genre_detail(
 @router.post(
     "/",
     status_code=status.HTTP_201_CREATED,
-    response_model=GenreBaseSchema
+    response_model=genres_schemas.GenreBaseSchema
 )
 async def create_genre(
-    data: GenreDataRequestSchema,
+    data: genres_schemas.GenreDataRequestSchema,
     db: AsyncSession = Depends(get_db),
     genre_service: GenreService = Depends(get_genre_service),
     current_user: UserModel = Depends(get_current_moderator_or_admin)
@@ -62,11 +63,11 @@ async def create_genre(
 
 @router.put(
     "/{genre_id}/",
-    response_model=GenreBaseSchema
+    response_model=genres_schemas.GenreBaseSchema
 )
 async def update_genre(
     genre_id: int,
-    data: GenreDataRequestSchema,
+    data: genres_schemas.GenreDataRequestSchema,
     db: AsyncSession = Depends(get_db),
     genre_service: GenreService = Depends(get_genre_service),
     current_user: UserModel = Depends(get_current_moderator_or_admin)
