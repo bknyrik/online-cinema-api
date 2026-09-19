@@ -85,7 +85,7 @@ async def update_certification(
 )
 async def delete_certification(
     certification_id: int,
-    db: AsyncSession,
+    db: AsyncSession = Depends(get_db),
     certification_service: CertificationService = Depends(get_certification_service),
     current_user: UserModel = Depends(get_current_moderator_or_admin)
 ) -> None:
