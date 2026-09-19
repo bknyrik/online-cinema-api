@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class StarBaseSchema(BaseModel):
@@ -12,3 +12,5 @@ class StarListResponseSchema(BaseModel):
     total_pages: int
     prev: str | None
     next: str | None
+
+    model_config = ConfigDict(from_attributes=True)
