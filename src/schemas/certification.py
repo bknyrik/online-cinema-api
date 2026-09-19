@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class CertificationDetailBaseSchema(BaseModel):
@@ -14,3 +14,7 @@ class CertificationListResponseSchema(BaseModel):
     next: str | None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class CertificationCreateUpdateRequestSchema(BaseModel):
+    name: str = Field(min_length=1, strict=True)
