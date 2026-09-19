@@ -162,5 +162,3 @@ class MovieUpdateRequestSchema(MovieDataRequestBaseSchema):
     directors: list[int] | None = Field(
         default=None,
     )
-
-    model_config = ConfigDict(strict=True)
