@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.dependencies.database import get_db
@@ -39,4 +39,20 @@ async def get_certification_detail(
     return await certification_service.get_certification_detail(
         db=db,
         certification_id=certification_id
+    )
+
+
+@router.post(
+    "/",
+    status_code=status.HTTP_201_CREATED,
+    response_model=certifications.CertificationDetailBaseSchema
+)
+async def create_certification(
+    data: certifications.CertificationCreateUpdateRequestSchema,
+    db: AsyncSession = Depends(get_db),
+    certification_service: CertificationService = Depends(get_certification_service)
+) -> CertificationModel:
+    return await certification_service.create_certification(
+        db=db,
+        data=data.model_dump()
     )
