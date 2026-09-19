@@ -113,67 +113,54 @@ class MovieUpdateRequestSchema(MovieDataRequestBaseSchema):
     name: str | None = Field(
         min_length=3,
         default=None,
-        exclude_if=lambda value: value is None
     )
     year: int | None = Field(
         ge=1,
         default=None,
-        exclude_if=lambda value: value is None
     )
     time: int | None = Field(
         ge=1,
         default=None,
-        exclude_if=lambda value: value is None
     )
     imdb: float | None = Field(
         ge=1,
         le=10,
         default=None,
-        exclude_if=lambda value: value is None
     )
     votes: int | None = Field(
         ge=1,
         default=None,
-        exclude_if=lambda value: value is None
     )
     meta_score: int | None = Field(
         ge=1,
         le=100,
         default=None,
-        exclude_if=lambda value: value is None
     )
     gross: float | None = Field(
         ge=1,
         default=None,
-        exclude_if=lambda value: value is None
     )
     description: str | None = Field(
         min_length=10,
         default=None,
-        exclude_if=lambda value: value is None
     )
     price: Decimal | None = Field(
         ge=1,
         max_digits=10,
         decimal_places=2,
         default=None,
-        exclude_if=lambda value: value is None
     )
     certification: int | None = Field(
         default=None,
-        exclude_if=lambda value: value is None
     )
     genres: list[int] | None = Field(
         default=None,
-        exclude_if=lambda value: value is None
     )
     stars: list[int] | None = Field(
         default=None,
-        exclude_if=lambda value: value is None
     )
     directors: list[int] | None = Field(
         default=None,
-        exclude_if=lambda value: value is None
     )
 
     model_config = ConfigDict(strict=True)
