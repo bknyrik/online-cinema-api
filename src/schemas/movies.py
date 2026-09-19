@@ -175,3 +175,5 @@ class MovieUpdateRequestSchema(MovieDataRequestBaseSchema):
         default=None,
         exclude_if=lambda value: value is None
     )
+
+    model_config = ConfigDict(strict=True)
