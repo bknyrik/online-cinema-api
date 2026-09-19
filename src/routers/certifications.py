@@ -47,7 +47,7 @@ async def get_certification_detail(
 @router.post(
     "/",
     status_code=status.HTTP_201_CREATED,
-    response_model=certifications.CertificationDataResponseSchema
+    response_model=certifications.CertificationBaseSchema
 )
 async def create_certification(
     data: certifications.CertificationCreateRequestSchema,
