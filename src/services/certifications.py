@@ -165,3 +165,25 @@ class CertificationService(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while updating certification"
             )
+
+    async def delete_certification(
+        self,
+        db: AsyncSession,
+        certification_id: int
+    ) -> None:
+        try:
+            certification = await self.certification_repository.adelete_by_id(
+                db=db,
+                id_=certification_id
+            )
+
+            self.validate_item_by_id_not_found(
+                item=certification,
+                id_=certification_id,
+                item_type="Certification"
+            )
+        except SQLAlchemyError:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while certification deletion"
+            )
