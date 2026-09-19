@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.dependencies.database import get_db
@@ -39,4 +39,20 @@ async def get_star_detail(
     return await star_service.get_star_detail(
         db=db,
         star_id=star_id
+    )
+
+
+@router.post(
+    "/",
+    status_code=status.HTTP_201_CREATED,
+    response_model=stars_schemas.StarDetailResponseSchema
+)
+async def create_star(
+    data: stars_schemas.StarDataRequestSchema,
+    db: AsyncSession = Depends(get_db),
+    star_service: StarService = Depends(get_star_service)
+) -> StarModel:
+    return await star_service.create_star(
+        db=db,
+        data=data.model_dump()
     )
