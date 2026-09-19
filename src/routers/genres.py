@@ -31,7 +31,7 @@ async def get_genre_list(
 
 @router.get(
     "/{genre_id}/",
-    response_model=genres_schemas.GenreDetailResponseSchema
+    response_model=genres_schemas.GenreMoviesDetailResponseSchema
 )
 async def get_genre_detail(
     genre_id: int,

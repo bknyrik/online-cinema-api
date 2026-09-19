@@ -29,7 +29,7 @@ class GenreDetailMoviesSchema(BaseModel):
     description: str
 
 
-class GenreDetailResponseSchema(GenreBaseSchema):
+class GenreMoviesDetailResponseSchema(GenreBaseSchema):
     movies: list[GenreDetailMoviesSchema]
 
     model_config = ConfigDict(from_attributes=True)
