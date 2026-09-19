@@ -59,3 +59,21 @@ async def create_star(
         db=db,
         data=data.model_dump()
     )
+
+
+@router.put(
+    "/{star_id}/",
+    response_model=stars_schemas.StarDetailResponseSchema
+)
+async def update_star(
+    star_id: int,
+    data: stars_schemas.StarDataRequestSchema,
+    db: AsyncSession = Depends(get_db),
+    star_service: StarService = Depends(get_star_service),
+    current_user: UserModel = Depends(get_current_moderator_or_admin)
+) -> StarModel:
+    return await star_service.update_star(
+        db=db,
+        data=data.model_dump(),
+        star_id=star_id
+    )
