@@ -1,13 +1,13 @@
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class CertificationBaseSchema(BaseModel):
+class CertificationDetailResponseSchema(BaseModel):
     id: int
     name: str
 
 
 class CertificationListResponseSchema(BaseModel):
-    certifications: list[CertificationBaseSchema]
+    certifications: list[CertificationDetailResponseSchema]
     total_certifications: int
     total_pages: int
     prev: str | None
