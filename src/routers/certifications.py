@@ -56,3 +56,20 @@ async def create_certification(
         db=db,
         data=data.model_dump()
     )
+
+
+@router.put(
+    "/{certification_id}/",
+    response_model=certifications.CertificationDetailBaseSchema
+)
+async def update_certification(
+    certification_id: int,
+    data: certifications.CertificationCreateUpdateRequestSchema,
+    db: AsyncSession = Depends(get_db),
+    certification_service: CertificationService = Depends(get_certification_service)
+) -> CertificationModel:
+    return await certification_service.update_certification(
+        db=db,
+        certification_id=certification_id,
+        data=data.model_dump()
+    )
