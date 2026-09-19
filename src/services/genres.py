@@ -140,11 +140,12 @@ class GenreService(
                 expressions=[GenreModel.name == data["name"]]
             )
 
-            if another_genre and another_genre.name != genre.name:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=f"A genre with name {data['name']} exists"
-                )
+            self.validate_item_by_attrs_with_another_item_exists(
+                item=genre,
+                another_item=another_genre,
+                attrs=data,
+                item_type="Genre"
+            )
 
             await self.genre_repository.aupdate(db, genre, data)
             await db.commit()
