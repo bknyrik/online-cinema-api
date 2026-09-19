@@ -81,6 +81,9 @@ class DirectorModel(Base):
         back_populates="directors"
     )
 
+    def __eq__(self, other: "DirectorModel") -> bool:
+        return self.name == other.name
+
 
 class CertificationModel(Base):
     __tablename__ = "certifications"
