@@ -102,11 +102,11 @@ class GenreService(
                 expressions=[GenreModel.name == data["name"]]
             )
 
-            if genre:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=f"Genre with name {repr(data["name"])} exists"
-                )
+            self.validate_item_by_attrs_exists(
+                item=genre,
+                attrs=data,
+                item_type="Genre"
+            )
 
             created_genre = await self.genre_repository.acreate(
                 db=db,
