@@ -77,3 +77,19 @@ async def update_star(
         data=data.model_dump(),
         star_id=star_id
     )
+
+
+@router.delete(
+    "/{star_id}/",
+    status_code=status.HTTP_204_NO_CONTENT
+)
+async def delete_star(
+    star_id: int,
+    db: AsyncSession = Depends(get_db),
+    star_service: StarService = Depends(get_star_service),
+    current_user: UserModel = Depends(get_current_moderator_or_admin)
+) -> None:
+    return await star_service.delete_star(
+        db=db,
+        star_id=star_id
+    )
