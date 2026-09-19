@@ -20,5 +20,5 @@ class CertificationListResponseSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class CertificationCreateUpdateRequestSchema(BaseModel):
+class CertificationDataRequestSchema(BaseModel):
     name: str = Field(min_length=1, strict=True)
