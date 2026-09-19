@@ -6,6 +6,7 @@ from src.dependencies.pagination import PaginationDep
 from src.schemas import stars as stars_schemas
 from src.dependencies.services import get_star_service
 from src.services.stars import StarService
+from src.database.models.movies import StarModel
 
 
 router = APIRouter()
@@ -23,4 +24,19 @@ async def get_star_list(
     return await star_service.get_star_list(
         pagination_data=pagination_data,
         db=db
+    )
+
+
+@router.get(
+    "/{star_id}/",
+    response_model=stars_schemas.StarDetailResponseSchema
+)
+async def get_star_detail(
+    star_id: int,
+    db: AsyncSession = Depends(get_db),
+    star_service: StarService = Depends(get_star_service)
+) -> StarModel:
+    return await star_service.get_star_detail(
+        db=db,
+        star_id=star_id
     )
