@@ -66,6 +66,9 @@ class StarModel(Base):
         back_populates="stars"
     )
 
+    def __eq__(self, other: "StarModel") -> bool:
+        return self.name == other.name
+
 
 class DirectorModel(Base):
     __tablename__ = "directors"
