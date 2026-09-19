@@ -86,19 +86,19 @@ class MovieDetailResponseSchema(MovieDetailBaseSchema):
 
 
 class MovieDataRequestBaseSchema(BaseModel):
-    name: StrictStr = Field(min_length=3)
-    year: StrictInt = Field(ge=1)
-    time: StrictInt = Field(ge=1)
-    imdb: StrictFloat = Field(ge=1, le=10)
-    votes: StrictInt = Field(ge=1)
-    meta_score: StrictFloat = Field(ge=1, le=100)
-    gross: StrictFloat = Field(ge=1)
-    description: StrictStr = Field(min_length=10)
+    name: int = Field(min_length=3)
+    year: int = Field(ge=1)
+    time: int = Field(ge=1)
+    imdb: float = Field(ge=1, le=10)
+    votes: int = Field(ge=1)
+    meta_score: float = Field(ge=1, le=100)
+    gross: float = Field(ge=1)
+    description: str = Field(min_length=10)
     price: Decimal = Field(ge=1, max_digits=10, decimal_places=2)
-    certification: StrictInt
-    genres: list[StrictInt]
-    stars: list[StrictInt]
-    directors: list[StrictInt]
+    certification: int
+    genres: list[int]
+    stars: list[int]
+    directors: list[int]
 
     @field_validator("genres", "stars", "directors", mode="before")
     @classmethod
