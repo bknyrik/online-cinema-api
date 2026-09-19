@@ -8,11 +8,6 @@ from pydantic import (
     field_serializer,
     Field
 )
-from pydantic.types import (
-    StrictFloat,
-    StrictInt,
-    StrictStr
-)
 
 from src.schemas.genres import GenreBaseSchema
 from src.schemas.certifications import CertificationDetailResponseSchema
@@ -115,44 +110,44 @@ class MovieCreateRequestSchema(MovieDataRequestBaseSchema):
     ...
 
 class MovieUpdateRequestSchema(MovieDataRequestBaseSchema):
-    name: StrictStr | None = Field(
+    name: str | None = Field(
         min_length=3,
         default=None,
         exclude_if=lambda value: value is None
     )
-    year: StrictInt | None = Field(
+    year: int | None = Field(
         ge=1,
         default=None,
         exclude_if=lambda value: value is None
     )
-    time: StrictInt | None = Field(
+    time: int | None = Field(
         ge=1,
         default=None,
         exclude_if=lambda value: value is None
     )
-    imdb: StrictFloat | None = Field(
+    imdb: float | None = Field(
         ge=1,
         le=10,
         default=None,
         exclude_if=lambda value: value is None
     )
-    votes: StrictInt| None = Field(
+    votes: int | None = Field(
         ge=1,
         default=None,
         exclude_if=lambda value: value is None
     )
-    meta_score: StrictFloat | None = Field(
+    meta_score: int | None = Field(
         ge=1,
         le=100,
         default=None,
         exclude_if=lambda value: value is None
     )
-    gross: StrictFloat | None = Field(
+    gross: float | None = Field(
         ge=1,
         default=None,
         exclude_if=lambda value: value is None
     )
-    description: StrictStr | None = Field(
+    description: str | None = Field(
         min_length=10,
         default=None,
         exclude_if=lambda value: value is None
@@ -164,19 +159,19 @@ class MovieUpdateRequestSchema(MovieDataRequestBaseSchema):
         default=None,
         exclude_if=lambda value: value is None
     )
-    certification: StrictInt | None = Field(
+    certification: int | None = Field(
         default=None,
         exclude_if=lambda value: value is None
     )
-    genres: list[StrictInt] | None = Field(
+    genres: list[int] | None = Field(
         default=None,
         exclude_if=lambda value: value is None
     )
-    stars: list[StrictInt] | None = Field(
+    stars: list[int] | None = Field(
         default=None,
         exclude_if=lambda value: value is None
     )
-    directors: list[StrictInt] | None = Field(
+    directors: list[int] | None = Field(
         default=None,
         exclude_if=lambda value: value is None
     )
