@@ -69,7 +69,8 @@ async def update_certification(
     certification_id: int,
     data: certifications.CertificationCreateUpdateRequestSchema,
     db: AsyncSession = Depends(get_db),
-    certification_service: CertificationService = Depends(get_certification_service)
+    certification_service: CertificationService = Depends(get_certification_service),
+    current_user: UserModel = Depends(get_current_moderator_or_admin)
 ) -> CertificationModel:
     return await certification_service.update_certification(
         db=db,
