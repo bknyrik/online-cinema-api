@@ -151,3 +151,24 @@ class StarService(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while star updating"
             )
+
+    async def delete_star(
+        self,
+        db: AsyncSession,
+        star_id: int
+    ) -> None:
+        try:
+            star = await self.star_repository.adelete_by_id(
+                db=db,
+                id_=star_id
+            )
+
+            self.validate_item_by_id_not_found(star, star_id, "Star")
+
+            await db.commit()
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while star deletion"
+            )
