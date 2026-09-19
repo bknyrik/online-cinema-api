@@ -4,6 +4,7 @@ from src.settings import settings
 from src.services.accounts import UserService
 from src.services.movies import MovieService
 from src.services.genres import GenreService
+from src.services.certifications import CertificationService
 from src.services.profiles import UserProfileService
 from src.services.security import PasswordSecurityService, JWTAuthService
 from src.services.email_sender import EmailSenderService
@@ -86,4 +87,10 @@ def get_movie_service() -> MovieService:
 def get_genre_service() -> GenreService:
     return GenreService(
         genre_repository=GenreRepository()
+    )
+
+
+def get_certification_service() -> CertificationService:
+    return CertificationService(
+        certification_repository=CertificationRepository()
     )
