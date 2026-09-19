@@ -92,6 +92,9 @@ class CertificationModel(Base):
     name = Column(String(10), nullable=False, unique=True)
     movies = relationship("MovieModel", back_populates="certification")
 
+    def __eq__(self, other: "CertificationModel") -> bool:
+        return self.name == other.name
+
 
 class MovieModel(Base):
     __tablename__ = "movies"
