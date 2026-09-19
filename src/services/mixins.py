@@ -15,7 +15,7 @@ class PaginationLimitOffsetMixin:
 
     @staticmethod
     def get_total_pages(total_items: int, per_page: int) -> int:
-        return math.ceil(total_items / per_page)
+        return (total_items + per_page - 1) // per_page
 
     @staticmethod
     def get_prev_next_urls_pages(
