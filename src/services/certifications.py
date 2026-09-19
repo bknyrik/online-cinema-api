@@ -72,7 +72,7 @@ class CertificationService(
         certification_id: int
     ) -> CertificationModel:
         try:
-            certification = self.certification_repository.aget_by_id(
+            certification = await self.certification_repository.aget_by_id(
                 db=db,
                 id_=certification_id
             )
