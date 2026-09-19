@@ -89,3 +89,34 @@ class CertificationService(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while getting the certification"
             )
+
+    async def create_certification(
+        self,
+        db: AsyncSession,
+        data: dict
+    ) -> CertificationModel:
+        try:
+            certification = await self.certification_repository.aget_by(
+                db=db,
+                expressions=[CertificationModel.name == data["name"]]
+            )
+
+            self.validate_item_by_attrs_exists(
+                item=certification,
+                attrs=data,
+                item_type="Certification"
+            )
+
+            certification = await self.certification_repository.acreate(
+                db=db,
+                data=data
+            )
+
+            await db.commit()
+            return certification
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while certification creation"
+            )
