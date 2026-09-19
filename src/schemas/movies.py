@@ -108,6 +108,8 @@ class MovieDataRequestBaseSchema(BaseModel):
 
         return value
 
+    model_config = ConfigDict(strict=True)
+
 
 class MovieCreateRequestSchema(MovieDataRequestBaseSchema):
     ...
