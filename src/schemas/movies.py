@@ -16,11 +16,7 @@ from pydantic.types import (
 
 from src.schemas.genres import GenreBaseSchema
 from src.schemas.certifications import CertificationBaseSchema
-
-
-class StarDetailBaseSchema(BaseModel):
-    id: int
-    name: str
+from src.schemas.stars import StarDetailBaseSchema
 
 
 class DirectorDetailBaseSchema(BaseModel):
