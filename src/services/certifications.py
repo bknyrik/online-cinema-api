@@ -120,3 +120,48 @@ class CertificationService(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while certification creation"
             )
+
+    async def update_certification(
+        self,
+        db: AsyncSession,
+        certification_id: int,
+        data: dict
+    ) -> CertificationModel:
+        try:
+            certification = await self.certification_repository.aget_by_id(
+                db=db,
+                id_=certification_id
+            )
+
+            self.validate_item_by_id_not_found(
+                item=certification,
+                id_=certification_id,
+                item_type="Certification"
+            )
+
+            another_certification = await self.certification_repository.aget_by(
+                db=db,
+                expressions=[CertificationModel.name == data["name"]]
+            )
+
+            self.validate_item_by_attrs_with_another_item_exists(
+                item=certification,
+                another_item=another_certification,
+                attrs=data,
+                item_type="Certification"
+            )
+
+            await self.certification_repository.aupdate(
+                db=db,
+                instance=certification,
+                data=data
+            )
+
+            await db.commit()
+            return certification
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while updating certification"
+            )
