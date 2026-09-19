@@ -24,6 +24,10 @@ class CertificationDataRequestSchema(BaseModel):
     name: str = Field(min_length=1, strict=True)
 
 
+class CertificationDataResponseSchema(CertificationBaseSchema):
+    ...
+
+
 class CertificationCreateRequestSchema(CertificationDataRequestSchema):
     ...
 
