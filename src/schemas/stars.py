@@ -1,13 +1,13 @@
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class StarBaseSchema(BaseModel):
+class StarDetailResponseSchema(BaseModel):
     id: int
     name: str
 
 
 class StarListResponseSchema(BaseModel):
-    stars: list[StarBaseSchema]
+    stars: list[StarDetailResponseSchema]
     total_stars: int
     total_pages: int
     prev: str | None
