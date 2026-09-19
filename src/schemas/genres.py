@@ -37,3 +37,11 @@ class GenreDetailResponseSchema(GenreBaseSchema):
 
 class GenreDataRequestSchema(BaseModel):
     name: str = Field(min_length=5, strict=True)
+
+
+class GenreCreateRequestSchema(GenreDataRequestSchema):
+    ...
+
+
+class GenreUpdateRequestSchema(GenreDataRequestSchema):
+    ...
