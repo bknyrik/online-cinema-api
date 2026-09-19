@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class StarBaseSchema(BaseModel):
@@ -14,3 +14,7 @@ class StarListResponseSchema(BaseModel):
     next: str | None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class StarDataRequestSchema(BaseModel):
+    name: str = Field(min_length=3, strict=True)
