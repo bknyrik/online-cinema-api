@@ -6,6 +6,10 @@ class CertificationDetailBaseSchema(BaseModel):
     name: str
 
 
+class CertificationDetailResponseSchema(CertificationDetailBaseSchema):
+    ...
+
+
 class CertificationListResponseSchema(BaseModel):
     certifications: list[CertificationDetailBaseSchema]
     total_certifications: int
