@@ -63,7 +63,7 @@ async def create_certification(
 
 @router.put(
     "/{certification_id}/",
-    response_model=certifications.CertificationBaseSchema
+    response_model=certifications.CertificationDetailResponseSchema
 )
 async def update_certification(
     certification_id: int,
