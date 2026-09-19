@@ -1,5 +1,4 @@
 from pydantic import BaseModel, ConfigDict, Field
-from pydantic.types import StrictStr
 
 
 class GenreBaseSchema(BaseModel):
@@ -37,4 +36,4 @@ class GenreDetailResponseSchema(GenreBaseSchema):
 
 
 class GenreCreateUpdateRequestSchema(BaseModel):
-    name: StrictStr = Field(min_length=5)
+    name: str = Field(min_length=5, strict=True)
