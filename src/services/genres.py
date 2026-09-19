@@ -36,6 +36,7 @@ class GenreService(PaginationLimitOffsetMixin):
                     db=db,
                     offset=offset,
                     limit=limit,
+                    order_by_columns=[GenreModel.id]
                 )
             )
             count_movies = await self.genre_repository.acount_movies(db)
