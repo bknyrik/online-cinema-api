@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
 
-class StarDetailBaseSchema(BaseModel):
+class StarBaseSchema(BaseModel):
     id: int
     name: str
