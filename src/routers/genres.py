@@ -68,7 +68,8 @@ async def update_genre(
     genre_id: int,
     data: GenreCreateUpdateRequestSchema,
     db: AsyncSession = Depends(get_db),
-    genre_service: GenreService = Depends(get_genre_service)
+    genre_service: GenreService = Depends(get_genre_service),
+    current_user: UserModel = Depends(get_current_moderator_or_admin)
 ) -> GenreModel:
     return await genre_service.update_genre(
         db=db,
