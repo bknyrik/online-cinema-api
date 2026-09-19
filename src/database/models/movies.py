@@ -51,6 +51,9 @@ class GenreModel(Base):
         back_populates="genres"
     )
 
+    def __eq__(self, other: "GenreModel") -> bool:
+        return self.name == other.name
+
 
 class StarModel(Base):
     __tablename__ = "stars"
