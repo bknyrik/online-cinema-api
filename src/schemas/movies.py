@@ -9,7 +9,7 @@ from pydantic import (
     Field
 )
 
-from src.schemas.genres import GenreBaseSchema
+from src.schemas.genres import GenreDetailResponseSchema
 from src.schemas.certifications import CertificationDetailResponseSchema
 from src.schemas.stars import StarDetailResponseSchema
 
@@ -35,7 +35,7 @@ class MovieDetailBaseSchema(BaseModel):
 
 class MovieDetailItemSchema(MovieDetailBaseSchema):
     certification: CertificationDetailResponseSchema
-    genres: list[GenreBaseSchema]
+    genres: list[GenreDetailResponseSchema]
     stars: list[StarDetailResponseSchema]
     directors: list[DirectorDetailBaseSchema]
 
@@ -55,7 +55,7 @@ class MovieDetailItemSchema(MovieDetailBaseSchema):
     def serialize_into_str_names(
         self,
         items: list[
-            GenreBaseSchema
+            GenreDetailResponseSchema
             | StarDetailResponseSchema
             | DirectorDetailBaseSchema
             ]
@@ -73,7 +73,7 @@ class MovieListResponseSchema(BaseModel):
 
 class MovieDetailResponseSchema(MovieDetailBaseSchema):
     certification: CertificationDetailResponseSchema
-    genres: list[GenreBaseSchema]
+    genres: list[GenreDetailResponseSchema]
     stars: list[StarDetailResponseSchema]
     directors: list[DirectorDetailBaseSchema]
 

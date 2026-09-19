@@ -1,12 +1,12 @@
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class GenreBaseSchema(BaseModel):
+class GenreDetailResponseSchema(BaseModel):
     id: int
     name: str
 
 
-class GenreListItemSchema(GenreBaseSchema):
+class GenreListItemSchema(GenreDetailResponseSchema):
     movies: int
 
 
@@ -29,7 +29,7 @@ class GenreDetailMoviesSchema(BaseModel):
     description: str
 
 
-class GenreMoviesDetailResponseSchema(GenreBaseSchema):
+class GenreMoviesDetailResponseSchema(GenreDetailResponseSchema):
     movies: list[GenreDetailMoviesSchema]
 
     model_config = ConfigDict(from_attributes=True)
@@ -39,5 +39,5 @@ class GenreDataRequestSchema(BaseModel):
     name: str = Field(min_length=5, strict=True)
 
 
-class GenreDataResponseSchema(GenreBaseSchema):
+class GenreDataResponseSchema(GenreDetailResponseSchema):
     ...

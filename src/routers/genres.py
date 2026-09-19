@@ -47,7 +47,7 @@ async def get_genre_detail(
 @router.post(
     "/",
     status_code=status.HTTP_201_CREATED,
-    response_model=genres_schemas.GenreBaseSchema
+    response_model=genres_schemas.GenreDetailResponseSchema
 )
 async def create_genre(
     data: genres_schemas.GenreDataRequestSchema,
@@ -63,7 +63,7 @@ async def create_genre(
 
 @router.put(
     "/{genre_id}/",
-    response_model=genres_schemas.GenreBaseSchema
+    response_model=genres_schemas.GenreDetailResponseSchema
 )
 async def update_genre(
     genre_id: int,
