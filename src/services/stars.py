@@ -51,6 +51,7 @@ class StarService(
             return {
                 "stars": stars,
                 "total_stars": total_stars,
+                "total_pages": total_pages,
                 "prev": prev_page,
                 "next": next_page
             }
