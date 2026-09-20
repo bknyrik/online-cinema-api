@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.dependencies.database import get_db
@@ -7,6 +7,8 @@ from src.schemas import directors as schemas
 from src.dependencies.services import get_director_service
 from src.dependencies.pagination import PaginationDep
 from src.database.models.movies import DirectorModel
+from src.dependencies.authentication import get_current_moderator_or_admin
+from src.database.models.accounts import UserModel
 
 
 router = APIRouter()
@@ -36,4 +38,21 @@ async def get_director_detail(
     return await director_service.get_director_detail(
         db=db,
         director_id=director_id
+    )
+
+
+@router.post(
+    "/",
+    response_model=schemas.DirectorDetailResponseSchema,
+    status_code=status.HTTP_201_CREATED
+)
+async def create_director(
+    data: schemas.DirectorDataRequestSchema,
+    db: AsyncSession = Depends(get_db),
+    director_service: DirectorService = Depends(get_director_service),
+    current_user: UserModel = Depends(get_current_moderator_or_admin)
+) -> DirectorModel:
+    return await director_service.create_director(
+        db=db,
+        data=data.model_dump()
     )
