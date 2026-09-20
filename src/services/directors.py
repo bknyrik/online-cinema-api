@@ -27,6 +27,12 @@ class DirectorService(
                 per_page=pagination_data["per_page"]
             )
 
+            self.validate_page_not_found(
+                page=pagination_data["page"],
+                total_pages=total_pages,
+                total_items=total_directors
+            )
+
             directors = await self.director_repository.aget_all(
                 db=db,
                 limit=limit,
