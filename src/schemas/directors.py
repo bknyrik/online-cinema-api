@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class DirectorDetailResponseSchema(BaseModel):
@@ -12,3 +12,7 @@ class DirectorListResponseSchema(BaseModel):
     total_pages: int
     prev: str | None
     next: str | None
+
+
+class DirectorDataRequestSchema(BaseModel):
+    name: str = Field(min_length=5, strict=True)
