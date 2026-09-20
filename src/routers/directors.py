@@ -56,3 +56,20 @@ async def create_director(
         db=db,
         data=data.model_dump()
     )
+
+
+@router.put(
+    "/{director_id}/",
+    response_model=schemas.DirectorDetailResponseSchema
+)
+async def update_director(
+    director_id: int,
+    data: schemas.DirectorDataRequestSchema,
+    db: AsyncSession = Depends(get_db),
+    director_service: DirectorService = Depends(get_director_service)
+) -> DirectorModel:
+    return await director_service.update_director(
+        db=db,
+        data=data.model_dump(),
+        director_id=director_id
+    )
