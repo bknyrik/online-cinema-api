@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
 
-class DirectorDetailBaseSchema(BaseModel):
+class DirectorDetailResponseSchema(BaseModel):
     id: int
     name: str
