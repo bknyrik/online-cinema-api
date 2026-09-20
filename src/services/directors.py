@@ -112,3 +112,43 @@ class DirectorService(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while director creation"
             )
+
+    async def update_director(
+        self,
+        db: AsyncSession,
+        data: dict,
+        director_id: int
+    ) -> DirectorModel:
+        try:
+            director = await self.director_repository.aget_by_id(
+                db=db,
+                id_=director_id
+            )
+
+            self.validate_item_by_id_not_found(
+                item=director,
+                id_=director_id,
+                item_type="Director"
+            )
+
+            another_director = await self.director_repository.aget_by(
+                db=db,
+                expressions=[DirectorModel.name == data["name"]]
+            )
+
+            self.validate_item_by_attrs_with_another_item_exists(
+                item=director,
+                another_item=another_director,
+                attrs=data,
+                item_type="Director"
+            )
+
+            await self.director_repository.aupdate(db, director, data)
+            await db.commit()
+            return director
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while director updating"
+            )
