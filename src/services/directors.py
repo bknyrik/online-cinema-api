@@ -4,6 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from src.services import mixins
 from src.repositories.movies import DirectorRepository
+from src.database.models.movies import DirectorModel
 
 
 class DirectorService(
@@ -50,4 +51,28 @@ class DirectorService(
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while getting list with directors"
+            )
+
+    async def get_director_detail(
+        self,
+        db: AsyncSession,
+        director_id: int
+    ) -> DirectorModel:
+        try:
+            director = await self.director_repository.aget_by_id(
+                db=db,
+                id_=director_id
+            )
+
+            self.validate_item_by_id_not_found(
+                item=director,
+                id_=director_id,
+                item_type="Director"
+            )
+
+            return director
+        except SQLAlchemyError:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while getting the director"
             )
