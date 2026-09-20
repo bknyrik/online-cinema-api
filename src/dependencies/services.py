@@ -5,6 +5,7 @@ from src.services.accounts import UserService
 from src.services.movies import MovieService
 from src.services.genres import GenreService
 from src.services.stars import StarService
+from src.services.directors import DirectorService
 from src.services.certifications import CertificationService
 from src.services.profiles import UserProfileService
 from src.services.security import PasswordSecurityService, JWTAuthService
@@ -100,4 +101,10 @@ def get_certification_service() -> CertificationService:
 def get_star_service() -> StarService:
     return StarService(
         star_repository=StarRepository()
+    )
+
+
+def get_director_service() -> DirectorService:
+    return DirectorService(
+        director_repository=DirectorRepository()
     )
