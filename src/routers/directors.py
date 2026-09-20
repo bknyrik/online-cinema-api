@@ -78,8 +78,7 @@ async def update_director(
 
 @router.delete(
     "/{director_id}/",
-    response_model=schemas.DirectorDetailResponseSchema,
-    status_code=status.HTTP_204_NO_CONTENT
+     status_code=status.HTTP_204_NO_CONTENT
 )
 async def delete_director(
     director_id: int,
