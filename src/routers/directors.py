@@ -74,3 +74,19 @@ async def update_director(
         data=data.model_dump(),
         director_id=director_id
     )
+
+
+@router.delete(
+    "/{director_id}/",
+    response_model=schemas.DirectorDetailResponseSchema
+)
+async def delete_director(
+    director_id: int,
+    db: AsyncSession = Depends(get_db),
+    director_service: DirectorService = Depends(get_director_service),
+    current_user: UserModel = Depends(get_current_moderator_or_admin)
+) -> None:
+    return await director_service.delete_director(
+        db=db,
+        director_id=director_id
+    )
