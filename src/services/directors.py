@@ -152,3 +152,28 @@ class DirectorService(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while director updating"
             )
+
+    async def delete_director(
+        self,
+        director_id: int,
+        db: AsyncSession,
+    ) -> None:
+        try:
+            director = await self.director_repository.adelete_by_id(
+                db=db,
+                id_=director_id
+            )
+
+            self.validate_item_by_id_not_found(
+                item=director,
+                id_=director_id,
+                item_type="Director"
+            )
+
+            await db.commit()
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while director deletion"
+            )
