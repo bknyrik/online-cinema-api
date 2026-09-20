@@ -6,7 +6,8 @@ from src.routers import (
     movies,
     genres,
     certifications,
-    stars
+    stars,
+    directors
 )
 
 
@@ -47,4 +48,9 @@ app.include_router(
     stars.router,
     prefix=f"{api_prefix}/stars",
     tags=["stars"]
+)
+app.include_router(
+    directors.router,
+    prefix=f"{api_prefix}/directors",
+    tags=["directors"]
 )
