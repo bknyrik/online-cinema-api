@@ -82,3 +82,33 @@ class DirectorService(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while getting the director"
             )
+
+    async def create_director(
+        self,
+        db: AsyncSession,
+        data: dict
+    ) -> DirectorModel:
+        try:
+            director = await self.director_repository.aget_by(
+                db=db,
+                expressions=[DirectorModel.name == data["name"]]
+            )
+
+            self.validate_item_by_attrs_exists(
+                item=director,
+                attrs=data,
+                item_type="Director"
+            )
+
+            director = await self.director_repository.acreate(
+                db=db,
+                data=data
+            )
+            await db.commit()
+            return director
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while director creation"
+            )
