@@ -66,7 +66,8 @@ async def update_director(
     director_id: int,
     data: schemas.DirectorDataRequestSchema,
     db: AsyncSession = Depends(get_db),
-    director_service: DirectorService = Depends(get_director_service)
+    director_service: DirectorService = Depends(get_director_service),
+    current_user: UserModel = Depends(get_current_moderator_or_admin)
 ) -> DirectorModel:
     return await director_service.update_director(
         db=db,
