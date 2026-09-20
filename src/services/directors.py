@@ -36,7 +36,8 @@ class DirectorService(
             directors = await self.director_repository.aget_all(
                 db=db,
                 limit=limit,
-                offset=offset
+                offset=offset,
+                order_by_columns=[DirectorModel.id]
             )
 
             prev_page, next_page = self.get_prev_next_urls_pages(
