@@ -12,11 +12,7 @@ from pydantic import (
 from src.schemas.genres import GenreDetailResponseSchema
 from src.schemas.certifications import CertificationDetailResponseSchema
 from src.schemas.stars import StarDetailResponseSchema
-
-
-class DirectorDetailBaseSchema(BaseModel):
-    id: int
-    name: str
+from src.schemas.directors import DirectorDetailBaseSchema
 
 
 class MovieDetailBaseSchema(BaseModel):
