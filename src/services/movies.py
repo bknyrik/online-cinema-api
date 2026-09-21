@@ -162,8 +162,19 @@ class MovieService(mixins.PaginationLimitOffsetMixin):
         sort_data: dict[str, SortingOrderEnum | None]
     ) -> dict:
         try:
+            filter_expressions = self.get_filter_expressions(filter_data)
+            search_expressions = self.get_search_expressions(search_data)
+            sort_columns = (
+                self.get_sort_columns(sort_data)
+                if any(value is not None for value in sort_data.values())
+                else [MovieModel.id]
+            )
+
             limit, offset = self.get_limit_offset(pagination_data)
-            total_movies = await self.movie_repository.acount(db)
+            total_movies = await self.movie_repository.acount(
+                db=db,
+                expressions=filter_expressions
+            )
             total_pages = self.get_total_pages(
                 total_movies,
                 pagination_data["per_page"]
@@ -173,14 +184,6 @@ class MovieService(mixins.PaginationLimitOffsetMixin):
                 page=pagination_data["page"],
                 total_pages=total_pages,
                 total_items=total_movies
-            )
-
-            filter_expressions = self.get_filter_expressions(filter_data)
-            search_expressions = self.get_search_expressions(search_data)
-            sort_columns = (
-                self.get_sort_columns(sort_data)
-                if any(value is not None for value in sort_data.values())
-                else [MovieModel.id]
             )
 
             movies_list = list(
