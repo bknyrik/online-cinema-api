@@ -176,3 +176,75 @@ class SearchItemsMixin:
                     )
 
         return search_expressions
+
+
+class FilterItemsMixin:
+
+    @classmethod
+    def _get_min_max_filter_expressions(
+        cls,
+        filter_data: dict
+    ) -> list[ColumnElement[bool]]:
+        min_max_keys = tuple(
+            (min_key, max_key) for min_key, max_key in zip(
+                (key for key in filter_data.keys() if key.startswith("min_")),
+                (key for key in filter_data.keys() if key.startswith("max_"))
+            )
+        )
+
+        expressions = []
+
+        for min_key, max_key in min_max_keys:
+            column = getattr(cls._model_type, min_key.replace("min_", ""))
+            min_value, max_value = filter_data[min_key], filter_data[max_key]
+
+            if min_value is not None and max_value is not None:
+                expressions.append(column.between(min_value, max_value))
+
+            elif min_value is not None:
+                expressions.append(column >= min_value)
+
+            elif max_value is not None:
+                expressions.append(column <= max_value)
+
+        return expressions
+
+    @classmethod
+    def _get_single_id_expressions(
+        cls,
+        filter_data: dict
+    ) -> list[ColumnElement[bool]]:
+        return [
+            getattr(cls._model_type, name) == filter_data[name]
+            for name, value in filter_data.items()
+            if name.endswith("_id") and value is not None
+        ]
+
+    @classmethod
+    def _get_multiple_ids_expressions(
+        cls,
+        filter_data: dict
+    ) -> list[ColumnElement[bool]]:
+        expressions = []
+
+        for name, value in filter_data.items():
+            if name.endswith("_ids") and value is not None:
+                column = getattr(cls._model_type, name.replace("_ids", ""))
+                child_model = column.prop.argument
+
+                expressions.append(column.any(child_model.id.in_(value)))
+
+        return expressions
+
+    @classmethod
+    def get_filter_expressions(cls, filter_data: dict) -> list[ColumnElement[bool]]:
+        filter_data = {
+            key.replace("filter_by_", ""): value
+            for key, value in filter_data.items()
+        }
+
+        return (
+            cls._get_min_max_filter_expressions(filter_data) +
+            cls._get_single_id_expressions(filter_data) +
+            cls._get_multiple_ids_expressions(filter_data)
+        )
