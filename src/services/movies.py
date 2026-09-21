@@ -190,11 +190,11 @@ class MovieService(
                 id_=data["certification_id"]
             )
 
-            if not certification:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail=f"Certification with id {data['certification_id']} not found"
-                )
+            self.validate_item_by_id_not_found(
+                item=certification,
+                id_=data["certification_id"],
+                item_type="Certification"
+            )
 
             data["genres"] = genres
             data["stars"] = stars
