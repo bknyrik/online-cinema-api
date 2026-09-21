@@ -253,16 +253,15 @@ class MovieService(
                     ]
                 )
 
-                if (
-                    another_movie
-                    and another_movie.name != movie.name
-                    and another_movie.year != movie.year
-                    and another_movie.time != movie.time
-                ):
-                    raise HTTPException(
-                        status_code=status.HTTP_400_BAD_REQUEST,
-                        detail="Movie with this name, year and time exists"
-                    )
+                self.validate_item_by_attrs_with_another_item_exists(
+                    item=movie,
+                    another_item=another_movie,
+                    attrs={
+                        key: value for key, value in data.items()
+                        if key in ("name", "year", "time")
+                    },
+                    item_type="Movie"
+                )
 
             await self.movie_repository.aupdate(
                 db=db,
