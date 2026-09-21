@@ -1,5 +1,3 @@
-from typing import Sequence
-
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
@@ -33,21 +31,6 @@ class MovieService(
         self.star_repository = star_repository
         self.director_repository = director_repository
         self.certification_repository = certification_repository
-
-    @staticmethod
-    def validate_all_ids_exist(
-        ids: list[int],
-        items: Sequence,
-        item_type: str
-    ) -> None:
-        items_ids = tuple(item.id for item in items)
-
-        for id_ in ids:
-            if id_ not in items_ids:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=f"{item_type} with id {id_} not found"
-                )
 
     async def get_movie_list(
         self,
