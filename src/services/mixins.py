@@ -2,6 +2,8 @@ from urllib import parse
 from enum import StrEnum, auto
 
 from fastapi import HTTPException, status
+from sqlalchemy import UnaryExpression
+from sqlalchemy.orm import InstrumentedAttribute
 
 
 class SortingOrderEnum(StrEnum):
@@ -120,3 +122,26 @@ class ModelItemsMixin[T]:
                     status_code=status.HTTP_404_NOT_FOUND,
                     detail=f"{item_type} with id {id_} not found"
                 )
+
+
+class SortingItemsMixin:
+
+    @classmethod
+    def get_sort_columns(
+        cls,
+        sort_data: dict
+    ) -> list[InstrumentedAttribute | UnaryExpression]:
+        sort_data = {
+            key.replace("sort_by_", ""): value
+            for key, value in sort_data.items()
+        }
+        sort_columns = []
+
+        for name, order in sort_data.items():
+            if order is not None:
+                column = getattr(cls._model_type, name)
+                sort_columns.append(
+                    column if order == SortingOrderEnum.ASC else column.desc()
+                )
+
+        return sort_columns
