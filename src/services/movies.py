@@ -14,7 +14,10 @@ from src.services import mixins
 
 class MovieService(
     mixins.PaginationLimitOffsetMixin,
-    mixins.ModelItemsMixin
+    mixins.ModelItemsMixin,
+    mixins.SearchItemsMixin,
+    mixins.SortingItemsMixin,
+    mixins.FilterItemsMixin
 ):
 
     def __init__(
@@ -45,116 +48,6 @@ class MovieService(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail=f"{item_type} with id {id_} not found"
                 )
-
-    @staticmethod
-    def get_sort_columns(
-        sort_data: dict[str, SortingOrderEnum | None]
-    ) -> list[InstrumentedAttribute | UnaryExpression]:
-        sort_data = {
-            key.replace("sort_by_", ""): value
-            for key, value in sort_data.items()
-        }
-        sort_columns = []
-
-        for name, order in sort_data.items():
-            if order is not None:
-                column = getattr(MovieModel, name)
-                sort_columns.append(
-                    column if order == SortingOrderEnum.ASC else column.desc()
-                )
-
-        return sort_columns
-
-    @staticmethod
-    def get_search_expressions(search_data: dict) -> list[ColumnElement[bool]]:
-        search_data = {
-            key.replace("search_by_", ""): value
-            for key, value in search_data.items()
-        }
-
-        search_expressions = []
-
-        for name, value in search_data.items():
-            if value is not None:
-                if isinstance(value, str):
-                    search_expressions.append(
-                        getattr(MovieModel, name).icontains(value)
-                    )
-
-                if name.endswith("_ids"):
-                    column = getattr(MovieModel, name.replace("_ids", ""))
-                    child_model = column.prop.argument
-                    search_expressions.append(
-                        column.any(child_model.id.in_(value))
-                    )
-
-        return search_expressions
-
-    @staticmethod
-    def _get_min_max_filter_expressions(
-        filter_data: dict
-    ) -> list[ColumnElement[bool]]:
-        min_max_keys = tuple(
-            (min_key, max_key) for min_key, max_key in zip(
-                (key for key in filter_data.keys() if key.startswith("min_")),
-                (key for key in filter_data.keys() if key.startswith("max_"))
-            )
-        )
-
-        expressions = []
-
-        for min_key, max_key in min_max_keys:
-            column = getattr(MovieModel, min_key.replace("min_", ""))
-            min_value, max_value = filter_data[min_key], filter_data[max_key]
-
-            if min_value is not None and max_value is not None:
-                expressions.append(column.between(min_value, max_value))
-
-            elif min_value is not None:
-                expressions.append(column >= min_value)
-
-            elif max_value is not None:
-                expressions.append(column <= max_value)
-
-        return expressions
-
-    @staticmethod
-    def _get_single_id_expressions(
-        filter_data: dict
-    ) -> list[ColumnElement[bool]]:
-        return [
-            getattr(MovieModel, name) == filter_data[name]
-            for name, value in filter_data.items()
-            if name.endswith("_id") and value is not None
-        ]
-
-    @staticmethod
-    def _get_multiple_ids_expressions(
-        filter_data: dict
-    ) -> list[ColumnElement[bool]]:
-        expressions = []
-
-        for name, value in filter_data.items():
-            if name.endswith("_ids") and value is not None:
-                column = getattr(MovieModel, name.replace("_ids", ""))
-                child_model = column.prop.argument
-
-                expressions.append(column.any(child_model.id.in_(value)))
-
-        return expressions
-
-    @classmethod
-    def get_filter_expressions(cls, filter_data: dict) -> list[ColumnElement[bool]]:
-        filter_data = {
-            key.replace("filter_by_", ""): value
-            for key, value in filter_data.items()
-        }
-
-        return (
-            cls._get_min_max_filter_expressions(filter_data) +
-            cls._get_single_id_expressions(filter_data) +
-            cls._get_multiple_ids_expressions(filter_data)
-        )
 
     async def get_movie_list(
         self,
