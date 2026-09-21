@@ -76,7 +76,7 @@ class MovieDetailResponseSchema(MovieDetailBaseSchema):
     model_config = ConfigDict(from_attributes=True)
 
 
-class MovieDataRequestBaseSchema(BaseModel):
+class MovieDataRequestSchema(BaseModel):
     name: int = Field(min_length=3)
     year: int = Field(ge=1)
     time: int = Field(ge=1)
@@ -102,7 +102,7 @@ class MovieDataRequestBaseSchema(BaseModel):
     model_config = ConfigDict(strict=True)
 
 
-class MovieUpdateRequestSchema(MovieDataRequestBaseSchema):
+class MovieUpdateRequestSchema(MovieDataRequestSchema):
     name: str | None = Field(
         min_length=3,
         default=None,

@@ -58,7 +58,7 @@ async def get_detail_movie(
     status_code=status.HTTP_201_CREATED
 )
 async def create_movie(
-    data: movies_schemas.MovieDataRequestBaseSchema,
+    data: movies_schemas.MovieDataRequestSchema,
     movie_service: MovieService = Depends(get_movie_service),
     db: AsyncSession = Depends(get_db),
     current_user: UserModel = Depends(get_current_moderator_or_admin)
