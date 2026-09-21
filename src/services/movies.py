@@ -163,11 +163,14 @@ class MovieService(
                 ]
             )
 
-            if movie:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Move with this name, year and time exists"
-                )
+            self.validate_item_by_attrs_exists(
+                item=movie,
+                attrs={
+                    key: value for key, value in data.items()
+                    if key in ("name", "year", "time")
+                },
+                item_type="Movie"
+            )
 
             genres_ids = data.pop("genres")
             stars_ids = data.pop("stars")
