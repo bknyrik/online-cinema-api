@@ -3,7 +3,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 
 from src.database.models.movies import MovieModel
-from src.dependencies.movies import SortingOrderEnum
 from src.repositories import movies
 from src.services import mixins
 
@@ -38,7 +37,7 @@ class MovieService(
         pagination_data: dict,
         filter_data: dict,
         search_data: dict,
-        sort_data: dict[str, SortingOrderEnum | None]
+        sort_data: dict
     ) -> dict:
         try:
             filter_expressions = self.get_filter_expressions(filter_data)
