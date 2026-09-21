@@ -2,7 +2,7 @@ from urllib import parse
 from enum import StrEnum, auto
 
 from fastapi import HTTPException, status
-from sqlalchemy import UnaryExpression
+from sqlalchemy import UnaryExpression, ColumnElement
 from sqlalchemy.orm import InstrumentedAttribute
 
 
@@ -145,3 +145,34 @@ class SortingItemsMixin:
                 )
 
         return sort_columns
+
+
+class SearchItemsMixin:
+
+    @classmethod
+    def get_search_expressions(
+        cls,
+        search_data: dict
+    ) -> list[ColumnElement[bool]]:
+        search_data = {
+            key.replace("search_by_", ""): value
+            for key, value in search_data.items()
+        }
+
+        search_expressions = []
+
+        for name, value in search_data.items():
+            if value is not None:
+                if isinstance(value, str):
+                    search_expressions.append(
+                        getattr(cls._model_type, name).icontains(value)
+                    )
+
+                if name.endswith("_ids"):
+                    column = getattr(cls._model_type, name.replace("_ids", ""))
+                    child_model = column.prop.argument
+                    search_expressions.append(
+                        column.any(child_model.id.in_(value))
+                    )
+
+        return search_expressions
