@@ -237,11 +237,11 @@ class MovieService(
                 ]
             )
 
-            if not movie:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail=f"Movie with id {movie_id} not found"
-                )
+            self.validate_item_by_id_not_found(
+                item=movie,
+                id_=movie_id,
+                item_type="Movie"
+            )
 
             if data.get("name") and data.get("year") and data.get("time"):
                 another_movie = await self.movie_repository.aget_by(
