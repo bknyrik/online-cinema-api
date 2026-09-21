@@ -82,7 +82,7 @@ async def update_movie(
 ) -> MovieModel:
     return await movie_service.update_movie(
         db=db,
-        data=data.model_dump(),
+        data=data.model_dump(exclude_defaults=True),
         movie_id=movie_id
     )
 
