@@ -85,7 +85,7 @@ class MovieDataRequestSchema(BaseModel):
     meta_score: float = Field(ge=1, le=100)
     gross: float = Field(ge=1)
     description: str = Field(min_length=10)
-    price: Decimal = Field(ge=1, max_digits=10, decimal_places=2)
+    price: Decimal = Field(max_digits=10, decimal_places=2, strict=False)
     certification: int
     genres: list[int]
     stars: list[int]
