@@ -102,9 +102,6 @@ class MovieDataRequestBaseSchema(BaseModel):
     model_config = ConfigDict(strict=True)
 
 
-class MovieCreateRequestSchema(MovieDataRequestBaseSchema):
-    ...
-
 class MovieUpdateRequestSchema(MovieDataRequestBaseSchema):
     name: str | None = Field(
         min_length=3,
