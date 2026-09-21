@@ -175,13 +175,25 @@ class MovieService(
             directors_ids = data.pop("directors")
 
             genres = await self.genre_repository.aget_by_ids(db, genres_ids)
-            self.validate_all_ids_exist(genres_ids, genres, "Genre")
+            self.validate_items_by_ids_not_found(
+                items=genres,
+                ids=genres_ids,
+                item_type="Genre"
+            )
 
             stars = await self.star_repository.aget_by_ids(db, stars_ids)
-            self.validate_all_ids_exist(stars_ids, stars, "Star")
+            self.validate_items_by_ids_not_found(
+                items=stars,
+                ids=stars_ids,
+                item_type="Star"
+            )
 
             directors = await self.director_repository.aget_by_ids(db, directors_ids)
-            self.validate_all_ids_exist(directors_ids, directors, "Director")
+            self.validate_items_by_ids_not_found(
+                items=directors,
+                ids=directors_ids,
+                item_type="Directors"
+            )
 
             data["certification_id"] = data.pop("certification")
 
