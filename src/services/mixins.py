@@ -1,4 +1,3 @@
-import math
 from urllib import parse
 
 from fastapi import HTTPException, status
