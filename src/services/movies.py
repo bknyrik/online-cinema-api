@@ -284,11 +284,11 @@ class MovieService(
                 id_=movie_id
             )
 
-            if not movie:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail=f"Movie with id {movie_id} not found"
-                )
+            self.validate_item_by_id_not_found(
+                item=movie,
+                id_=movie_id,
+                item_type="Movie"
+            )
 
             await db.commit()
         except SQLAlchemyError:
