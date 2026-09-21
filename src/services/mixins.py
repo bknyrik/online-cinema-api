@@ -1,6 +1,12 @@
 from urllib import parse
+from enum import StrEnum, auto
 
 from fastapi import HTTPException, status
+
+
+class SortingOrderEnum(StrEnum):
+    ASC = auto()
+    DESC = auto()
 
 
 class PaginationLimitOffsetMixin:

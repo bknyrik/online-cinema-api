@@ -1,12 +1,8 @@
 from typing import Annotated
-from enum import StrEnum, auto
 
 from fastapi import Depends, Query
 
-
-class SortingOrderEnum(StrEnum):
-    ASC = auto()
-    DESC = auto()
+from src.services.mixins import SortingOrderEnum
 
 
 async def movie_filter_params(
