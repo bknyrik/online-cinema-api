@@ -12,7 +12,10 @@ from src.repositories import movies
 from src.services import mixins
 
 
-class MovieService(mixins.PaginationLimitOffsetMixin):
+class MovieService(
+    mixins.PaginationLimitOffsetMixin,
+    mixins.ModelItemsMixin
+):
 
     def __init__(
         self,
