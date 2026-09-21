@@ -11,10 +11,17 @@ class AsyncBaseRepository[T]:
     def __init__(self, model_type: type[T]) -> None:
         self._model_type = model_type
 
-    async def acount(self, db: AsyncSession) -> int:
-        result = await db.execute(
-            select(func.count()).select_from(self._model_type)
-        )
+    async def acount(
+        self,
+        db: AsyncSession,
+        expressions: list[ColumnElement[bool]] | None = None
+    ) -> int:
+        stmt = select(func.count()).select_from(self._model_type)
+
+        if expressions is not None:
+            stmt = stmt.where(*expressions)
+
+        result = await db.execute(stmt)
         return result.scalar_one()
 
     async def aget_all(
