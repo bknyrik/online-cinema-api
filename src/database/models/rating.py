@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, ForeignKey, Text
+from sqlalchemy import Column, Integer, ForeignKey, Text, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from src.database.models.base import Base
@@ -15,6 +15,14 @@ class LikeMovieModel(Base):
     )
     movie = relationship("MovieModel", back_populates="likes")
     profile = relationship("UserProfileModel", back_populates="movie_likes")
+
+    __table_args__ = (
+        UniqueConstraint(
+            "movie_id",
+            "profile_id",
+            name="movie_id_profile_id_unique"
+        )
+    )
 
 
 class CommentMovieModel(Base):
