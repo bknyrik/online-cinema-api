@@ -12,7 +12,7 @@ from src.database.models.accounts import UserProfileModel
 router = APIRouter()
 
 
-@router.get("/likes-movies/", response_model=schemas.LikeMovieListItemSchema)
+@router.get("/likes-movies/", response_model=schemas.LikeMovieListResponseSchema)
 async def get_like_movie_list(
     pagination_data: PaginationDep,
     db: AsyncSession = Depends(get_db),
