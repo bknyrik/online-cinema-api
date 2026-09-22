@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
@@ -30,6 +32,48 @@ class MovieService(
         self.star_repository = star_repository
         self.director_repository = director_repository
         self.certification_repository = certification_repository
+
+    async def handle_movie_data_parent_objects(
+        self,
+        db: AsyncSession,
+        data: dict
+    ) -> dict:
+        repositories = {
+            "genres": self.genre_repository,
+            "stars": self.star_repository,
+            "directors": self.director_repository,
+            "certification": self.certification_repository
+        }
+        data_copy = deepcopy(data)
+
+        for key, value in data.items():
+            match key:
+                case "genres" | "stars" | "directors":
+                    items = await repositories[key].aget_by_ids(
+                        db=db,
+                        ids=data_copy[key]
+                    )
+
+                    self.validate_items_by_ids_not_found(
+                        items=items,
+                        ids=data[key],
+                        item_type=key.capitalize()
+                    )
+                    data_copy[key] = items
+                case "certification":
+                    certification = await repositories[key].aget_by_id(
+                        db=db,
+                        id_=data[key]
+                    )
+                    self.validate_item_by_id_not_found(
+                        item=certification,
+                        id_=data[key],
+                        item_type=key.capitalize()
+                    )
+                    data_copy["certification_id"] = data_copy.pop(key)
+
+        return data_copy
+
 
     async def get_movie_list(
         self,
