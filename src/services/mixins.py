@@ -116,12 +116,20 @@ class ModelItemsMixin[T]:
         ids: list[int],
         item_type: str
     ) -> None:
+        not_found_ids = []
         for id_ in ids:
-            if not all(item.id != id_ for item in items):
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail=f"{item_type} with id {id_} not found"
+            if all(item.id != id_ for item in items):
+                not_found_ids.append(id_)
+
+        if not_found_ids:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=(
+                    f"{item_type} with ids"
+                    + ", ".join(str(id_) for id_ in not_found_ids)
+                    + "not found"
                 )
+            )
 
 
 class SortingItemsMixin:
