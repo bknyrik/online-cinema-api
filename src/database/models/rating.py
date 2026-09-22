@@ -71,6 +71,14 @@ class RateModel(Base):
     scale = Column(Integer, nullable=False)
     movie = relationship("MovieModel", back_populates="rates")
 
+    __table_args__ = (
+        UniqueConstraint(
+        "movie_id",
+            "profile_id",
+            name="movie_id_profile_id_unique"
+        ),
+    )
+
 
 FavoriteMoviesModel = Table(
     "favorite_movies",
