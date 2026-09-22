@@ -7,7 +7,8 @@ from src.routers import (
     genres,
     certifications,
     stars,
-    directors
+    directors,
+    rating
 )
 
 
@@ -53,4 +54,9 @@ app.include_router(
     directors.router,
     prefix=f"{api_prefix}/directors",
     tags=["directors"]
+)
+app.include_router(
+    rating.router,
+    prefix=f"{api_prefix}/rating",
+    tags=["rating"]
 )
