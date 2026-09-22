@@ -139,7 +139,7 @@ class SortingItemsMixin:
 
         for name, order in sort_data.items():
             if order is not None:
-                column = getattr(cls._model_type, name)
+                column = getattr(cls.MODEL_TYPE, name)
                 sort_columns.append(
                     column if order == SortingOrderEnum.ASC else column.desc()
                 )
@@ -165,11 +165,11 @@ class SearchItemsMixin:
             if value is not None:
                 if isinstance(value, str):
                     search_expressions.append(
-                        getattr(cls._model_type, name).icontains(value)
+                        getattr(cls.MODEL_TYPE, name).icontains(value)
                     )
 
                 if name.endswith("_ids"):
-                    column = getattr(cls._model_type, name.replace("_ids", ""))
+                    column = getattr(cls.MODEL_TYPE, name.replace("_ids", ""))
                     child_model = column.prop.argument
                     search_expressions.append(
                         column.any(child_model.id.in_(value))
@@ -195,7 +195,7 @@ class FilterItemsMixin:
         expressions = []
 
         for min_key, max_key in min_max_keys:
-            column = getattr(cls._model_type, min_key.replace("min_", ""))
+            column = getattr(cls.MODEL_TYPE, min_key.replace("min_", ""))
             min_value, max_value = filter_data[min_key], filter_data[max_key]
 
             if min_value is not None and max_value is not None:
@@ -215,7 +215,7 @@ class FilterItemsMixin:
         filter_data: dict
     ) -> list[ColumnElement[bool]]:
         return [
-            getattr(cls._model_type, name) == filter_data[name]
+            getattr(cls.MODEL_TYPE, name) == filter_data[name]
             for name, value in filter_data.items()
             if name.endswith("_id") and value is not None
         ]
@@ -229,7 +229,7 @@ class FilterItemsMixin:
 
         for name, value in filter_data.items():
             if name.endswith("_ids") and value is not None:
-                column = getattr(cls._model_type, name.replace("_ids", ""))
+                column = getattr(cls.MODEL_TYPE, name.replace("_ids", ""))
                 child_model = column.prop.argument
 
                 expressions.append(column.any(child_model.id.in_(value)))
