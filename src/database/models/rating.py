@@ -24,11 +24,7 @@ class LikeMovieModel(Base):
     profile = relationship("UserProfileModel", back_populates="movie_likes")
 
     __table_args__ = (
-        UniqueConstraint(
-            "movie_id",
-            "profile_id",
-            name="movie_id_profile_id_unique"
-        ),
+        UniqueConstraint("movie_id", "profile_id"),
     )
 
 
@@ -74,11 +70,7 @@ class RateModel(Base):
     profile = relationship("UserProfileModel", back_populates="rates")
 
     __table_args__ = (
-        UniqueConstraint(
-        "movie_id",
-            "profile_id",
-            name="movie_id_profile_id_unique"
-        ),
+        UniqueConstraint("movie_id", "profile_id"),
     )
 
 
