@@ -173,3 +173,7 @@ class UserProfileModel(Base):
         "ReplyCommentModel",
         back_populates="profile"
     )
+    rates = relationship(
+        "RateModel",
+        back_populates="profile"
+    )
