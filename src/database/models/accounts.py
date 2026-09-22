@@ -165,3 +165,7 @@ class UserProfileModel(Base):
         "LikeMovieModel",
         back_populates="profile"
     )
+    movie_comments = relationship(
+        "CommentMovieModel",
+        back_populates="profile"
+    )
