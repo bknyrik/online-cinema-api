@@ -8,6 +8,10 @@ class LikeMovieListItemSchema(BaseModel):
 
 class LikeMovieListResponseSchema(BaseModel):
     likes: list[LikeMovieListItemSchema]
+    total_likes: int
+    total_pages: int
+    prev: str | None
+    next: str | None
 
     model_config = ConfigDict(from_attributes=True)
 
