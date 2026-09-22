@@ -37,3 +37,19 @@ class CommentMovieModel(Base):
     text = Column(Text, nullable=False)
     movie = relationship("MovieModel", back_populates="comments")
     profile = relationship("UserProfileModel", back_populates="movie_comments")
+
+
+class ReplyCommentModel(Base):
+    __tablename__ = "comment_replies"
+
+    id = Column(Integer, primary_key=True)
+    comment_id = Column(
+        Integer,
+        ForeignKey("movie_comments.id", ondelete="CASCADE")
+    )
+    profile_id = Column(
+        Integer,
+        ForeignKey("user_profiles.id", ondelete="CASCADE")
+    )
+    comment = relationship("CommentMovieModel", back_populates="replies")
+    profile = relationship("UserProfileModel", back_populates="comment_replies")
