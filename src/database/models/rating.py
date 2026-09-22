@@ -28,7 +28,7 @@ class LikeMovieModel(Base):
             "movie_id",
             "profile_id",
             name="movie_id_profile_id_unique"
-        )
+        ),
     )
 
 
