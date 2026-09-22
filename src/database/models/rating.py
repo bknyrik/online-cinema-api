@@ -58,6 +58,7 @@ class ReplyCommentModel(Base):
         Integer,
         ForeignKey("user_profiles.id", ondelete="CASCADE")
     )
+    text = Column(Text, nullable=False)
     comment = relationship("CommentMovieModel", back_populates="replies")
     profile = relationship("UserProfileModel", back_populates="comment_replies")
 
