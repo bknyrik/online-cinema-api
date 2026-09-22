@@ -125,9 +125,9 @@ class ModelItemsMixin[T]:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=(
-                    f"{item_type} with ids"
+                    f"{item_type} with ids "
                     + ", ".join(str(id_) for id_ in not_found_ids)
-                    + "not found"
+                    + " not found"
                 )
             )
 
