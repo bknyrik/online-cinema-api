@@ -196,47 +196,10 @@ class MovieService(
                 item_type="Movie"
             )
 
-            genres_ids = data.pop("genres")
-            stars_ids = data.pop("stars")
-            directors_ids = data.pop("directors")
-
-            genres = await self.genre_repository.aget_by_ids(db, genres_ids)
-            self.validate_items_by_ids_not_found(
-                items=genres,
-                ids=genres_ids,
-                item_type="Genre"
-            )
-
-            stars = await self.star_repository.aget_by_ids(db, stars_ids)
-            self.validate_items_by_ids_not_found(
-                items=stars,
-                ids=stars_ids,
-                item_type="Star"
-            )
-
-            directors = await self.director_repository.aget_by_ids(db, directors_ids)
-            self.validate_items_by_ids_not_found(
-                items=directors,
-                ids=directors_ids,
-                item_type="Directors"
-            )
-
-            data["certification_id"] = data.pop("certification")
-
-            certification = await self.certification_repository.aget_by_id(
+            data = await self.handle_movie_data_parent_objects(
                 db=db,
-                id_=data["certification_id"]
+                data=data
             )
-
-            self.validate_item_by_id_not_found(
-                item=certification,
-                id_=data["certification_id"],
-                item_type="Certification"
-            )
-
-            data["genres"] = genres
-            data["stars"] = stars
-            data["directors"] = directors
 
             created_movie = await self.movie_repository.acreate(
                 db=db,
