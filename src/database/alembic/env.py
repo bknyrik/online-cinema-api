@@ -10,6 +10,7 @@ from alembic import context
 from src.database.config import SQLALCHEMY_DATABASE_URL
 from src.database.models.accounts import *
 from src.database.models.movies import *
+from src.database.models.rating import *
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
