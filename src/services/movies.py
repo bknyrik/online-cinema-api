@@ -95,7 +95,7 @@ class MovieService(
             limit, offset = self.get_limit_offset(pagination_data)
             total_movies = await self.movie_repository.acount(
                 db=db,
-                expressions=filter_expressions
+                expressions=filter_expressions + search_expressions
             )
             total_pages = self.get_total_pages(
                 total_movies,
