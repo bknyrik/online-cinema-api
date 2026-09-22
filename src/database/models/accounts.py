@@ -169,3 +169,7 @@ class UserProfileModel(Base):
         "CommentMovieModel",
         back_populates="profile"
     )
+    comment_replies = relationship(
+        "ReplyCommentModel",
+        back_populates="profile"
+    )
