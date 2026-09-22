@@ -270,12 +270,18 @@ class MovieService(
                     item_type="Movie"
                 )
 
+            data = await self.handle_movie_data_parent_objects(
+                db=db,
+                data=data
+            )
+
             await self.movie_repository.aupdate(
                 db=db,
                 instance=movie,
                 data=data
             )
             await db.commit()
+            await db.refresh(movie)
             return movie
         except SQLAlchemyError:
             await db.rollback()
