@@ -150,7 +150,7 @@ class MovieModel(Base):
     profiles = relationship(
         "UserProfileModel",
         secondary=FavoriteMoviesModel,
-        back_populates="movies"
+        back_populates="favorite_movies"
     )
 
     __table_args__ = (
