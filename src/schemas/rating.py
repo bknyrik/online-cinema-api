@@ -10,3 +10,7 @@ class LikeMovieListResponseSchema(BaseModel):
     likes: list[LikeMovieListItemSchema]
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class LikeMovieDataRequestSchema(BaseModel):
+    movie_id: int
