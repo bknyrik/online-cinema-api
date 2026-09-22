@@ -9,7 +9,7 @@ from src.services import mixins
 
 class MovieService(
     mixins.PaginationLimitOffsetMixin,
-    mixins.ModelItemsMixin,
+    mixins.ModelItemsMixin[MovieModel],
     mixins.SearchItemsMixin,
     mixins.SortingItemsMixin,
     mixins.FilterItemsMixin
