@@ -67,6 +67,7 @@ class RateModel(Base):
 
     id = Column(Integer, primary_key=True)
     movie_id = Column(Integer, ForeignKey("movies.id", ondelete="CASCADE"))
+    profile_id = Column(Integer, ForeignKey("user_profiles.id", ondelete="CASCADE"))
     scale = Column(Integer, nullable=False)
     movie = relationship("MovieModel", back_populates="rates")
 
