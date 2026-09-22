@@ -71,6 +71,7 @@ class RateModel(Base):
     profile_id = Column(Integer, ForeignKey("user_profiles.id", ondelete="CASCADE"))
     scale = Column(Integer, nullable=False)
     movie = relationship("MovieModel", back_populates="rates")
+    profile = relationship("UserProfileModel", back_populates="rates")
 
     __table_args__ = (
         UniqueConstraint(
