@@ -144,6 +144,10 @@ class MovieModel(Base):
         "rating.CommentMovieModel",
         back_populates="movie"
     )
+    rates = relationship(
+        "rating.RateModel",
+        back_populates="movie"
+    )
 
     __table_args__ = (
         UniqueConstraint("name", "year", "time", name="name_year_time_unique"),
