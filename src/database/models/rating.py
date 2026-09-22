@@ -1,4 +1,11 @@
-from sqlalchemy import Column, Integer, ForeignKey, Text, UniqueConstraint
+from sqlalchemy import (
+    Column,
+    Integer,
+    ForeignKey,
+    Text,
+    UniqueConstraint,
+    Table
+)
 from sqlalchemy.orm import relationship
 
 from src.database.models.base import Base
@@ -62,3 +69,12 @@ class RateModel(Base):
     movie_id = Column(Integer, ForeignKey("movies.id", ondelete="CASCADE"))
     scale = Column(Integer, nullable=False)
     movie = relationship("MovieModel", back_populates="rates")
+
+
+FavoriteMoviesModel = Table(
+    "favorite_movies",
+    Base.metadata,
+    Column("movie_id", ForeignKey("movies.id"), primary_key=True),
+    Column("profile_id", ForeignKey("user_profiles.id"), primary_key=True),
+    UniqueConstraint("movie_id", "profile_id", name="movie_id_profile_id_unique")
+)
