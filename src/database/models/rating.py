@@ -53,3 +53,11 @@ class ReplyCommentModel(Base):
     )
     comment = relationship("CommentMovieModel", back_populates="replies")
     profile = relationship("UserProfileModel", back_populates="comment_replies")
+
+
+class RateModel(Base):
+    __tablename__ = "movie_rates"
+
+    id = Column(Integer, primary_key=True)
+    movie_id = Column(Integer, ForeignKey("movies.id", ondelete="CASCADE"))
+    scale = Column(Integer, nullable=False)
