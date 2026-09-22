@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, ForeignKey
+from sqlalchemy import Column, Integer, ForeignKey, Text
 from sqlalchemy.orm import relationship
 
 from src.database.models.base import Base
@@ -15,3 +15,17 @@ class LikeMovieModel(Base):
     )
     movie = relationship("MovieModel", back_populates="likes")
     profile = relationship("UserProfileModel", back_populates="movie_likes")
+
+
+class CommentMovieModel(Base):
+    __tablename__ = "movie_comments"
+
+    id = Column(Integer, primary_key=True)
+    movie_id = Column(Integer, ForeignKey("movies.id", ondelete="CASCADE"))
+    profile_id = Column(
+        Integer,
+        ForeignKey("user_profiles.id", ondelete="CASCADE")
+    )
+    text = Column(Text, nullable=False)
+    movie = relationship("MovieModel", back_populates="comments")
+    profile = relationship("UserProfileModel", back_populates="movie_comments")
