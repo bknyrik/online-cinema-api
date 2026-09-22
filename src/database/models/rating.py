@@ -85,5 +85,4 @@ FavoriteMoviesModel = Table(
     Base.metadata,
     Column("movie_id", ForeignKey("movies.id"), primary_key=True),
     Column("profile_id", ForeignKey("user_profiles.id"), primary_key=True),
-    UniqueConstraint("movie_id", "profile_id", name="movie_id_profile_id_unique")
 )
