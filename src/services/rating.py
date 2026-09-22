@@ -1,6 +1,11 @@
+from fastapi import HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import SQLAlchemyError
+
 from src.services import mixins
 from src.repositories.rating import LikeMovieRepository
 from src.database.models.rating import LikeMovieModel
+from src.database.models.accounts import UserProfileModel
 
 
 class LikeMovieService(
@@ -9,3 +14,47 @@ class LikeMovieService(
 ):
     def __init__(self) -> None:
         self.like_movie_repository = LikeMovieRepository()
+
+    async def get_like_movie_list(
+        self,
+        pagination_data: dict,
+        db: AsyncSession,
+        current_user_profile: UserProfileModel
+    ) -> dict:
+        try:
+            limit, offset = self.get_limit_offset(pagination_data)
+            total_likes = await self.like_movie_repository.acount(
+                db=db,
+                expressions=[UserProfileModel.id == current_user_profile.id]
+            )
+            total_pages = self.get_total_pages(
+                total_items=total_likes,
+                per_page=pagination_data["per_page"]
+            )
+
+            likes = await self.like_movie_repository.aget_all(
+                db=db,
+                limit=limit,
+                offset=offset,
+                expressions=[UserProfileModel.id == current_user_profile.id],
+                order_by_columns=[UserProfileModel.id]
+            )
+            prev_page, next_page = self.get_prev_next_urls_pages(
+                url="/api/likes-movies/",
+                page=pagination_data["page"],
+                total_pages=total_pages,
+                query_params=pagination_data
+            )
+
+            return {
+                "likes": likes,
+                "total_likes": total_likes,
+                "total_pages": total_pages,
+                "prev": prev_page,
+                "next": next_page
+            }
+        except SQLAlchemyError:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while getting list with movie likes"
+            )
