@@ -14,9 +14,8 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 
-
 from src.database.models.base import Base
-
+from src.database.models.rating import FavoriteMoviesModel
 
 MoviesGenresModel = Table(
     "movie_genres",
@@ -147,6 +146,11 @@ class MovieModel(Base):
     rates = relationship(
         "rating.RateModel",
         back_populates="movie"
+    )
+    profile_favorites = relationship(
+        "UserProfileModel",
+        secondary=FavoriteMoviesModel,
+        back_populates="movies"
     )
 
     __table_args__ = (
