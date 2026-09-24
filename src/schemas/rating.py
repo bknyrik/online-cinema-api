@@ -18,3 +18,9 @@ class LikeMovieListResponseSchema(BaseModel):
 
 class LikeMovieDataRequestSchema(BaseModel):
     movie_id: int
+
+
+class CommentMovieDetailResponseSchema(BaseModel):
+    id: int
+    movie_id: int
+    text: str
