@@ -22,10 +22,13 @@ class LikeMovieService(
         current_user_profile: UserProfileModel
     ) -> dict:
         try:
+            expressions = [
+                LikeMovieModel.profile_id == current_user_profile.id
+            ]
             limit, offset = self.get_limit_offset(pagination_data)
             total_likes = await self.like_movie_repository.acount(
                 db=db,
-                expressions=[UserProfileModel.id == current_user_profile.id]
+                expressions=expressions
             )
             total_pages = self.get_total_pages(
                 total_items=total_likes,
@@ -36,8 +39,8 @@ class LikeMovieService(
                 db=db,
                 limit=limit,
                 offset=offset,
-                expressions=[UserProfileModel.id == current_user_profile.id],
-                order_by_columns=[UserProfileModel.id]
+                expressions=expressions,
+                order_by_columns=[LikeMovieModel.profile_id]
             )
             prev_page, next_page = self.get_prev_next_urls_pages(
                 url="/api/likes-movies/",
