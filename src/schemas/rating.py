@@ -26,6 +26,14 @@ class CommentMovieDetailResponseSchema(BaseModel):
     text: str
 
 
+class CommentMovieListResponseSchema(BaseModel):
+    comments: list[CommentMovieDetailResponseSchema]
+    total_comments: int
+    total_pages: int
+    prev: str | None
+    next: str | None
+
+
 class CommentMovieDataRequestSchema(BaseModel):
     movie_id: int
     text: str
