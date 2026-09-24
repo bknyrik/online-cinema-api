@@ -1,13 +1,13 @@
 from pydantic import BaseModel, ConfigDict
 
 
-class LikeMovieListItemSchema(BaseModel):
+class LikeMovieDetailResponseSchema(BaseModel):
     id: int
     movie_id: int
 
 
 class LikeMovieListResponseSchema(BaseModel):
-    likes: list[LikeMovieListItemSchema]
+    likes: list[LikeMovieDetailResponseSchema]
     total_likes: int
     total_pages: int
     prev: str | None
