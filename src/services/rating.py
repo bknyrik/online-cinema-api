@@ -61,3 +61,40 @@ class LikeMovieService(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while getting list with movie likes"
             )
+
+    async def create_like_movie(
+        self,
+        db: AsyncSession,
+        data: dict,
+        current_user_profile: UserProfileModel
+    ) -> LikeMovieModel:
+        try:
+            like = await self.like_movie_repository.aget_by(
+                db=db,
+                expressions=[
+                    LikeMovieModel.movie_id == data["movie_id"],
+                    LikeMovieModel.profile_id == current_user_profile.id
+                ]
+            )
+
+            self.validate_item_by_attrs_exists(
+                item=like,
+                attrs=data,
+                item_type="Like"
+            )
+
+            data["profile_id"] = current_user_profile.id
+
+            like = await self.like_movie_repository.acreate(
+                db=db,
+                data=data,
+            )
+
+            await db.commit()
+            return like
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while like movie creation"
+            )
