@@ -71,6 +71,13 @@ class LikeMovieService(
         current_user_profile: UserProfileModel
     ) -> LikeMovieModel:
         try:
+            movie = await self.movie_repository.aget_by_id(
+                db=db,
+                id_=data["movie_id"]
+            )
+
+            self.validate_item_by_id_not_found(movie, data["movie_id"], "Movie")
+
             like = await self.like_movie_repository.aget_by(
                 db=db,
                 expressions=[
