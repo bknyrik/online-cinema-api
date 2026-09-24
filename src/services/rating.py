@@ -98,3 +98,28 @@ class LikeMovieService(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while like movie creation"
             )
+
+    async def delete_like_movie(
+        self,
+        db: AsyncSession,
+        like_movie_id: int,
+        current_user_profile: UserProfileModel
+    ) -> None:
+        try:
+            like = await self.like_movie_repository.adelete_by(
+                db=db,
+                expressions=[
+                    LikeMovieModel.id == like_movie_id,
+                    LikeMovieModel.profile_id == current_user_profile.id
+                ]
+            )
+
+            self.validate_item_by_id_not_found(like, like_movie_id, "Like")
+
+            await db.commit()
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while like movie deletion"
+            )
