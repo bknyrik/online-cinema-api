@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 
 from src.services import mixins
+from src.repositories.movies import MovieRepository
 from src.repositories.rating import LikeMovieRepository
 from src.database.models.rating import LikeMovieModel
 from src.database.models.accounts import UserProfileModel
@@ -14,6 +15,7 @@ class LikeMovieService(
 ):
     def __init__(self) -> None:
         self.like_movie_repository = LikeMovieRepository()
+        self.movie_repository = MovieRepository()
 
     async def get_like_movie_list(
         self,
