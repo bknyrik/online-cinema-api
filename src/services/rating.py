@@ -4,7 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from src.services import mixins
 from src.repositories.movies import MovieRepository
-from src.repositories.rating import LikeMovieRepository
+from src.repositories.rating import LikeMovieRepository, CommentMovieRepository
 from src.database.models.rating import LikeMovieModel
 from src.database.models.accounts import UserProfileModel
 
@@ -132,3 +132,13 @@ class LikeMovieService(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while like movie deletion"
             )
+
+
+class CommentMovieService(
+    mixins.PaginationLimitOffsetMixin,
+    mixins.ModelItemsMixin
+):
+
+    def __init__(self) -> None:
+        self.movie_repository = MovieRepository()
+        self.comment_repository = CommentMovieRepository()
