@@ -1,6 +1,6 @@
 from typing import Sequence
 
-from sqlalchemy import select, func
+from sqlalchemy import select, func, delete
 from sqlalchemy.sql.elements import ColumnElement
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -143,6 +143,22 @@ class AsyncBaseRepository[T]:
             return instance
 
         await db.delete(instance)
+        return instance
+
+    async def adelete_by(
+        self,
+        db: AsyncSession,
+        expressions: list[ColumnElement[bool]]
+    ) -> T | None:
+        instance = await self.aget_by(
+            db=db,
+            expressions=expressions
+        )
+
+        if not instance:
+            return None
+
+        await self.adelete(db, instance)
         return instance
 
     @staticmethod
