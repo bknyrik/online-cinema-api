@@ -5,7 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from src.services import mixins
 from src.repositories.movies import MovieRepository
 from src.repositories.rating import LikeMovieRepository, CommentMovieRepository
-from src.database.models.rating import LikeMovieModel
+from src.database.models.rating import LikeMovieModel, CommentMovieModel
 from src.database.models.accounts import UserProfileModel
 
 
@@ -142,3 +142,22 @@ class CommentMovieService(
     def __init__(self) -> None:
         self.movie_repository = MovieRepository()
         self.comment_repository = CommentMovieRepository()
+
+    async def create_comment(
+        self,
+        db: AsyncSession,
+        data: dict
+    ) -> CommentMovieModel:
+        try:
+            comment = await self.comment_repository.acreate(
+                db=db,
+                data=data
+            )
+            await db.commit()
+            return comment
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while comment creation"
+            )
