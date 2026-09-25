@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class LikeMovieDetailResponseSchema(BaseModel):
@@ -37,3 +37,9 @@ class CommentMovieListResponseSchema(BaseModel):
 class CommentMovieDataRequestSchema(BaseModel):
     movie_id: int
     text: str
+
+
+class CommentUpdateRequestSchema(BaseModel):
+    text: str = Field(min_length=1)
+
+    model_config = ConfigDict(strict=True)
