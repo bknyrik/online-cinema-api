@@ -65,7 +65,7 @@ async def delete_like_movie(
 @router.post(
     "/comments/",
     status_code=status.HTTP_201_CREATED,
-    response_model=schemas.LikeMovieDetailResponseSchema,
+    response_model=schemas.CommentMovieDetailResponseSchema,
 )
 async def create_comment(
     data: schemas.CommentMovieDataRequestSchema,
