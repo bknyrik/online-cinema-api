@@ -7,7 +7,7 @@ from src.dependencies.profiles import get_current_user_profile
 from src.services import rating as services
 from src.schemas import rating as schemas
 from src.database.models.accounts import UserProfileModel
-from src.database.models.rating import LikeMovieModel
+from src.database.models.rating import LikeMovieModel, CommentMovieModel
 
 
 router = APIRouter()
@@ -58,5 +58,23 @@ async def delete_like_movie(
     return await like_movie_service.delete_like_movie(
         db=db,
         like_movie_id=like_movie_id,
+        current_user_profile=current_user_profile
+    )
+
+
+@router.post(
+    "comments/",
+    status_code=status.HTTP_201_CREATED,
+    response_model=schemas.LikeMovieDetailResponseSchema,
+)
+async def create_comment(
+    data: schemas.CommentMovieDataRequestSchema,
+    db: AsyncSession = Depends(get_db),
+    current_user_profile: UserProfileModel = Depends(get_current_user_profile),
+    comment_service: services.CommentMovieService = Depends(services.CommentMovieService)
+) -> CommentMovieModel:
+    return await comment_service.create_comment(
+        db=db,
+        data=data.model_dump(),
         current_user_profile=current_user_profile
     )
