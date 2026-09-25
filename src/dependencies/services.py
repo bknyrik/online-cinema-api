@@ -2,6 +2,11 @@ from datetime import timedelta
 
 from src.settings import settings
 from src.services.accounts import UserService
+from src.services.movies import MovieService
+from src.services.genres import GenreService
+from src.services.stars import StarService
+from src.services.directors import DirectorService
+from src.services.certifications import CertificationService
 from src.services.profiles import UserProfileService
 from src.services.security import PasswordSecurityService, JWTAuthService
 from src.services.email_sender import EmailSenderService
@@ -12,6 +17,13 @@ from src.repositories.accounts import (
     UserGroupRepository
 )
 from src.repositories.profiles import UserProfileRepository
+from src.repositories.movies import (
+    MovieRepository,
+    GenreRepository,
+    StarRepository,
+    DirectorRepository,
+    CertificationRepository
+)
 from src.database.models import accounts
 
 
@@ -61,4 +73,38 @@ def get_user_service() -> UserService:
 def get_profile_service() -> UserProfileService:
     return UserProfileService(
         profile_repository=UserProfileRepository()
+    )
+
+
+def get_movie_service() -> MovieService:
+    return MovieService(
+        movie_repository=MovieRepository(),
+        genre_repository=GenreRepository(),
+        star_repository=StarRepository(),
+        director_repository=DirectorRepository(),
+        certification_repository=CertificationRepository()
+    )
+
+
+def get_genre_service() -> GenreService:
+    return GenreService(
+        genre_repository=GenreRepository()
+    )
+
+
+def get_certification_service() -> CertificationService:
+    return CertificationService(
+        certification_repository=CertificationRepository()
+    )
+
+
+def get_star_service() -> StarService:
+    return StarService(
+        star_repository=StarRepository()
+    )
+
+
+def get_director_service() -> DirectorService:
+    return DirectorService(
+        director_repository=DirectorRepository()
     )
