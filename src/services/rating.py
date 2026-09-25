@@ -146,9 +146,11 @@ class CommentMovieService(
     async def create_comment(
         self,
         db: AsyncSession,
-        data: dict
+        data: dict,
+        current_user_profile: UserProfileModel
     ) -> CommentMovieModel:
         try:
+            data["profile_id"] = current_user_profile.id
             comment = await self.comment_repository.acreate(
                 db=db,
                 data=data
