@@ -5,6 +5,8 @@ from fastapi import HTTPException, status
 from sqlalchemy import UnaryExpression, ColumnElement
 from sqlalchemy.orm import InstrumentedAttribute
 
+from src.database.models.accounts import UserModel
+
 
 class SortingOrderEnum(StrEnum):
     ASC = auto()
@@ -256,3 +258,31 @@ class FilterItemsMixin:
             cls._get_single_id_expressions(filter_data) +
             cls._get_multiple_ids_expressions(filter_data)
         )
+
+
+class UserPermissionsMixin:
+
+    @staticmethod
+    def belongs_to_profile_or_is_admin_or_moderator(
+        current_user: UserModel,
+        child_object,
+        child_object_type: str
+    ) -> None:
+
+        if (
+            current_user.profile.id != child_object.profile_id
+            and current_user.group.name == "user"
+        ):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=(
+                    f"{child_object_type} with id {child_object.id}"
+                    " doesn't belong to current user profile"
+                )
+            )
+
+        if current_user.group.name not in ("admin", "moderator"):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You are not admin/moderator to perform this action"
+            )
