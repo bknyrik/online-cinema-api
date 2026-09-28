@@ -163,3 +163,23 @@ class CommentMovieService(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while comment creation"
             )
+
+    async def delete_comment(
+        self,
+        db: AsyncSession,
+        comment_id: int,
+        current_user: UserModel
+    ) -> None:
+        try:
+            comment = await self.comment_repository.aget_by_id(db, comment_id)
+
+            self.validate_item_by_id_not_found(comment, comment_id, "Comment")
+
+            await self.comment_repository.adelete(db, comment)
+            await db.commit()
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while comment deletion"
+            )
