@@ -20,9 +20,10 @@ async def get_current_user(
     user_repository = UserRepository()
     payload = jwt_auth_service.decode_token(token)
 
-    user = await user_repository.aget_with_group_by_id(
+    user = await user_repository.aget_by_id(
         db=db,
-        id_=int(payload["sub"])
+        id_=int(payload["sub"]),
+        join_relationships=["profile", "group"]
     )
 
     if not user:
