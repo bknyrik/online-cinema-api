@@ -136,7 +136,8 @@ class LikeMovieService(
 
 class CommentMovieService(
     mixins.PaginationLimitOffsetMixin,
-    mixins.ModelItemsMixin
+    mixins.ModelItemsMixin,
+    mixins.UserPermissionsMixin
 ):
 
     def __init__(self) -> None:
