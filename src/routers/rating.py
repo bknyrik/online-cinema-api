@@ -77,5 +77,5 @@ async def create_comment(
     return await comment_service.create_comment(
         db=db,
         data=data.model_dump(),
-        current_user_profile=current_user
+        current_user=current_user
     )

@@ -6,7 +6,7 @@ from src.services import mixins
 from src.repositories.movies import MovieRepository
 from src.repositories.rating import LikeMovieRepository, CommentMovieRepository
 from src.database.models.rating import LikeMovieModel, CommentMovieModel
-from src.database.models.accounts import UserProfileModel
+from src.database.models.accounts import UserProfileModel, UserModel
 
 
 class LikeMovieService(
@@ -147,10 +147,10 @@ class CommentMovieService(
         self,
         db: AsyncSession,
         data: dict,
-        current_user_profile: UserProfileModel
+        current_user: UserModel
     ) -> CommentMovieModel:
         try:
-            data["profile_id"] = current_user_profile.id
+            data["profile_id"] = current_user.profile.id
             comment = await self.comment_repository.acreate(
                 db=db,
                 data=data
