@@ -188,7 +188,8 @@ class CommentMovieService(
         self,
         db: AsyncSession,
         comment_id: int,
-        data: dict
+        data: dict,
+        current_user: UserModel
     ) -> CommentMovieModel:
         try:
             comment = await self.comment_repository.aget_by_id(
@@ -197,6 +198,11 @@ class CommentMovieService(
             )
 
             self.validate_item_by_id_not_found(comment, comment_id, "Comment")
+            self.belongs_to_profile_or_is_admin_or_moderator(
+                current_user=current_user,
+                child_object=comment,
+                child_object_type="Comment"
+            )
 
             await self.comment_repository.aupdate(
                 db=db,
