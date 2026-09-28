@@ -175,6 +175,11 @@ class CommentMovieService(
             comment = await self.comment_repository.aget_by_id(db, comment_id)
 
             self.validate_item_by_id_not_found(comment, comment_id, "Comment")
+            self.belongs_to_profile_or_is_admin_or_moderator(
+                current_user=current_user,
+                child_object=comment,
+                child_object_type="Comment"
+            )
 
             await self.comment_repository.adelete(db, comment)
             await db.commit()
