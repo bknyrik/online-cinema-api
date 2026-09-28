@@ -184,6 +184,35 @@ class CommentMovieService(
                 detail="An error occurred while comment creation"
             )
 
+    async def update_comment(
+        self,
+        db: AsyncSession,
+        comment_id: int,
+        data: dict
+    ) -> CommentMovieModel:
+        try:
+            comment = await self.comment_repository.aget_by_id(
+                db=db,
+                id_=comment_id
+            )
+
+            self.validate_item_by_id_not_found(comment, comment_id, "Comment")
+
+            await self.comment_repository.aupdate(
+                db=db,
+                instance=comment,
+                data=data
+            )
+
+            await db.commit()
+            return comment
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while updating comment"
+            )
+
     async def delete_comment(
         self,
         db: AsyncSession,
