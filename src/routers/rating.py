@@ -4,9 +4,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.dependencies.database import get_db
 from src.dependencies.pagination import PaginationDep
 from src.dependencies.profiles import get_current_user_profile
+from src.dependencies import authentication as auth
 from src.services import rating as services
 from src.schemas import rating as schemas
-from src.database.models.accounts import UserProfileModel
+from src.database.models.accounts import UserProfileModel, UserModel
 from src.database.models.rating import LikeMovieModel, CommentMovieModel
 
 
@@ -70,11 +71,11 @@ async def delete_like_movie(
 async def create_comment(
     data: schemas.CommentMovieDataRequestSchema,
     db: AsyncSession = Depends(get_db),
-    current_user_profile: UserProfileModel = Depends(get_current_user_profile),
+    current_user: UserModel = Depends(auth.get_current_user),
     comment_service: services.CommentMovieService = Depends(services.CommentMovieService)
 ) -> CommentMovieModel:
     return await comment_service.create_comment(
         db=db,
         data=data.model_dump(),
-        current_user_profile=current_user_profile
+        current_user_profile=current_user
     )
