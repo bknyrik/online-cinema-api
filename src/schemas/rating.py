@@ -41,9 +41,3 @@ class CommentMovieDataRequestSchema(BaseModel):
 
 class CommentMovieUpdateRequestSchema(BaseModel):
     text: str = Field(strict=True, min_length=1)
-
-
-class CommentUpdateRequestSchema(BaseModel):
-    text: str = Field(min_length=1)
-
-    model_config = ConfigDict(strict=True)
