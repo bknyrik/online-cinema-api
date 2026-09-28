@@ -144,6 +144,26 @@ class CommentMovieService(
         self.movie_repository = MovieRepository()
         self.comment_repository = CommentMovieRepository()
 
+    async def get_comment_detail(
+        self,
+        db: AsyncSession,
+        comment_id: int,
+        current_user: UserModel
+    ) -> CommentMovieModel:
+        try:
+            comment = await self.comment_repository.aget_by_id(
+                db=db,
+                id_=comment_id
+            )
+
+            self.validate_item_by_id_not_found(comment, comment_id, "Comment")
+            return comment
+        except SQLAlchemyError:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while getting comment"
+            )
+
     async def create_comment(
         self,
         db: AsyncSession,
