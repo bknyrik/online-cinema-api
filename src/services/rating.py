@@ -148,7 +148,6 @@ class CommentMovieService(
         self,
         db: AsyncSession,
         comment_id: int,
-        current_user: UserModel
     ) -> CommentMovieModel:
         try:
             comment = await self.comment_repository.aget_by_id(
