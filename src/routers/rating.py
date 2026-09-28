@@ -96,6 +96,25 @@ async def create_comment(
     )
 
 
+@router.put(
+    "/comment/{comment_id}/",
+    response_model=schemas.CommentMovieDetailResponseSchema
+)
+async def update_comment(
+    comment_id: int,
+    data: schemas.CommentMovieUpdateRequestSchema,
+    db: AsyncSession = Depends(get_db),
+    comment_service: services.CommentMovieService = Depends(services.CommentMovieService),
+    current_user: UserModel = Depends(auth.get_current_user),
+):
+    return await comment_service.update_comment(
+        db=db,
+        data=data.model_dump(),
+        comment_id=comment_id,
+        current_user=current_user
+    )
+
+
 @router.delete(
     "/comments/{comment_id}/",
     status_code=status.HTTP_204_NO_CONTENT,
