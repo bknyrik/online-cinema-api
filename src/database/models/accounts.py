@@ -74,7 +74,8 @@ class UserModel(Base):
     profile = relationship(
         "UserProfileModel",
         back_populates="user",
-        single_parent=True
+        single_parent=True,
+        uselist=False
     )
 
 
