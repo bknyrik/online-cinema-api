@@ -21,11 +21,11 @@ class LikeMovieService(
         self,
         pagination_data: dict,
         db: AsyncSession,
-        current_user_profile: UserProfileModel
+        current_user: UserModel
     ) -> dict:
         try:
             expressions = [
-                LikeMovieModel.profile_id == current_user_profile.id
+                LikeMovieModel.profile_id == current_user.profile.id
             ]
             limit, offset = self.get_limit_offset(pagination_data)
             total_likes = await self.like_movie_repository.acount(
