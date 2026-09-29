@@ -33,6 +33,8 @@ class CommentMovieListResponseSchema(BaseModel):
     prev: str | None
     next: str | None
 
+    model_config = ConfigDict(from_attributes=True)
+
 
 class CommentMovieDataRequestSchema(BaseModel):
     movie_id: int
