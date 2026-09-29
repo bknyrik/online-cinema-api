@@ -24,6 +24,7 @@ class CommentMovieDetailResponseSchema(BaseModel):
     id: int
     movie_id: int
     text: str
+    profile_id: int
 
 
 class CommentMovieListResponseSchema(BaseModel):
