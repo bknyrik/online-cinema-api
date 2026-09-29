@@ -5,6 +5,7 @@ from src.dependencies.database import get_db
 from src.dependencies.pagination import PaginationDep
 from src.dependencies.profiles import get_current_user_profile
 from src.dependencies import authentication as auth
+from src.dependencies.rating import CommentFilterDep
 from src.services import rating as services
 from src.schemas import rating as schemas
 from src.database.models.accounts import UserProfileModel, UserModel
@@ -60,6 +61,25 @@ async def delete_like_movie(
         db=db,
         like_movie_id=like_movie_id,
         current_user_profile=current_user_profile
+    )
+
+
+@router.get(
+    "/comments/",
+    response_model=schemas.CommentMovieListResponseSchema
+)
+async def get_comment_list(
+    pagination_data: PaginationDep,
+    filter_data: CommentFilterDep,
+    db: AsyncSession = Depends(get_db),
+    comment_service: services.CommentMovieService = Depends(services.CommentMovieService),
+    current_user: UserModel = Depends(auth.get_current_user),
+) -> dict:
+    return await comment_service.get_comment_list(
+        db=db,
+        pagination_data=pagination_data,
+        filter_data=filter_data,
+        current_user=current_user
     )
 
 
