@@ -90,7 +90,8 @@ async def get_comment_list(
 async def get_comment_detail(
     comment_id: int,
     db: AsyncSession = Depends(get_db),
-    comment_service: services.CommentMovieService = Depends(services.CommentMovieService)
+    comment_service: services.CommentMovieService = Depends(services.CommentMovieService),
+    current_user: UserModel = Depends(auth.get_current_user)
 ) -> CommentMovieModel:
     return await comment_service.get_comment_detail(
         db=db,
