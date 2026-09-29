@@ -20,12 +20,12 @@ async def get_like_movie_list(
     pagination_data: PaginationDep,
     db: AsyncSession = Depends(get_db),
     like_movie_service: services.LikeMovieService = Depends(services.LikeMovieService),
-    current_user_profile: UserProfileModel = Depends(get_current_user_profile)
+    current_user: UserModel = Depends(auth.get_current_user)
 ) -> dict:
     return await like_movie_service.get_like_movie_list(
         db=db,
         pagination_data=pagination_data,
-        current_user_profile=current_user_profile
+        current_user=current_user
     )
 
 
