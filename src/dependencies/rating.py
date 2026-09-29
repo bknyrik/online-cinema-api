@@ -28,7 +28,7 @@ async def comment_filter_params(
 
     return {
         "filter_by_movie_id": filter_by_movie_id,
-        "filter_by_by_current_user": filter_by_current_user
+        "filter_by_current_user": filter_by_current_user
     }
 
 
