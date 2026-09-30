@@ -8,7 +8,7 @@ from src.dependencies.rating import CommentFilterDep
 from src.services import rating as services
 from src.schemas import rating as schemas
 from src.database.models.accounts import UserModel
-from src.database.models.rating import LikeMovieModel, CommentMovieModel
+from src.database.models.rating import MovieLikeModel, CommentMovieModel
 
 
 router = APIRouter()
@@ -38,7 +38,7 @@ async def create_like_movie(
     db: AsyncSession = Depends(get_db),
     like_movie_service: services.LikeMovieService = Depends(services.LikeMovieService),
     current_user: UserModel = Depends(auth.get_current_user)
-) -> LikeMovieModel:
+) -> MovieLikeModel:
     return await like_movie_service.create_like_movie(
         db=db,
         data=data.model_dump(),

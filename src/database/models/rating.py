@@ -14,7 +14,7 @@ from sqlalchemy.orm import relationship
 from src.database.models.base import Base
 
 
-class LikeMovieModel(Base):
+class MovieLikeModel(Base):
     __tablename__ = "movie_likes"
 
     id = Column(Integer, primary_key=True)

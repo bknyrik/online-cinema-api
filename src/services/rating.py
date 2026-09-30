@@ -5,13 +5,13 @@ from sqlalchemy.exc import SQLAlchemyError
 from src.services import mixins
 from src.repositories.movies import MovieRepository
 from src.repositories.rating import LikeMovieRepository, CommentMovieRepository
-from src.database.models.rating import LikeMovieModel, CommentMovieModel
+from src.database.models.rating import MovieLikeModel, CommentMovieModel
 from src.database.models.accounts import UserModel
 
 
 class LikeMovieService(
     mixins.PaginationLimitOffsetMixin,
-    mixins.ModelItemsMixin[LikeMovieModel]
+    mixins.ModelItemsMixin[MovieLikeModel]
 ):
     def __init__(self) -> None:
         self.like_movie_repository = LikeMovieRepository()
@@ -25,7 +25,7 @@ class LikeMovieService(
     ) -> dict:
         try:
             expressions = [
-                LikeMovieModel.profile_id == current_user.profile.id
+                MovieLikeModel.profile_id == current_user.profile.id
             ]
             limit, offset = self.get_limit_offset(pagination_data)
             total_likes = await self.like_movie_repository.acount(
@@ -42,7 +42,7 @@ class LikeMovieService(
                 limit=limit,
                 offset=offset,
                 expressions=expressions,
-                order_by_columns=[LikeMovieModel.profile_id]
+                order_by_columns=[MovieLikeModel.profile_id]
             )
             prev_page, next_page = self.get_prev_next_urls_pages(
                 url="/api/likes-movies/",
@@ -69,7 +69,7 @@ class LikeMovieService(
         db: AsyncSession,
         data: dict,
         current_user: UserModel
-    ) -> LikeMovieModel:
+    ) -> MovieLikeModel:
         try:
             movie = await self.movie_repository.aget_by_id(
                 db=db,
@@ -81,8 +81,8 @@ class LikeMovieService(
             like = await self.like_movie_repository.aget_by(
                 db=db,
                 expressions=[
-                    LikeMovieModel.movie_id == data["movie_id"],
-                    LikeMovieModel.profile_id == current_user.profile.id
+                    MovieLikeModel.movie_id == data["movie_id"],
+                    MovieLikeModel.profile_id == current_user.profile.id
                 ]
             )
 
@@ -118,8 +118,8 @@ class LikeMovieService(
             like = await self.like_movie_repository.adelete_by(
                 db=db,
                 expressions=[
-                    LikeMovieModel.id == like_movie_id,
-                    LikeMovieModel.profile_id == current_user.profile.id
+                    MovieLikeModel.id == like_movie_id,
+                    MovieLikeModel.profile_id == current_user.profile.id
                 ]
             )
 
