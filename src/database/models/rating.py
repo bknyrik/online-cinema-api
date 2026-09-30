@@ -60,7 +60,7 @@ class MovieCommentModel(Base):
 class ReplyCommentModel(Base):
     __tablename__ = "comment_replies"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, index=True)
     created_at = Column(
         DateTime,
         default=datetime.now(timezone.utc),
