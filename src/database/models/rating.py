@@ -17,7 +17,7 @@ from src.database.models.base import Base
 class MovieLikeModel(Base):
     __tablename__ = "movie_likes"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, index=True)
     created_at = Column(
         DateTime,
         default=datetime.now(timezone.utc),
