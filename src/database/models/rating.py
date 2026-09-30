@@ -73,6 +73,8 @@ class CommentLikeModel(Base):
         Integer,
         ForeignKey("user_profiles.id", ondelete="CASCADE")
     )
+    comment = relationship(CommentMovieModel, back_populates="likes")
+    profile = relationship("UserProfileModel", back_populates="comment_likes")
 
     __table_args__ = (
         UniqueConstraint("comment_id", "profile_id"),
