@@ -55,12 +55,12 @@ async def delete_like_movie(
     like_movie_id: int,
     db: AsyncSession = Depends(get_db),
     like_movie_service: services.LikeMovieService = Depends(services.LikeMovieService),
-    current_user_profile: UserProfileModel = Depends(get_current_user_profile)
+    current_user: UserModel = Depends(auth.get_current_user)
 ) -> None:
     return await like_movie_service.delete_like_movie(
         db=db,
         like_movie_id=like_movie_id,
-        current_user_profile=current_user_profile
+        current_user_profile=current_user
     )
 
 
