@@ -159,7 +159,7 @@ class UserProfileModel(Base):
         single_parent=True
     )
     favorite_movies = relationship(
-        "MovieModel",
+        "FavoriteMovieModel",
         back_populates="profile"
     )
     movie_likes = relationship(
