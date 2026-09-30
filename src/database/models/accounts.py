@@ -163,19 +163,19 @@ class UserProfileModel(Base):
         back_populates="profile"
     )
     movie_likes = relationship(
-        "LikeMovieModel",
+        "MovieLikeModel",
         back_populates="profile"
     )
     movie_comments = relationship(
-        "CommentMovieModel",
+        "MovieCommentModel",
         back_populates="profile"
     )
     comment_replies = relationship(
-        "ReplyCommentModel",
+        "CommentReplyModel",
         back_populates="profile"
     )
     rates = relationship(
-        "RateModel",
+        "MovieRateModel",
         back_populates="profile"
     )
     comment_likes = relationship(
