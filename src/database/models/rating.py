@@ -53,11 +53,11 @@ class MovieCommentModel(Base):
     text = Column(Text, nullable=False)
     movie = relationship("MovieModel", back_populates="comments")
     profile = relationship("UserProfileModel", back_populates="movie_comments")
-    replies = relationship("ReplyCommentModel", back_populates="comment")
+    replies = relationship("CommentReplyModel", back_populates="comment")
     likes = relationship("CommentLikeModel", back_populates="comment")
 
 
-class ReplyCommentModel(Base):
+class CommentReplyModel(Base):
     __tablename__ = "comment_replies"
 
     id = Column(Integer, primary_key=True, index=True)
