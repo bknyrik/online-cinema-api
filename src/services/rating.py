@@ -68,7 +68,7 @@ class LikeMovieService(
         self,
         db: AsyncSession,
         data: dict,
-        current_user_profile: UserProfileModel
+        current_user: UserModel
     ) -> LikeMovieModel:
         try:
             movie = await self.movie_repository.aget_by_id(
@@ -82,7 +82,7 @@ class LikeMovieService(
                 db=db,
                 expressions=[
                     LikeMovieModel.movie_id == data["movie_id"],
-                    LikeMovieModel.profile_id == current_user_profile.id
+                    LikeMovieModel.profile_id == current_user.profile.id
                 ]
             )
 
@@ -92,7 +92,7 @@ class LikeMovieService(
                 item_type="Like"
             )
 
-            data["profile_id"] = current_user_profile.id
+            data["profile_id"] = current_user.profile.id
 
             like = await self.like_movie_repository.acreate(
                 db=db,

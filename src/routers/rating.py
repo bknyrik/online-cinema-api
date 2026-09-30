@@ -43,7 +43,7 @@ async def create_like_movie(
     return await like_movie_service.create_like_movie(
         db=db,
         data=data.model_dump(),
-        current_user_profile=current_user
+        current_user=current_user
     )
 
 
