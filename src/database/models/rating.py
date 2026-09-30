@@ -39,7 +39,7 @@ class MovieLikeModel(Base):
 class MovieCommentModel(Base):
     __tablename__ = "movie_comments"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, index=True)
     created_at = Column(
         DateTime,
         default=datetime.now(timezone.utc),
