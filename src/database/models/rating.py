@@ -131,6 +131,8 @@ class FavoriteMoviesModel(Base):
     )
     movie_id = Column(Integer, ForeignKey("movies.id", ondelete="CASCADE"))
     profile_id = Column(Integer, ForeignKey("user_profiles.id", ondelete="CASCADE"))
+    movie = relationship("MovieModel")
+    profile = relationship("UserProfileModel", back_populates="favorite_movies")
 
     __table_args__ = (
         UniqueConstraint("movie_id", "profile_id"),
