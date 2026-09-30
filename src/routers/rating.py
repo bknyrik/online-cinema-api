@@ -38,12 +38,12 @@ async def create_like_movie(
     data: schemas.LikeMovieDataRequestSchema,
     db: AsyncSession = Depends(get_db),
     like_movie_service: services.LikeMovieService = Depends(services.LikeMovieService),
-    current_user_profile: UserProfileModel = Depends(get_current_user_profile)
+    current_user: UserModel = Depends(auth.get_current_user)
 ) -> LikeMovieModel:
     return await like_movie_service.create_like_movie(
         db=db,
         data=data.model_dump(),
-        current_user_profile=current_user_profile
+        current_user_profile=current_user
     )
 
 
