@@ -8,7 +8,7 @@ from src.dependencies.rating import CommentFilterDep
 from src.services import rating as services
 from src.schemas import rating as schemas
 from src.database.models.accounts import UserModel
-from src.database.models.rating import MovieLikeModel, CommentMovieModel
+from src.database.models.rating import MovieLikeModel, MovieCommentModel
 
 
 router = APIRouter()
@@ -91,7 +91,7 @@ async def get_comment_detail(
     db: AsyncSession = Depends(get_db),
     comment_service: services.CommentMovieService = Depends(services.CommentMovieService),
     current_user: UserModel = Depends(auth.get_current_user)
-) -> CommentMovieModel:
+) -> MovieCommentModel:
     return await comment_service.get_comment_detail(
         db=db,
         comment_id=comment_id
@@ -108,7 +108,7 @@ async def create_comment(
     db: AsyncSession = Depends(get_db),
     current_user: UserModel = Depends(auth.get_current_user),
     comment_service: services.CommentMovieService = Depends(services.CommentMovieService)
-) -> CommentMovieModel:
+) -> MovieCommentModel:
     return await comment_service.create_comment(
         db=db,
         data=data.model_dump(),

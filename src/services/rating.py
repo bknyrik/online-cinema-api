@@ -5,7 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from src.services import mixins
 from src.repositories.movies import MovieRepository
 from src.repositories.rating import LikeMovieRepository, CommentMovieRepository
-from src.database.models.rating import MovieLikeModel, CommentMovieModel
+from src.database.models.rating import MovieLikeModel, MovieCommentModel
 from src.database.models.accounts import UserModel
 
 
@@ -140,7 +140,7 @@ class CommentMovieService(
     mixins.UserPermissionsMixin,
     mixins.FilterItemsMixin
 ):
-    MODEL_TYPE = CommentMovieModel
+    MODEL_TYPE = MovieCommentModel
 
     def __init__(self) -> None:
         self.movie_repository = MovieRepository()
@@ -160,7 +160,7 @@ class CommentMovieService(
 
             if current_user.group.name == "user":
                 filter_expressions.append(
-                    CommentMovieModel.profile_id == current_user.profile.id
+                    MovieCommentModel.profile_id == current_user.profile.id
                 )
 
             total_comments = await self.comment_repository.acount(
@@ -212,7 +212,7 @@ class CommentMovieService(
         self,
         db: AsyncSession,
         comment_id: int,
-    ) -> CommentMovieModel:
+    ) -> MovieCommentModel:
         try:
             comment = await self.comment_repository.aget_by_id(
                 db=db,
@@ -232,7 +232,7 @@ class CommentMovieService(
         db: AsyncSession,
         data: dict,
         current_user: UserModel
-    ) -> CommentMovieModel:
+    ) -> MovieCommentModel:
         try:
             data["profile_id"] = current_user.profile.id
             comment = await self.comment_repository.acreate(
@@ -254,7 +254,7 @@ class CommentMovieService(
         comment_id: int,
         data: dict,
         current_user: UserModel
-    ) -> CommentMovieModel:
+    ) -> MovieCommentModel:
         try:
             comment = await self.comment_repository.aget_by_id(
                 db=db,

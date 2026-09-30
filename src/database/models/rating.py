@@ -31,7 +31,7 @@ class MovieLikeModel(Base):
     )
 
 
-class CommentMovieModel(Base):
+class MovieCommentModel(Base):
     __tablename__ = "movie_comments"
 
     id = Column(Integer, primary_key=True)
@@ -60,7 +60,7 @@ class ReplyCommentModel(Base):
         ForeignKey("user_profiles.id", ondelete="CASCADE")
     )
     text = Column(Text, nullable=False)
-    comment = relationship("CommentMovieModel", back_populates="replies")
+    comment = relationship("MovieCommentModel", back_populates="replies")
     profile = relationship("UserProfileModel", back_populates="comment_replies")
 
 
@@ -87,7 +87,7 @@ class CommentLikeModel(Base):
         Integer,
         ForeignKey("user_profiles.id", ondelete="CASCADE")
     )
-    comment = relationship(CommentMovieModel, back_populates="likes")
+    comment = relationship(MovieCommentModel, back_populates="likes")
     profile = relationship("UserProfileModel", back_populates="comment_likes")
 
     __table_args__ = (
