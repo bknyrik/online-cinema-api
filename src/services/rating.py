@@ -6,7 +6,7 @@ from src.services import mixins
 from src.repositories.movies import MovieRepository
 from src.repositories.rating import LikeMovieRepository, CommentMovieRepository
 from src.database.models.rating import LikeMovieModel, CommentMovieModel
-from src.database.models.accounts import UserProfileModel, UserModel
+from src.database.models.accounts import UserModel
 
 
 class LikeMovieService(

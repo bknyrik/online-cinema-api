@@ -3,12 +3,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.dependencies.database import get_db
 from src.dependencies.pagination import PaginationDep
-from src.dependencies.profiles import get_current_user_profile
 from src.dependencies import authentication as auth
 from src.dependencies.rating import CommentFilterDep
 from src.services import rating as services
 from src.schemas import rating as schemas
-from src.database.models.accounts import UserProfileModel, UserModel
+from src.database.models.accounts import UserModel
 from src.database.models.rating import LikeMovieModel, CommentMovieModel
 
 
