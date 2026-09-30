@@ -56,6 +56,11 @@ class ReplyCommentModel(Base):
     __tablename__ = "comment_replies"
 
     id = Column(Integer, primary_key=True)
+    created_at = Column(
+        DateTime,
+        default=datetime.now(timezone.utc),
+        nullable=False
+    )
     comment_id = Column(
         Integer,
         ForeignKey("movie_comments.id", ondelete="CASCADE")
