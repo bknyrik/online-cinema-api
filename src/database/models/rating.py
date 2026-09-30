@@ -120,9 +120,18 @@ class RateModel(Base):
     )
 
 
-FavoriteMoviesModel = Table(
-    "favorite_movies",
-    Base.metadata,
-    Column("movie_id", ForeignKey("movies.id"), primary_key=True),
-    Column("profile_id", ForeignKey("user_profiles.id"), primary_key=True),
-)
+class FavoriteMoviesModel(Base):
+    __tablename__ = "favorite_movies"
+
+    id = Column(Integer, primary_key=True, index=True)
+    created_at = Column(
+        DateTime,
+        default=datetime.now(timezone.utc),
+        nullable=False
+    )
+    movie_id = Column(Integer, ForeignKey("movies.id", ondelete="CASCADE"))
+    profile_id = Column(Integer, ForeignKey("user_profiles.id", ondelete="CASCADE"))
+
+    __table_args__ = (
+        UniqueConstraint("movie_id", "profile_id"),
+    )
