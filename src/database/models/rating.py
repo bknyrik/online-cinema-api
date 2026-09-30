@@ -105,7 +105,11 @@ class CommentLikeModel(Base):
     profile = relationship("UserProfileModel", back_populates="comment_likes")
 
     __table_args__ = (
-        UniqueConstraint("comment_id", "profile_id"),
+        UniqueConstraint(
+            "comment_id",
+            "profile_id",
+            name="comment_likes_comment_id_profile_id_unique"
+        ),
     )
 
 
