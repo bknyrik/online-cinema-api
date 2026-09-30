@@ -1,8 +1,11 @@
+from datetime import datetime, timezone
+
 from sqlalchemy import (
     Column,
     Integer,
     ForeignKey,
     Text,
+    DateTime,
     UniqueConstraint,
     Table
 )
@@ -64,6 +67,11 @@ class CommentLikeModel(Base):
     __tablename__ = "comment_likes"
 
     id = Column(Integer, primary_key=True, index=True)
+    created_at = Column(
+        DateTime,
+        default=datetime.now(timezone.utc),
+        nullable=False
+    )
     comment_id = Column(
         Integer,
         ForeignKey("comment_likes.id", ondelete="CASCADE"),
