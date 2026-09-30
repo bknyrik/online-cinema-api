@@ -113,7 +113,7 @@ class CommentLikeModel(Base):
     )
 
 
-class RateModel(Base):
+class MovieRateModel(Base):
     __tablename__ = "movie_rates"
 
     id = Column(Integer, primary_key=True, index=True)
