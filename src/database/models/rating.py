@@ -35,6 +35,11 @@ class MovieCommentModel(Base):
     __tablename__ = "movie_comments"
 
     id = Column(Integer, primary_key=True)
+    created_at = Column(
+        DateTime,
+        default=datetime.now(timezone.utc),
+        nullable=False
+    )
     movie_id = Column(Integer, ForeignKey("movies.id", ondelete="CASCADE"))
     profile_id = Column(
         Integer,
