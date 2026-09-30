@@ -136,15 +136,15 @@ class MovieModel(Base):
         back_populates="movies"
     )
     likes = relationship(
-        "rating.LikeMovieModel",
+        "MovieLikeModel",
         back_populates="movie",
     )
     comments = relationship(
-        "rating.CommentMovieModel",
+        "MovieCommentModel",
         back_populates="movie"
     )
     rates = relationship(
-        "rating.RateModel",
+        "MovieRateModel",
         back_populates="movie"
     )
 
