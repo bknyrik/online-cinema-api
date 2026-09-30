@@ -60,7 +60,7 @@ async def delete_like_movie(
     return await like_movie_service.delete_like_movie(
         db=db,
         like_movie_id=like_movie_id,
-        current_user_profile=current_user
+        current_user=current_user
     )
 
 

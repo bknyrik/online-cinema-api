@@ -112,14 +112,14 @@ class LikeMovieService(
         self,
         db: AsyncSession,
         like_movie_id: int,
-        current_user_profile: UserProfileModel
+        current_user: UserModel
     ) -> None:
         try:
             like = await self.like_movie_repository.adelete_by(
                 db=db,
                 expressions=[
                     LikeMovieModel.id == like_movie_id,
-                    LikeMovieModel.profile_id == current_user_profile.id
+                    LikeMovieModel.profile_id == current_user.profile.id
                 ]
             )
 
