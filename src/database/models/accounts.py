@@ -179,3 +179,7 @@ class UserProfileModel(Base):
         "RateModel",
         back_populates="profile"
     )
+    comment_likes = relationship(
+        "CommentLikeModel",
+        back_populates="profile"
+    )
