@@ -94,7 +94,7 @@ class CommentLikeModel(Base):
     )
     comment_id = Column(
         Integer,
-        ForeignKey("comment_likes.id", ondelete="CASCADE"),
+        ForeignKey("comments.id", ondelete="CASCADE"),
         nullable=False
     )
     profile_id = Column(
