@@ -73,6 +73,11 @@ class CommentLikeModel(Base):
         default=datetime.now(timezone.utc),
         nullable=False
     )
+    updated_at = Column(
+        DateTime,
+        default=datetime.now(timezone.utc),
+        nullable=False
+    )
     comment_id = Column(
         Integer,
         ForeignKey("comment_likes.id", ondelete="CASCADE"),
