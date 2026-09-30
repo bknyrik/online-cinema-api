@@ -60,6 +60,25 @@ class ReplyCommentModel(Base):
     profile = relationship("UserProfileModel", back_populates="comment_replies")
 
 
+class CommentLikeModel(Base):
+    __tablename__ = "comment_likes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    comment_id = Column(
+        Integer,
+        ForeignKey("comment_likes.id", ondelete="CASCADE"),
+        nullable=False
+    )
+    profile_id = Column(
+        Integer,
+        ForeignKey("user_profiles.id", ondelete="CASCADE")
+    )
+
+    __table_args__ = (
+        UniqueConstraint("comment_id", "profile_id"),
+    )
+
+
 class RateModel(Base):
     __tablename__ = "movie_rates"
 
