@@ -124,7 +124,11 @@ class RateModel(Base):
     profile = relationship("UserProfileModel", back_populates="rates")
 
     __table_args__ = (
-        UniqueConstraint("movie_id", "profile_id"),
+        UniqueConstraint(
+            "movie_id",
+            "profile_id",
+            name="movie_rates_movie_id_profile_id_unique"
+        ),
     )
 
 
