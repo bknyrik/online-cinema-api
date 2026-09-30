@@ -147,10 +147,6 @@ class MovieModel(Base):
         "rating.RateModel",
         back_populates="movie"
     )
-    profiles = relationship(
-        "UserProfileModel",
-        back_populates="favorite_movies"
-    )
 
     __table_args__ = (
         UniqueConstraint("name", "year", "time", name="name_year_time_unique"),
