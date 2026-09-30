@@ -147,5 +147,9 @@ class FavoriteMoviesModel(Base):
     profile = relationship("UserProfileModel", back_populates="favorite_movies")
 
     __table_args__ = (
-        UniqueConstraint("movie_id", "profile_id"),
+        UniqueConstraint(
+            "movie_id",
+            "profile_id",
+            name="favorite_movies_movie_id_profile_id_unique"
+        ),
     )
