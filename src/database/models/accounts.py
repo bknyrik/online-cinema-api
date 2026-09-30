@@ -160,8 +160,7 @@ class UserProfileModel(Base):
     )
     favorite_movies = relationship(
         "MovieModel",
-        secondary=FavoriteMoviesModel,
-        back_populates="profiles"
+        back_populates="profile"
     )
     movie_likes = relationship(
         "LikeMovieModel",
