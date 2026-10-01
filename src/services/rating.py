@@ -252,7 +252,7 @@ class MovieCommentService(
                 detail="An error occurred while comment creation"
             )
 
-    async def update_comment(
+    async def update_movie_comment(
         self,
         db: AsyncSession,
         comment_id: int,

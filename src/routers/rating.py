@@ -127,7 +127,7 @@ async def update_movie_comment(
     comment_service: services.MovieCommentService = Depends(services.MovieCommentService),
     current_user: UserModel = Depends(auth.get_current_user),
 ):
-    return await comment_service.update_comment(
+    return await comment_service.update_movie_comment(
         db=db,
         data=data.model_dump(),
         comment_id=comment_id,
