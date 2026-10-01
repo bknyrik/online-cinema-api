@@ -67,3 +67,8 @@ class CommentReplyListResponseSchema(BaseModel):
     next: str | None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class CommentReplyCreateRequestSchema(BaseModel):
+    comment_id: int
+    text: str
