@@ -316,12 +316,67 @@ class MovieCommentService(
 class CommentReplyService(
     mixins.PaginationLimitOffsetMixin,
     mixins.ModelItemsMixin,
-    mixins.UserPermissionsMixin
+    mixins.UserPermissionsMixin,
+    mixins.FilterItemsMixin
 ):
 
     def __init__(self) -> None:
         self.reply_repository = CommentReplyRepository()
         self.comment_repository = MovieCommentRepository()
+
+    async def get_comment_reply_list(
+        self,
+        filter_data: dict,
+        pagination_data: dict,
+        db: AsyncSession,
+        current_user: UserModel
+    ) -> dict:
+        try:
+            limit, offset = self.get_limit_offset(pagination_data)
+            filter_expressions = self.get_filter_expressions(filter_data)
+
+            if current_user.group.name == "user":
+                filter_expressions.append(
+                    CommentReplyModel.profile_id == current_user.profile.id
+                )
+
+            total_replies = await self.reply_repository.acount(
+                db=db,
+                expressions=filter_expressions
+            )
+            total_pages = self.get_total_pages(
+                total_items=total_replies,
+                per_page=pagination_data["per_page"]
+            )
+
+            replies = await self.reply_repository.aget_all(
+                db=db,
+                expressions=filter_expressions,
+                limit=limit,
+                offset=offset
+            )
+
+            prev_page, next_page = self.get_prev_next_urls_pages(
+                "/comment-replies/",
+                page=pagination_data["page"],
+                total_pages=total_pages,
+                query_params={
+                    **pagination_data,
+                    **filter_data
+                }
+            )
+            return {
+                "replies": replies,
+                "total_replies": total_replies,
+                "total_pages": total_pages,
+                "prev_page": next_page,
+                "next_page": prev_page
+            }
+        except SQLAlchemyError:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while getting list with comment replies"
+            )
 
     async def get_comment_reply_detail(
         self,
