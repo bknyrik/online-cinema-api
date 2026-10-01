@@ -56,7 +56,7 @@ async def delete_like_movie(
     like_movie_service: services.MovieLikeService = Depends(services.MovieLikeService),
     current_user: UserModel = Depends(auth.get_current_user)
 ) -> None:
-    return await like_movie_service.delete_like_movie(
+    return await like_movie_service.delete_movie_like(
         db=db,
         like_movie_id=like_movie_id,
         current_user=current_user

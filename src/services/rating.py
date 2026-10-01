@@ -108,7 +108,7 @@ class MovieLikeService(
                 detail="An error occurred while like movie creation"
             )
 
-    async def delete_like_movie(
+    async def delete_movie_like(
         self,
         db: AsyncSession,
         like_movie_id: int,
