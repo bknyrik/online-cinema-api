@@ -15,7 +15,7 @@ router = APIRouter()
 
 
 @router.get("/likes-movies/", response_model=schemas.LikeMovieListResponseSchema)
-async def get_like_movie_list(
+async def get_movie_like_list(
     pagination_data: PaginationDep,
     db: AsyncSession = Depends(get_db),
     like_movie_service: services.MovieLikeService = Depends(services.MovieLikeService),
