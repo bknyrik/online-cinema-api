@@ -47,18 +47,18 @@ async def create_movie_like(
 
 
 @router.delete(
-    "/movie-likes/{like_movie_id}/",
+    "/movie-likes/{like_id}/",
     status_code=status.HTTP_204_NO_CONTENT
 )
 async def delete_movie_like(
-    like_movie_id: int,
+    like_id: int,
     db: AsyncSession = Depends(get_db),
     like_service: services.MovieLikeService = Depends(services.MovieLikeService),
     current_user: UserModel = Depends(auth.get_current_user)
 ) -> None:
     return await like_service.delete_movie_like(
         db=db,
-        like_movie_id=like_movie_id,
+        like_movie_id=like_id,
         current_user=current_user
     )
 
