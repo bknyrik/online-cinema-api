@@ -185,6 +185,25 @@ async def create_comment_reply(
     )
 
 
+@router.put(
+    "/comment-replies/{reply_id}/",
+    response_model=schemas.CommentReplyDetailResponseSchema
+)
+async def update_comment_reply(
+    reply_id: int,
+    data: schemas.CommentReplyUpdateRequestSchema,
+    db: AsyncSession = Depends(get_db),
+    reply_service: services.CommentReplyService = Depends(services.CommentReplyService),
+    current_user: UserModel = Depends(auth.get_current_user)
+) -> CommentReplyModel:
+    return await reply_service.update_comment_reply(
+        db=db,
+        reply_id=reply_id,
+        data=data.model_dump(),
+        current_user=current_user
+    )
+
+
 @router.delete(
     "/comment-replies/{reply_id}/",
     status_code=status.HTTP_204_NO_CONTENT
