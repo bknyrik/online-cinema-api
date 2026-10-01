@@ -67,7 +67,7 @@ async def delete_movie_like(
     "/movie-comments/",
     response_model=schemas.MovieCommentListResponseSchema
 )
-async def get_comment_list(
+async def get_movie_comment_list(
     pagination_data: PaginationDep,
     filter_data: CommentFilterDep,
     db: AsyncSession = Depends(get_db),
