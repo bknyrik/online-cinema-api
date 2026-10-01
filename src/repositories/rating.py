@@ -13,3 +13,9 @@ class CommentMovieRepository(AsyncBaseRepository[rating.MovieCommentModel]):
 
     def __init__(self) -> None:
         super().__init__(rating.MovieCommentModel)
+
+
+class CommentReplyRepository(AsyncBaseRepository[rating.CommentReplyModel]):
+
+    def __init__(self) -> None:
+        super().__init__(rating.CommentReplyModel)
