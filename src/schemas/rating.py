@@ -1,9 +1,13 @@
+from datetime import datetime
+
 from pydantic import BaseModel, ConfigDict, Field
 
 
 class LikeMovieDetailResponseSchema(BaseModel):
     id: int
+    created_at: datetime
     movie_id: int
+    profile_id: int
 
 
 class LikeMovieListResponseSchema(BaseModel):
