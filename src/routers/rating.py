@@ -14,7 +14,7 @@ from src.database.models.rating import MovieLikeModel, MovieCommentModel
 router = APIRouter()
 
 
-@router.get("/likes-movies/", response_model=schemas.LikeMovieListResponseSchema)
+@router.get("/movie-likes/", response_model=schemas.LikeMovieListResponseSchema)
 async def get_movie_like_list(
     pagination_data: PaginationDep,
     db: AsyncSession = Depends(get_db),
@@ -29,7 +29,7 @@ async def get_movie_like_list(
 
 
 @router.post(
-    "/likes-movies/",
+    "/movie-likes/",
     status_code=status.HTTP_201_CREATED,
     response_model=schemas.LikeMovieDetailResponseSchema
 )
@@ -47,7 +47,7 @@ async def create_movie_like(
 
 
 @router.delete(
-    "/likes-movies/{like_movie_id}/",
+    "/movie-likes/{like_movie_id}/",
     status_code=status.HTTP_204_NO_CONTENT
 )
 async def delete_movie_like(
