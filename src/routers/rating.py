@@ -8,7 +8,7 @@ from src.dependencies.rating import CommentFilterDep
 from src.services import rating as services
 from src.schemas import rating as schemas
 from src.database.models.accounts import UserModel
-from src.database.models.rating import MovieLikeModel, MovieCommentModel
+from src.database.models.rating import MovieLikeModel, MovieCommentModel, CommentReplyModel
 
 
 router = APIRouter()
@@ -149,4 +149,19 @@ async def delete_movie_comment(
         db=db,
         comment_id=comment_id,
         current_user=current_user
+    )
+
+
+@router.get(
+    "/comment-replies/{reply_id}/",
+    response_model=schemas.CommentReplyDetailResponseSchema
+)
+async def get_comment_reply_detail(
+    reply_id: int,
+    db: AsyncSession = Depends(get_db),
+    reply_service: services.CommentReplyService = Depends(services.CommentReplyService)
+) -> CommentReplyModel:
+    return await reply_service.get_comment_reply_detail(
+        reply_id=reply_id,
+        db=db
     )
