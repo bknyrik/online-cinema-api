@@ -17,7 +17,7 @@ class MovieLikeService(
         self.like_repository = MovieLikeRepository()
         self.movie_repository = MovieRepository()
 
-    async def get_like_movie_list(
+    async def get_movie_like_list(
         self,
         pagination_data: dict,
         db: AsyncSession,

@@ -21,7 +21,7 @@ async def get_like_movie_list(
     like_movie_service: services.MovieLikeService = Depends(services.MovieLikeService),
     current_user: UserModel = Depends(auth.get_current_user)
 ) -> dict:
-    return await like_movie_service.get_like_movie_list(
+    return await like_movie_service.get_movie_like_list(
         db=db,
         pagination_data=pagination_data,
         current_user=current_user
