@@ -9,7 +9,7 @@ from src.repositories.rating import (
     MovieCommentRepository,
     CommentReplyRepository
 )
-from src.database.models.rating import MovieLikeModel, MovieCommentModel
+from src.database.models.rating import MovieLikeModel, MovieCommentModel, CommentReplyModel
 from src.database.models.accounts import UserModel
 
 
@@ -322,3 +322,23 @@ class CommentReplyService(
     def __init__(self) -> None:
         self.reply_repository = CommentReplyRepository()
         self.comment_repository = MovieCommentRepository()
+
+    async def get_comment_reply_detail(
+        self,
+        reply_id: int,
+        db: AsyncSession,
+    ) -> CommentReplyModel:
+        try:
+            reply = await self.reply_repository.aget_by_id(
+                db=db,
+                id_=reply_id
+            )
+
+            self.validate_item_by_id_not_found(reply, reply_id, "Reply")
+
+            return reply
+        except SQLAlchemyError:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while getting comment reply"
+            )
