@@ -134,7 +134,7 @@ class MovieLikeService(
             )
 
 
-class CommentMovieService(
+class MovieCommentService(
     mixins.PaginationLimitOffsetMixin,
     mixins.ModelItemsMixin,
     mixins.UserPermissionsMixin,

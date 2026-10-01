@@ -71,7 +71,7 @@ async def get_comment_list(
     pagination_data: PaginationDep,
     filter_data: CommentFilterDep,
     db: AsyncSession = Depends(get_db),
-    comment_service: services.CommentMovieService = Depends(services.CommentMovieService),
+    comment_service: services.MovieCommentService = Depends(services.MovieCommentService),
     current_user: UserModel = Depends(auth.get_current_user),
 ) -> dict:
     return await comment_service.get_comment_list(
@@ -89,7 +89,7 @@ async def get_comment_list(
 async def get_comment_detail(
     comment_id: int,
     db: AsyncSession = Depends(get_db),
-    comment_service: services.CommentMovieService = Depends(services.CommentMovieService),
+    comment_service: services.MovieCommentService = Depends(services.MovieCommentService),
     current_user: UserModel = Depends(auth.get_current_user)
 ) -> MovieCommentModel:
     return await comment_service.get_comment_detail(
@@ -107,7 +107,7 @@ async def create_comment(
     data: schemas.CommentMovieDataRequestSchema,
     db: AsyncSession = Depends(get_db),
     current_user: UserModel = Depends(auth.get_current_user),
-    comment_service: services.CommentMovieService = Depends(services.CommentMovieService)
+    comment_service: services.MovieCommentService = Depends(services.MovieCommentService)
 ) -> MovieCommentModel:
     return await comment_service.create_comment(
         db=db,
@@ -124,7 +124,7 @@ async def update_comment(
     comment_id: int,
     data: schemas.CommentMovieUpdateRequestSchema,
     db: AsyncSession = Depends(get_db),
-    comment_service: services.CommentMovieService = Depends(services.CommentMovieService),
+    comment_service: services.MovieCommentService = Depends(services.MovieCommentService),
     current_user: UserModel = Depends(auth.get_current_user),
 ):
     return await comment_service.update_comment(
@@ -142,7 +142,7 @@ async def update_comment(
 async def delete_comment(
     comment_id: int,
     db: AsyncSession = Depends(get_db),
-    comment_service: services.CommentMovieService = Depends(services.CommentMovieService),
+    comment_service: services.MovieCommentService = Depends(services.MovieCommentService),
     current_user: UserModel = Depends(auth.get_current_user)
 ) -> None:
     return await comment_service.delete_comment(
