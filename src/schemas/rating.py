@@ -73,12 +73,12 @@ class CommentReplyListResponseSchema(BaseModel):
 
 class CommentReplyCreateRequestSchema(BaseModel):
     comment_id: int
-    text: str
+    text: str = Field(min_length=1)
 
     model_config = ConfigDict(strict=True)
 
 
 class CommentReplyUpdateRequestSchema(BaseModel):
-    text: str
+    text: str = Field(min_length=1)
 
     model_config = ConfigDict(strict=True)
