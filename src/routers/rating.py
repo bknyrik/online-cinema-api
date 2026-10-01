@@ -122,7 +122,7 @@ async def create_comment(
 )
 async def update_comment(
     comment_id: int,
-    data: schemas.CommentMovieUpdateRequestSchema,
+    data: schemas.MovieCommentUpdateRequestSchema,
     db: AsyncSession = Depends(get_db),
     comment_service: services.MovieCommentService = Depends(services.MovieCommentService),
     current_user: UserModel = Depends(auth.get_current_user),

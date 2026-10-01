@@ -49,7 +49,7 @@ class MovieCommentCreateRequestSchema(BaseModel):
     text: str
 
 
-class CommentMovieUpdateRequestSchema(BaseModel):
+class MovieCommentUpdateRequestSchema(BaseModel):
     text: str = Field(strict=True, min_length=1)
 
 
