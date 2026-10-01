@@ -26,6 +26,7 @@ class LikeMovieDataRequestSchema(BaseModel):
 
 class CommentMovieDetailResponseSchema(BaseModel):
     id: int
+    created_at: datetime
     movie_id: int
     text: str
     profile_id: int
