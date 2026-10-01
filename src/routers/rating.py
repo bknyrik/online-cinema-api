@@ -103,7 +103,7 @@ async def get_movie_comment_detail(
     status_code=status.HTTP_201_CREATED,
     response_model=schemas.MovieCommentDetailResponseSchema,
 )
-async def create_comment(
+async def create_movie_comment(
     data: schemas.MovieCommentCreateRequestSchema,
     db: AsyncSession = Depends(get_db),
     current_user: UserModel = Depends(auth.get_current_user),
