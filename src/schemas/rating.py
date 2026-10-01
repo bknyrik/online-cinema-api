@@ -26,7 +26,7 @@ class MovieLikeDataRequestSchema(BaseModel):
     model_config = ConfigDict(strict=True)
 
 
-class CommentMovieDetailResponseSchema(BaseModel):
+class MovieCommentDetailResponseSchema(BaseModel):
     id: int
     created_at: datetime
     movie_id: int
@@ -35,7 +35,7 @@ class CommentMovieDetailResponseSchema(BaseModel):
 
 
 class CommentMovieListResponseSchema(BaseModel):
-    comments: list[CommentMovieDetailResponseSchema]
+    comments: list[MovieCommentDetailResponseSchema]
     total_comments: int
     total_pages: int
     prev: str | None

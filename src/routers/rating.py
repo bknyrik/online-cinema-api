@@ -84,7 +84,7 @@ async def get_comment_list(
 
 @router.get(
     "/comments/{comment_id}/",
-    response_model=schemas.CommentMovieDetailResponseSchema
+    response_model=schemas.MovieCommentDetailResponseSchema
 )
 async def get_comment_detail(
     comment_id: int,
@@ -101,7 +101,7 @@ async def get_comment_detail(
 @router.post(
     "/comments/",
     status_code=status.HTTP_201_CREATED,
-    response_model=schemas.CommentMovieDetailResponseSchema,
+    response_model=schemas.MovieCommentDetailResponseSchema,
 )
 async def create_comment(
     data: schemas.CommentMovieDataRequestSchema,
@@ -118,7 +118,7 @@ async def create_comment(
 
 @router.put(
     "/comment/{comment_id}/",
-    response_model=schemas.CommentMovieDetailResponseSchema
+    response_model=schemas.MovieCommentDetailResponseSchema
 )
 async def update_comment(
     comment_id: int,
