@@ -64,7 +64,7 @@ async def delete_movie_like(
 
 
 @router.get(
-    "/comments/",
+    "/movie-comments/",
     response_model=schemas.MovieCommentListResponseSchema
 )
 async def get_comment_list(
@@ -83,7 +83,7 @@ async def get_comment_list(
 
 
 @router.get(
-    "/comments/{comment_id}/",
+    "/movie-comments/{comment_id}/",
     response_model=schemas.MovieCommentDetailResponseSchema
 )
 async def get_comment_detail(
@@ -99,7 +99,7 @@ async def get_comment_detail(
 
 
 @router.post(
-    "/comments/",
+    "/movie-comments/",
     status_code=status.HTTP_201_CREATED,
     response_model=schemas.MovieCommentDetailResponseSchema,
 )
@@ -117,7 +117,7 @@ async def create_comment(
 
 
 @router.put(
-    "/comment/{comment_id}/",
+    "/movie-comments/{comment_id}/",
     response_model=schemas.MovieCommentDetailResponseSchema
 )
 async def update_comment(
@@ -136,7 +136,7 @@ async def update_comment(
 
 
 @router.delete(
-    "/comments/{comment_id}/",
+    "/movie-comments/{comment_id}/",
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_comment(
