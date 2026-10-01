@@ -165,3 +165,20 @@ async def get_comment_reply_detail(
         reply_id=reply_id,
         db=db
     )
+
+
+@router.delete(
+    "/comment-replies/{reply_id}/",
+    status_code=status.HTTP_204_NO_CONTENT
+)
+async def delete_comment_reply(
+    reply_id: int,
+    db: AsyncSession = Depends(get_db),
+    reply_service: services.CommentReplyService = Depends(services.CommentReplyService),
+    current_user: UserModel = Depends(auth.get_current_user)
+) -> None:
+    return await reply_service.delete_comment_reply(
+        db=db,
+        reply_id=reply_id,
+        current_user=current_user,
+    )
