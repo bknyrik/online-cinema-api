@@ -120,7 +120,7 @@ async def create_movie_comment(
     "/movie-comments/{comment_id}/",
     response_model=schemas.MovieCommentDetailResponseSchema
 )
-async def update_comment(
+async def update_movie_comment(
     comment_id: int,
     data: schemas.MovieCommentUpdateRequestSchema,
     db: AsyncSession = Depends(get_db),
