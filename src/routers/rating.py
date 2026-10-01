@@ -92,7 +92,7 @@ async def get_movie_comment_detail(
     comment_service: services.MovieCommentService = Depends(services.MovieCommentService),
     current_user: UserModel = Depends(auth.get_current_user)
 ) -> MovieCommentModel:
-    return await comment_service.get_comment_detail(
+    return await comment_service.get_movie_comment_detail(
         db=db,
         comment_id=comment_id
     )

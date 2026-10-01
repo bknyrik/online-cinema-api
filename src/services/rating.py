@@ -212,7 +212,7 @@ class MovieCommentService(
                 detail="An error occurred while getting list with comments"
             )
 
-    async def get_comment_detail(
+    async def get_movie_comment_detail(
         self,
         db: AsyncSession,
         comment_id: int,
