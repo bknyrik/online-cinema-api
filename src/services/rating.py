@@ -4,7 +4,11 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from src.services import mixins
 from src.repositories.movies import MovieRepository
-from src.repositories.rating import MovieLikeRepository, MovieCommentRepository
+from src.repositories.rating import (
+    MovieLikeRepository,
+    MovieCommentRepository,
+    CommentReplyRepository
+)
 from src.database.models.rating import MovieLikeModel, MovieCommentModel
 from src.database.models.accounts import UserModel
 
@@ -307,3 +311,14 @@ class MovieCommentService(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while comment deletion"
             )
+
+
+class CommentReplyService(
+    mixins.PaginationLimitOffsetMixin,
+    mixins.ModelItemsMixin,
+    mixins.UserPermissionsMixin
+):
+
+    def __init__(self) -> None:
+        self.reply_repository = CommentReplyRepository()
+        self.comment_repository = MovieCommentRepository()
