@@ -343,6 +343,26 @@ class CommentReplyService(
                 detail="An error occurred while getting comment reply"
             )
 
+    async def create_comment_reply(
+        self,
+        data: dict,
+        db: AsyncSession,
+        current_user: UserModel
+    ) -> CommentReplyModel:
+        try:
+            data["profile_id"] = current_user.profile.id
+
+            reply = await self.reply_repository.acreate(db=db, data=data)
+
+            await db.commit()
+            return reply
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while comment reply creation"
+            )
+
     async def delete_comment_reply(
         self,
         reply_id: int,
