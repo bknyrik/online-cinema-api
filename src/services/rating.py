@@ -231,7 +231,7 @@ class MovieCommentService(
                 detail="An error occurred while getting comment"
             )
 
-    async def create_comment(
+    async def create_movie_comment(
         self,
         db: AsyncSession,
         data: dict,

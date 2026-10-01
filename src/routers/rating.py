@@ -109,7 +109,7 @@ async def create_movie_comment(
     current_user: UserModel = Depends(auth.get_current_user),
     comment_service: services.MovieCommentService = Depends(services.MovieCommentService)
 ) -> MovieCommentModel:
-    return await comment_service.create_comment(
+    return await comment_service.create_movie_comment(
         db=db,
         data=data.model_dump(),
         current_user=current_user
