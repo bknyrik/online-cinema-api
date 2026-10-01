@@ -100,7 +100,7 @@ class CommentLikeModel(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     created_at = Column(
-        DateTime,
+        DateTime(timezone=True),
         default=datetime.now(timezone.utc),
         nullable=False
     )
