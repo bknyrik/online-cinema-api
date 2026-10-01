@@ -33,7 +33,7 @@ async def get_movie_like_list(
     status_code=status.HTTP_201_CREATED,
     response_model=schemas.LikeMovieDetailResponseSchema
 )
-async def create_like_movie(
+async def create_movie_like(
     data: schemas.LikeMovieDataRequestSchema,
     db: AsyncSession = Depends(get_db),
     like_movie_service: services.MovieLikeService = Depends(services.MovieLikeService),
