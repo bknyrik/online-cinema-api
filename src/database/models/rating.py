@@ -23,10 +23,15 @@ class MovieLikeModel(Base):
         default=datetime.now(timezone.utc),
         nullable=False
     )
-    movie_id = Column(Integer, ForeignKey("movies.id", ondelete="CASCADE"))
+    movie_id = Column(
+        Integer,
+        ForeignKey("movies.id", ondelete="CASCADE"),
+        nullable=False
+    )
     profile_id = Column(
         Integer,
-        ForeignKey("user_profiles.id", ondelete="CASCADE")
+        ForeignKey("user_profiles.id", ondelete="CASCADE"),
+        nullable=False
     )
     movie = relationship("MovieModel", back_populates="likes")
     profile = relationship("UserProfileModel", back_populates="movie_likes")
