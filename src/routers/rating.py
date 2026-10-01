@@ -86,7 +86,7 @@ async def get_movie_comment_list(
     "/movie-comments/{comment_id}/",
     response_model=schemas.MovieCommentDetailResponseSchema
 )
-async def get_comment_detail(
+async def get_movie_comment_detail(
     comment_id: int,
     db: AsyncSession = Depends(get_db),
     comment_service: services.MovieCommentService = Depends(services.MovieCommentService),
