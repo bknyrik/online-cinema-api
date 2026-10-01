@@ -57,3 +57,13 @@ class CommentReplyDetailResponseSchema(BaseModel):
     comment_id: int
     profile_id: int
     text: str
+
+
+class CommentReplyListResponseSchema(BaseModel):
+    replies: list[CommentReplyDetailResponseSchema]
+    total_replies: int
+    total_pages: int
+    prev: str | None
+    next: str | None
+
+    model_config = ConfigDict(from_attributes=True)
