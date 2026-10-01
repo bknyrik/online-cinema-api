@@ -14,7 +14,7 @@ class MovieLikeService(
     mixins.ModelItemsMixin[MovieLikeModel]
 ):
     def __init__(self) -> None:
-        self.like_movie_repository = MovieLikeRepository()
+        self.like_repository = MovieLikeRepository()
         self.movie_repository = MovieRepository()
 
     async def get_like_movie_list(
@@ -28,7 +28,7 @@ class MovieLikeService(
                 MovieLikeModel.profile_id == current_user.profile.id
             ]
             limit, offset = self.get_limit_offset(pagination_data)
-            total_likes = await self.like_movie_repository.acount(
+            total_likes = await self.like_repository.acount(
                 db=db,
                 expressions=expressions
             )
@@ -37,7 +37,7 @@ class MovieLikeService(
                 per_page=pagination_data["per_page"]
             )
 
-            likes = await self.like_movie_repository.aget_all(
+            likes = await self.like_repository.aget_all(
                 db=db,
                 limit=limit,
                 offset=offset,
@@ -78,7 +78,7 @@ class MovieLikeService(
 
             self.validate_item_by_id_not_found(movie, data["movie_id"], "Movie")
 
-            like = await self.like_movie_repository.aget_by(
+            like = await self.like_repository.aget_by(
                 db=db,
                 expressions=[
                     MovieLikeModel.movie_id == data["movie_id"],
@@ -94,7 +94,7 @@ class MovieLikeService(
 
             data["profile_id"] = current_user.profile.id
 
-            like = await self.like_movie_repository.acreate(
+            like = await self.like_repository.acreate(
                 db=db,
                 data=data,
             )
@@ -115,7 +115,7 @@ class MovieLikeService(
         current_user: UserModel
     ) -> None:
         try:
-            like = await self.like_movie_repository.adelete_by(
+            like = await self.like_repository.adelete_by(
                 db=db,
                 expressions=[
                     MovieLikeModel.id == like_movie_id,
