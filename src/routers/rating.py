@@ -31,7 +31,7 @@ async def get_movie_like_list(
 @router.post(
     "/movie-likes/",
     status_code=status.HTTP_201_CREATED,
-    response_model=schemas.LikeMovieDetailResponseSchema
+    response_model=schemas.MovieLikeDetailResponseSchema
 )
 async def create_movie_like(
     data: schemas.LikeMovieDataRequestSchema,

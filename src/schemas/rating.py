@@ -3,7 +3,7 @@ from datetime import datetime
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class LikeMovieDetailResponseSchema(BaseModel):
+class MovieLikeDetailResponseSchema(BaseModel):
     id: int
     created_at: datetime
     movie_id: int
@@ -11,7 +11,7 @@ class LikeMovieDetailResponseSchema(BaseModel):
 
 
 class LikeMovieListResponseSchema(BaseModel):
-    likes: list[LikeMovieDetailResponseSchema]
+    likes: list[MovieLikeDetailResponseSchema]
     total_likes: int
     total_pages: int
     prev: str | None
