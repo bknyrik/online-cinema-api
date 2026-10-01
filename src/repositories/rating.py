@@ -3,7 +3,7 @@ from src.repositories.base import AsyncBaseRepository
 from src.database.models import rating
 
 
-class LikeMovieRepository(AsyncBaseRepository[rating.MovieLikeModel]):
+class MovieLikeRepository(AsyncBaseRepository[rating.MovieLikeModel]):
 
     def __init__(self) -> None:
         super().__init__(rating.MovieLikeModel)

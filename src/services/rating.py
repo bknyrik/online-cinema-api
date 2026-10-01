@@ -4,7 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from src.services import mixins
 from src.repositories.movies import MovieRepository
-from src.repositories.rating import LikeMovieRepository, CommentMovieRepository
+from src.repositories.rating import MovieLikeRepository, CommentMovieRepository
 from src.database.models.rating import MovieLikeModel, MovieCommentModel
 from src.database.models.accounts import UserModel
 
@@ -14,7 +14,7 @@ class LikeMovieService(
     mixins.ModelItemsMixin[MovieLikeModel]
 ):
     def __init__(self) -> None:
-        self.like_movie_repository = LikeMovieRepository()
+        self.like_movie_repository = MovieLikeRepository()
         self.movie_repository = MovieRepository()
 
     async def get_like_movie_list(
