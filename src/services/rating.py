@@ -342,3 +342,31 @@ class CommentReplyService(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while getting comment reply"
             )
+
+    async def delete_comment_reply(
+        self,
+        reply_id: int,
+        db: AsyncSession,
+        current_user: UserModel
+    ) -> None:
+        try:
+            reply = await self.reply_repository.aget_by(
+                db=db,
+                expressions=[CommentReplyModel.id == reply_id]
+            )
+
+            self.validate_item_by_id_not_found(reply, reply_id, "Reply")
+            self.belongs_to_profile_or_is_admin_or_moderator(
+                current_user=current_user,
+                child_object=reply,
+                child_object_type="Reply"
+            )
+
+            await self.reply_repository.adelete(db, reply)
+            await db.commit()
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while comment reply deletion"
+            )
