@@ -74,7 +74,7 @@ async def get_movie_comment_list(
     comment_service: services.MovieCommentService = Depends(services.MovieCommentService),
     current_user: UserModel = Depends(auth.get_current_user),
 ) -> dict:
-    return await comment_service.get_comment_list(
+    return await comment_service.get_movie_comment_list(
         db=db,
         pagination_data=pagination_data,
         filter_data=filter_data,

@@ -150,7 +150,7 @@ class MovieCommentService(
         self.movie_repository = MovieRepository()
         self.comment_repository = MovieCommentRepository()
 
-    async def get_comment_list(
+    async def get_movie_comment_list(
         self,
         filter_data: dict,
         pagination_data: dict,
