@@ -9,7 +9,7 @@ from src.database.models.rating import MovieLikeModel, MovieCommentModel
 from src.database.models.accounts import UserModel
 
 
-class LikeMovieService(
+class MovieLikeService(
     mixins.PaginationLimitOffsetMixin,
     mixins.ModelItemsMixin[MovieLikeModel]
 ):

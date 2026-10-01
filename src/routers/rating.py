@@ -18,7 +18,7 @@ router = APIRouter()
 async def get_like_movie_list(
     pagination_data: PaginationDep,
     db: AsyncSession = Depends(get_db),
-    like_movie_service: services.LikeMovieService = Depends(services.LikeMovieService),
+    like_movie_service: services.MovieLikeService = Depends(services.MovieLikeService),
     current_user: UserModel = Depends(auth.get_current_user)
 ) -> dict:
     return await like_movie_service.get_like_movie_list(
@@ -36,7 +36,7 @@ async def get_like_movie_list(
 async def create_like_movie(
     data: schemas.LikeMovieDataRequestSchema,
     db: AsyncSession = Depends(get_db),
-    like_movie_service: services.LikeMovieService = Depends(services.LikeMovieService),
+    like_movie_service: services.MovieLikeService = Depends(services.MovieLikeService),
     current_user: UserModel = Depends(auth.get_current_user)
 ) -> MovieLikeModel:
     return await like_movie_service.create_like_movie(
@@ -53,7 +53,7 @@ async def create_like_movie(
 async def delete_like_movie(
     like_movie_id: int,
     db: AsyncSession = Depends(get_db),
-    like_movie_service: services.LikeMovieService = Depends(services.LikeMovieService),
+    like_movie_service: services.MovieLikeService = Depends(services.MovieLikeService),
     current_user: UserModel = Depends(auth.get_current_user)
 ) -> None:
     return await like_movie_service.delete_like_movie(
