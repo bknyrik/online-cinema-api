@@ -139,7 +139,7 @@ async def update_movie_comment(
     "/movie-comments/{comment_id}/",
     status_code=status.HTTP_204_NO_CONTENT,
 )
-async def delete_comment(
+async def delete_movie_comment(
     comment_id: int,
     db: AsyncSession = Depends(get_db),
     comment_service: services.MovieCommentService = Depends(services.MovieCommentService),
