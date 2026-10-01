@@ -48,3 +48,11 @@ class CommentMovieDataRequestSchema(BaseModel):
 
 class CommentMovieUpdateRequestSchema(BaseModel):
     text: str = Field(strict=True, min_length=1)
+
+
+class CommentReplyDetailResponseSchema(BaseModel):
+    id: int
+    created_at: datetime
+    comment_id: int
+    profile_id: int
+    text: str
