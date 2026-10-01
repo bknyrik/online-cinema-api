@@ -64,7 +64,7 @@ class MovieLikeService(
                 detail="An error occurred while getting list with movie likes"
             )
 
-    async def create_like_movie(
+    async def create_movie_like(
         self,
         db: AsyncSession,
         data: dict,
