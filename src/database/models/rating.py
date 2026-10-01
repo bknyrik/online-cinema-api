@@ -99,7 +99,8 @@ class CommentLikeModel(Base):
     )
     profile_id = Column(
         Integer,
-        ForeignKey("user_profiles.id", ondelete="CASCADE")
+        ForeignKey("user_profiles.id", ondelete="CASCADE"),
+        nullable=False
     )
     comment = relationship(MovieCommentModel, back_populates="likes")
     profile = relationship("UserProfileModel", back_populates="comment_likes")
