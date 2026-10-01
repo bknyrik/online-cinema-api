@@ -34,7 +34,7 @@ class MovieCommentDetailResponseSchema(BaseModel):
     profile_id: int
 
 
-class CommentMovieListResponseSchema(BaseModel):
+class MovieCommentListResponseSchema(BaseModel):
     comments: list[MovieCommentDetailResponseSchema]
     total_comments: int
     total_pages: int

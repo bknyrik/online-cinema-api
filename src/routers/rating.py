@@ -65,7 +65,7 @@ async def delete_movie_like(
 
 @router.get(
     "/comments/",
-    response_model=schemas.CommentMovieListResponseSchema
+    response_model=schemas.MovieCommentListResponseSchema
 )
 async def get_comment_list(
     pagination_data: PaginationDep,
