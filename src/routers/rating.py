@@ -145,7 +145,7 @@ async def delete_movie_comment(
     comment_service: services.MovieCommentService = Depends(services.MovieCommentService),
     current_user: UserModel = Depends(auth.get_current_user)
 ) -> None:
-    return await comment_service.delete_comment(
+    return await comment_service.delete_movie_comment(
         db=db,
         comment_id=comment_id,
         current_user=current_user

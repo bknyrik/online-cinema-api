@@ -287,7 +287,7 @@ class MovieCommentService(
                 detail="An error occurred while updating comment"
             )
 
-    async def delete_comment(
+    async def delete_movie_comment(
         self,
         db: AsyncSession,
         comment_id: int,
