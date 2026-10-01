@@ -34,7 +34,7 @@ async def get_movie_like_list(
     response_model=schemas.MovieLikeDetailResponseSchema
 )
 async def create_movie_like(
-    data: schemas.LikeMovieDataRequestSchema,
+    data: schemas.MovieLikeDataRequestSchema,
     db: AsyncSession = Depends(get_db),
     like_service: services.MovieLikeService = Depends(services.MovieLikeService),
     current_user: UserModel = Depends(auth.get_current_user)
