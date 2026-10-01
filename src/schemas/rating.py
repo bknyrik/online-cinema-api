@@ -23,6 +23,8 @@ class MovieLikeListResponseSchema(BaseModel):
 class LikeMovieDataRequestSchema(BaseModel):
     movie_id: int
 
+    model_config = ConfigDict(strict=True)
+
 
 class CommentMovieDetailResponseSchema(BaseModel):
     id: int
