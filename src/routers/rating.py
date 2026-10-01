@@ -50,7 +50,7 @@ async def create_movie_like(
     "/likes-movies/{like_movie_id}/",
     status_code=status.HTTP_204_NO_CONTENT
 )
-async def delete_like_movie(
+async def delete_movie_like(
     like_movie_id: int,
     db: AsyncSession = Depends(get_db),
     like_movie_service: services.MovieLikeService = Depends(services.MovieLikeService),
