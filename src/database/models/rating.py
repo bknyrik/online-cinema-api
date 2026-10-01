@@ -130,6 +130,11 @@ class MovieRateModel(Base):
     __tablename__ = "movie_rates"
 
     id = Column(Integer, primary_key=True, index=True)
+    created_at = Column(
+        DateTime(timezone=True),
+        default=datetime.now(timezone.utc),
+        nullable=False
+    )
     movie_id = Column(
         Integer,
         ForeignKey("movies.id", ondelete="CASCADE"),
