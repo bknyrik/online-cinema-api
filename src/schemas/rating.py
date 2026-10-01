@@ -44,7 +44,7 @@ class MovieCommentListResponseSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class CommentMovieDataRequestSchema(BaseModel):
+class MovieCommentCreateRequestSchema(BaseModel):
     movie_id: int
     text: str
 

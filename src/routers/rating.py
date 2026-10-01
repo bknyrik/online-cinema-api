@@ -104,7 +104,7 @@ async def get_comment_detail(
     response_model=schemas.MovieCommentDetailResponseSchema,
 )
 async def create_comment(
-    data: schemas.CommentMovieDataRequestSchema,
+    data: schemas.MovieCommentCreateRequestSchema,
     db: AsyncSession = Depends(get_db),
     current_user: UserModel = Depends(auth.get_current_user),
     comment_service: services.MovieCommentService = Depends(services.MovieCommentService)
