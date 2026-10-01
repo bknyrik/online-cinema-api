@@ -72,11 +72,13 @@ class CommentReplyModel(Base):
     )
     comment_id = Column(
         Integer,
-        ForeignKey("movie_comments.id", ondelete="CASCADE")
+        ForeignKey("movie_comments.id", ondelete="CASCADE"),
+        nullable=False
     )
     profile_id = Column(
         Integer,
-        ForeignKey("user_profiles.id", ondelete="CASCADE")
+        ForeignKey("user_profiles.id", ondelete="CASCADE"),
+        nullable=False
     )
     text = Column(Text, nullable=False)
     comment = relationship("MovieCommentModel", back_populates="replies")
