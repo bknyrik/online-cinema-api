@@ -10,7 +10,7 @@ class MovieLikeDetailResponseSchema(BaseModel):
     profile_id: int
 
 
-class LikeMovieListResponseSchema(BaseModel):
+class MovieLikeListResponseSchema(BaseModel):
     likes: list[MovieLikeDetailResponseSchema]
     total_likes: int
     total_pages: int

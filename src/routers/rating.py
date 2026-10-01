@@ -14,7 +14,7 @@ from src.database.models.rating import MovieLikeModel, MovieCommentModel
 router = APIRouter()
 
 
-@router.get("/movie-likes/", response_model=schemas.LikeMovieListResponseSchema)
+@router.get("/movie-likes/", response_model=schemas.MovieLikeListResponseSchema)
 async def get_movie_like_list(
     pagination_data: PaginationDep,
     db: AsyncSession = Depends(get_db),
