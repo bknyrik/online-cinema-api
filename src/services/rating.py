@@ -7,9 +7,15 @@ from src.repositories.movies import MovieRepository
 from src.repositories.rating import (
     MovieLikeRepository,
     MovieCommentRepository,
-    CommentReplyRepository
+    CommentReplyRepository,
+    CommentLikeRepository
 )
-from src.database.models.rating import MovieLikeModel, MovieCommentModel, CommentReplyModel
+from src.database.models.rating import (
+    MovieLikeModel,
+    MovieCommentModel,
+    CommentReplyModel,
+    CommentLikeModel
+)
 from src.database.models.accounts import UserModel
 
 
@@ -478,3 +484,15 @@ class CommentReplyService(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while comment reply deletion"
             )
+
+
+class CommentLikeService(
+    mixins.PaginationLimitOffsetMixin,
+    mixins.ModelItemsMixin,
+    mixins.FilterItemsMixin,
+    mixins.UserPermissionsMixin
+):
+
+    def __init__(self) -> None:
+        self.like_repository = CommentLikeRepository()
+        self.comment_repository = MovieCommentRepository()
