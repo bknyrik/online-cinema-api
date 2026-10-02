@@ -496,3 +496,65 @@ class CommentLikeService(
     def __init__(self) -> None:
         self.like_repository = CommentLikeRepository()
         self.comment_repository = MovieCommentRepository()
+
+    async def get_comment_like_list(
+        self,
+        filter_data: dict,
+        pagination_data: dict,
+        db: AsyncSession,
+        current_user: UserModel
+    ) -> dict:
+        try:
+            filter_expressions = self.get_filter_expressions(filter_data)
+
+            if current_user.group.name == "user":
+                filter_expressions.append(
+                    CommentLikeModel.profile_id == current_user.profile.id
+                )
+
+            limit, offset = self.get_limit_offset(pagination_data)
+            total_likes = await self.like_repository.acount(
+                db=db,
+                expressions=filter_expressions
+            )
+            total_pages = self.get_total_pages(
+                total_items=total_likes,
+                per_page=pagination_data["per_page"]
+            )
+
+            self.validate_page_not_found(
+                page=pagination_data["page"],
+                total_pages=total_pages,
+                total_items=total_likes
+            )
+
+            likes = await self.like_repository.aget_all(
+                db=db,
+                expressions=filter_expressions,
+                offset=offset,
+                limit=limit,
+                order_by_columns=[CommentLikeModel.id]
+            )
+
+            prev_page, next_page = self.get_prev_next_urls_pages(
+                url="/comment-likes/",
+                page=pagination_data["page"],
+                total_pages=total_pages,
+                query_params={
+                    **pagination_data,
+                    **filter_data
+                }
+            )
+
+            return {
+                "likes": likes,
+                "total_likes": total_likes,
+                "total_pages": total_pages,
+                "prev": prev_page,
+                "next": next_page
+            }
+        except SQLAlchemyError:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while getting list with comment likes"
+            )
