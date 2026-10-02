@@ -19,3 +19,9 @@ class CommentReplyRepository(AsyncBaseRepository[rating.CommentReplyModel]):
 
     def __init__(self) -> None:
         super().__init__(rating.CommentReplyModel)
+
+
+class CommentLikeRepository(AsyncBaseRepository[rating.CommentLikeModel]):
+
+    def __init__(self) -> None:
+        super().__init__(rating.CommentLikeModel)
