@@ -238,3 +238,22 @@ async def delete_comment_reply(
         reply_id=reply_id,
         current_user=current_user,
     )
+
+
+@router.get(
+    "/comment-likes/",
+    response_model=schemas.CommentLikeListResponseSchema
+)
+async def get_comment_like_list(
+    pagination_data: PaginationDep,
+    filter_data: CommentReplyFilterDep,
+    db: AsyncSession = Depends(get_db),
+    like_service: services.CommentLikeService = Depends(services.CommentLikeService),
+    current_user: UserModel = Depends(auth.get_current_user)
+) -> dict:
+    return await like_service.get_comment_like_list(
+        db=db,
+        pagination_data=pagination_data,
+        filter_data=filter_data,
+        current_user=current_user
+    )
