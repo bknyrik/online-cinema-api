@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.dependencies.database import get_db
 from src.dependencies.pagination import PaginationDep
 from src.dependencies import authentication as auth
-from src.dependencies.rating import CommentFilterDep
+from src.dependencies.rating import CommentFilterDep, CommentReplyFilterDep
 from src.services import rating as services
 from src.schemas import rating as schemas
 from src.database.models.accounts import UserModel
@@ -148,6 +148,25 @@ async def delete_movie_comment(
     return await comment_service.delete_movie_comment(
         db=db,
         comment_id=comment_id,
+        current_user=current_user
+    )
+
+
+@router.get(
+    "/comment-replies/",
+    response_model=schemas.CommentReplyListResponseSchema
+)
+async def get_comment_reply_list(
+    filter_data: CommentReplyFilterDep,
+    pagination_data: PaginationDep,
+    db: AsyncSession = Depends(get_db),
+    reply_service: services.CommentReplyService = Depends(services.CommentReplyService),
+    current_user: UserModel = Depends(auth.get_current_user)
+) -> dict:
+    return await reply_service.get_comment_reply_list(
+        db=db,
+        pagination_data=pagination_data,
+        filter_data=filter_data,
         current_user=current_user
     )
 
