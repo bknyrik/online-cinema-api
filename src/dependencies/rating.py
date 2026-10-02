@@ -40,4 +40,15 @@ async def comment_filter_params(
     }
 
 
+async def comment_reply_filter_params(
+    filter_by_comment_id: int = Query(default=None),
+    rating_filter_queries: dict = Depends(rating_filter_params)
+) -> dict:
+    return {
+        "filter_by_comment_id": filter_by_comment_id,
+        **rating_filter_queries
+    }
+
+
 CommentFilterDep = Annotated[dict, Depends(comment_filter_params)]
+CommentReplyFilterDep = Annotated[dict, Depends(comment_reply_filter_params)]
