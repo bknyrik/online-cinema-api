@@ -82,3 +82,10 @@ class CommentReplyUpdateRequestSchema(BaseModel):
     text: str = Field(min_length=1)
 
     model_config = ConfigDict(strict=True)
+
+
+class CommentLikeDetailResponseSchema(BaseModel):
+    id: int
+    created_at: datetime
+    comment_id: int
+    profile_id: int
