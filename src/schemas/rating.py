@@ -89,3 +89,13 @@ class CommentLikeDetailResponseSchema(BaseModel):
     created_at: datetime
     comment_id: int
     profile_id: int
+
+
+class CommentLikeListResponseSchema(BaseModel):
+    likes: list[CommentLikeDetailResponseSchema]
+    total_likes: int
+    total_pages: int
+    prev: str | None
+    next: str | None
+
+    model_config = ConfigDict(from_attributes=True)
