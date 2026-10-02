@@ -99,3 +99,7 @@ class CommentLikeListResponseSchema(BaseModel):
     next: str | None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class CommentLikeCreateRequestSchema(BaseModel):
+    comment_id: int
