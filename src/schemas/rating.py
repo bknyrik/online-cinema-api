@@ -123,7 +123,7 @@ class MovieRateListResponseSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class MovieCreateRequestSchema(BaseModel):
+class MovieRateCreateRequestSchema(BaseModel):
     movie_id: int
     scale: int = Field(min_length=1, max_length=10)
 
