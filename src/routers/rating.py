@@ -280,3 +280,20 @@ async def create_comment_like(
         data=data.model_dump(),
         current_user=current_user
     )
+
+
+@router.delete(
+    "/comment-likes/{like_id}/",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def delete_comment_like(
+    like_id: int,
+    db: AsyncSession = Depends(get_db),
+    like_service: services.CommentLikeService = Depends(services.CommentLikeService),
+    current_user: UserModel = Depends(auth.get_current_user)
+) -> None:
+    return await like_service.delete_comment_like(
+        db=db,
+        like_id=like_id,
+        current_user=current_user
+    )
