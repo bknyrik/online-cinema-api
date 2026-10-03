@@ -12,7 +12,8 @@ from src.database.models.rating import (
     MovieLikeModel,
     MovieCommentModel,
     CommentReplyModel,
-    CommentLikeModel
+    CommentLikeModel,
+    MovieRateModel
 )
 
 
@@ -295,5 +296,23 @@ async def delete_comment_like(
     return await like_service.delete_comment_like(
         db=db,
         like_id=like_id,
+        current_user=current_user
+    )
+
+
+@router.post(
+    "/movie-rates/",
+    status_code=status.HTTP_201_CREATED,
+    response_model=schemas.MovieRateDetailResponseSchema
+)
+async def create_movie_rate(
+    data: schemas.MovieRateCreateRequestSchema,
+    db: AsyncSession = Depends(get_db),
+    rate_service: services.MovieRateService = Depends(services.MovieRateService),
+    current_user: UserModel = Depends(auth.get_current_user)
+) -> MovieRateModel:
+    return await rate_service.create_movie_rate(
+        db=db,
+        data=data.model_dump(),
         current_user=current_user
     )
