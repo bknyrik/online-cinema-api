@@ -103,3 +103,11 @@ class CommentLikeListResponseSchema(BaseModel):
 
 class CommentLikeCreateRequestSchema(BaseModel):
     comment_id: int
+
+
+class MovieRateResponseSchema(BaseModel):
+    id: int
+    created_at: datetime
+    movie_id: int
+    profile_id: int
+    scale: int
