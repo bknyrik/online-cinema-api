@@ -263,6 +263,14 @@ class FilterItemsMixin:
 class UserPermissionsMixin:
 
     @staticmethod
+    def has_profile(current_user: UserModel) -> None:
+        if current_user.profile is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User doesn't have a profile"
+            )
+
+    @staticmethod
     def belongs_to_profile_or_is_admin_or_moderator(
         current_user: UserModel,
         child_object,
