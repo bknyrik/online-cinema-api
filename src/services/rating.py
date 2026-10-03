@@ -558,3 +558,29 @@ class CommentLikeService(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while getting list with comment likes"
             )
+
+    async def create_comment_like(
+        self,
+        data: dict,
+        db: AsyncSession,
+        current_user: UserModel
+    ) -> CommentLikeModel:
+        try:
+            comment = await self.comment_repository.aget_by_id(
+                db=db,
+                id_=data["comment_id"]
+            )
+            self.validate_item_by_id_not_found(comment, data["comment_id"], "Comment")
+
+            data["profile_id"] = current_user.profile.id
+
+            like = await self.like_repository.acreate(
+                db=db,
+                data=data
+            )
+            return like
+        except SQLAlchemyError:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while comment like creation"
+            )
