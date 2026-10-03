@@ -111,3 +111,10 @@ class MovieRateDetailResponseSchema(BaseModel):
     movie_id: int
     profile_id: int
     scale: int
+
+
+class MovieCreateRequestSchema(BaseModel):
+    movie_id: int
+    scale: int = Field(min_length=1, max_length=10)
+
+    model_config = ConfigDict(strict=True)
