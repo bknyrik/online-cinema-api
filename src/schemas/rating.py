@@ -113,6 +113,16 @@ class MovieRateDetailResponseSchema(BaseModel):
     scale: int
 
 
+class MovieRateListResponseSchema(BaseModel):
+    rates: list[MovieRateDetailResponseSchema]
+    total_rates: int
+    total_pages: int
+    prev: str | None
+    next: str | None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 class MovieCreateRequestSchema(BaseModel):
     movie_id: int
     scale: int = Field(min_length=1, max_length=10)
