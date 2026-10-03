@@ -584,3 +584,32 @@ class CommentLikeService(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while comment like creation"
             )
+
+    async def delete_comment_like(
+        self,
+        db: AsyncSession,
+        like_id: int,
+        current_user: UserModel
+    ) -> None:
+        try:
+            like = await self.like_repository.aget_by_id(
+                db=db,
+                id_=like_id
+            )
+
+            self.validate_item_by_id_not_found(like, like_id, "Comment like")
+            self.belongs_to_profile_or_is_admin_or_moderator(
+                current_user=current_user,
+                child_object=like,
+                child_object_type="Comment like"
+            )
+
+            await self.like_repository.adelete(db, like)
+
+            await db.commit()
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while comment like deletion"
+            )
