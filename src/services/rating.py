@@ -8,13 +8,15 @@ from src.repositories.rating import (
     MovieLikeRepository,
     MovieCommentRepository,
     CommentReplyRepository,
-    CommentLikeRepository
+    CommentLikeRepository,
+    MovieRateRepository
 )
 from src.database.models.rating import (
     MovieLikeModel,
     MovieCommentModel,
     CommentReplyModel,
-    CommentLikeModel
+    CommentLikeModel,
+    MovieRateModel
 )
 from src.database.models.accounts import UserModel
 
@@ -616,3 +618,15 @@ class CommentLikeService(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while comment like deletion"
             )
+
+
+class MovieRateService(
+    mixins.PaginationLimitOffsetMixin,
+    mixins.ModelItemsMixin,
+    mixins.FilterItemsMixin,
+    mixins.UserPermissionsMixin
+):
+
+    def __init__(self) -> None:
+        self.rate_repository = MovieRateRepository()
+        self.movie_repository = MovieRepository()
