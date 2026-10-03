@@ -8,7 +8,12 @@ from src.dependencies.rating import CommentFilterDep, CommentReplyFilterDep
 from src.services import rating as services
 from src.schemas import rating as schemas
 from src.database.models.accounts import UserModel
-from src.database.models.rating import MovieLikeModel, MovieCommentModel, CommentReplyModel
+from src.database.models.rating import (
+    MovieLikeModel,
+    MovieCommentModel,
+    CommentReplyModel,
+    CommentLikeModel
+)
 
 
 router = APIRouter()
@@ -255,5 +260,23 @@ async def get_comment_like_list(
         db=db,
         pagination_data=pagination_data,
         filter_data=filter_data,
+        current_user=current_user
+    )
+
+
+@router.post(
+    "/comment-likes/",
+    status_code=status.HTTP_201_CREATED,
+    response_model=schemas.CommentLikeDetailResponseSchema
+)
+async def create_comment_like(
+    data: schemas.CommentLikeCreateRequestSchema,
+    db: AsyncSession = Depends(get_db),
+    like_service: services.CommentLikeService = Depends(services.CommentLikeService),
+    current_user: UserModel = Depends(auth.get_current_user)
+) -> CommentLikeModel:
+    return await like_service.create_comment_like(
+        db=db,
+        data=data.model_dump(),
         current_user=current_user
     )
