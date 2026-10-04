@@ -661,6 +661,8 @@ class MovieRateService(
         current_user: UserModel
     ) -> MovieRateModel:
         try:
+            self.has_profile(current_user)
+
             rate = await self.rate_repository.aget_by(
                 db=db,
                 expressions=[MovieRateModel.movie_id == data["movie_id"]]
