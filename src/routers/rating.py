@@ -407,3 +407,20 @@ async def add_movie_to_favorites(
         data=data.model_dump(),
         current_user=current_user
     )
+
+
+@router.delete(
+    "/movie-favorites/{favorite_id}/",
+    status_code=status.HTTP_204_NO_CONTENT
+)
+async def delete_movie_from_favorites(
+    favorite_id: int,
+    db: AsyncSession = Depends(get_db),
+    favorite_service: services.FavoriteMovieService = Depends(services.FavoriteMovieService),
+    current_user: UserModel = Depends(auth.get_current_user),
+) -> None:
+    return await favorite_service.delete_movie_from_favorites(
+        db=db,
+        favorite_id=favorite_id,
+        current_user=current_user
+    )
