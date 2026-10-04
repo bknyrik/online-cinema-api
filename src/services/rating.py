@@ -684,3 +684,29 @@ class MovieRateService(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while updating movie rating"
             )
+
+    async def delete_movie_rate(
+        self,
+        rate_id: int,
+        db: AsyncSession,
+        current_user: UserModel
+    ) -> None:
+        try:
+            self.has_profile(current_user)
+
+            rate = await self.rate_repository.aget_by_id(
+                db=db,
+                id_=rate_id
+            )
+
+            self.validate_item_by_id_not_found(rate, rate_id, "Movie rate")
+            self.belongs_to_profile_or_is_admin_or_moderator(current_user, rate, "MovieRate")
+
+            await self.rate_repository.adelete(db, rate)
+            await db.commit()
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while movie rate deletion"
+            )
