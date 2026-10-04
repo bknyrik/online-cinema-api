@@ -301,6 +301,25 @@ async def delete_comment_like(
 
 
 @router.get(
+    "/movie-rates/",
+    response_model=schemas.MovieRateDetailResponseSchema,
+)
+async def get_movie_rate_list(
+    pagination_data: PaginationDep,
+    filter_data: CommentFilterDep,
+    db: AsyncSession = Depends(get_db),
+    rate_service: services.MovieRateService = Depends(services.MovieRateService),
+    current_user: UserModel = Depends(auth.get_current_user)
+) -> dict:
+    return await rate_service.get_movie_rate_list(
+        pagination_data=pagination_data,
+        filter_data=filter_data,
+        db=db,
+        current_user=current_user
+    )
+
+
+@router.get(
     "/movie-rates/{rate_id}/",
     response_model=schemas.MovieRateDetailResponseSchema,
 )
