@@ -631,6 +631,29 @@ class MovieRateService(
         self.rate_repository = MovieRateRepository()
         self.movie_repository = MovieRepository()
 
+    async def get_movie_rate_detail(
+        self,
+        rate_id: int,
+        db: AsyncSession,
+        current_user: UserModel
+    ) -> MovieRateModel:
+        try:
+            self.has_profile(current_user)
+
+            rate = await self.rate_repository.aget_by_id(
+                db=db,
+                id_=rate_id
+            )
+
+            self.validate_item_by_id_not_found(rate, rate_id, "Movie rate")
+
+            return rate
+        except SQLAlchemyError:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while getting movie rate"
+            )
+
     async def create_movie_rate(
         self,
         data: dict,
