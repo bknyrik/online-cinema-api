@@ -136,6 +136,13 @@ class MovieRateUpdateRequestSchema(BaseModel):
     model_config = ConfigDict(strict=True)
 
 
+class FavoriteMovieDetailResponseSchema(BaseModel):
+    id: int
+    created_at: datetime
+    movie_id: int
+    profile_id: int
+
+
 class FavoriteMovieCreateRequestSchema(BaseModel):
     movie_id: int
 
