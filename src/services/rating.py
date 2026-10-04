@@ -9,14 +9,16 @@ from src.repositories.rating import (
     MovieCommentRepository,
     CommentReplyRepository,
     CommentLikeRepository,
-    MovieRateRepository
+    MovieRateRepository,
+    FavoriteMoviesRepository
 )
 from src.database.models.rating import (
     MovieLikeModel,
     MovieCommentModel,
     CommentReplyModel,
     CommentLikeModel,
-    MovieRateModel
+    MovieRateModel,
+    FavoriteMoviesModel
 )
 from src.database.models.accounts import UserModel
 
@@ -793,3 +795,17 @@ class MovieRateService(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while movie rate deletion"
             )
+
+
+class FavoriteMovieService(
+    mixins.PaginationLimitOffsetMixin,
+    mixins.ModelItemsMixin,
+    mixins.UserPermissionsMixin,
+    mixins.FilterItemsMixin,
+    mixins.SearchItemsMixin,
+    mixins.SortingItemsMixin
+):
+
+    def __init__(self) -> None:
+       self.favorite_movie_repository = FavoriteMoviesRepository()
+       self.movie_repository = MovieRepository()
