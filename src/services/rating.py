@@ -10,7 +10,7 @@ from src.repositories.rating import (
     CommentReplyRepository,
     CommentLikeRepository,
     MovieRateRepository,
-    FavoriteMoviesRepository
+    FavoriteMovieRepository
 )
 from src.database.models.rating import (
     MovieLikeModel,
@@ -807,5 +807,5 @@ class FavoriteMovieService(
 ):
 
     def __init__(self) -> None:
-       self.favorite_movie_repository = FavoriteMoviesRepository()
+       self.favorite_movie_repository = FavoriteMovieRepository()
        self.movie_repository = MovieRepository()
