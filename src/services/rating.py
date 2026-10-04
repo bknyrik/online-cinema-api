@@ -809,3 +809,46 @@ class FavoriteMovieService(
     def __init__(self) -> None:
        self.favorite_movie_repository = FavoriteMovieRepository()
        self.movie_repository = MovieRepository()
+
+    async def add_movie_to_favorites(
+        self,
+        data: dict,
+        db: AsyncSession,
+        current_user: UserModel
+    ) -> FavoriteMovieModel:
+        try:
+            self.has_profile(current_user)
+
+            movie = await self.movie_repository.aget_by_id(
+                db=db,
+                id_=data["movie_id"]
+            )
+
+            self.validate_item_by_id_not_found(movie, data["movie_id"], "Movie")
+
+
+            data["profile_id"] = current_user.profile.id
+
+            favorite_movie = await self.favorite_movie_repository.aget_by(
+                db=db,
+                expressions=[
+                    FavoriteMovieModel.profile_id == data["profile_id"],
+                    FavoriteMovieModel.movie_id == data["movie_id"]
+                ]
+            )
+
+            self.validate_item_by_attrs_exists(favorite_movie, data, "Movie")
+
+            favorite_movie = await self.favorite_movie_repository.acreate(
+                db=db,
+                data=data
+            )
+
+            await db.commit()
+            return favorite_movie
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while adding movie to favorites"
+            )
