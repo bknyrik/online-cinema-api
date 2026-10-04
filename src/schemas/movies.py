@@ -22,7 +22,7 @@ class MovieDetailBaseSchema(BaseModel):
     year: int
     time: int
     imdb: float
-    votes: float
+    votes: int
     meta_score: float
     gross: float
     description: str
