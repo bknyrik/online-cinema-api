@@ -670,6 +670,8 @@ class MovieRateService(
 
             self.validate_item_by_attrs_exists(rate, data, "Movie rate")
 
+            data["profile_id"] = current_user.profile.id
+
             rate = await self.rate_repository.acreate(db, data)
 
             await db.commit()
