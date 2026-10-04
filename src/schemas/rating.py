@@ -134,3 +134,9 @@ class MovieRateUpdateRequestSchema(BaseModel):
     scale: int = Field(min_length=1, max_length=10)
 
     model_config = ConfigDict(strict=True)
+
+
+class FavoriteMovieCreateRequestSchema(BaseModel):
+    movie_id: int
+
+    model_config = ConfigDict(strict=True)
