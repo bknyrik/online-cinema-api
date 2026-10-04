@@ -335,3 +335,20 @@ async def update_movie_rate(
         data=data.model_dump(),
         current_user=current_user
     )
+
+
+@router.delete(
+    "/movie-rates/{rate_id}/",
+    status_code=status.HTTP_204_NO_CONTENT
+)
+async def delete_movie_rate(
+    rate_id: int,
+    db: AsyncSession = Depends(get_db),
+    rate_service: services.MovieRateService = Depends(services.MovieRateService),
+    current_user: UserModel = Depends(auth.get_current_user)
+) -> None:
+    return await rate_service.delete_movie_rate(
+        db=db,
+        rate_id=rate_id,
+        current_user=current_user
+    )
