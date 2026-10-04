@@ -631,6 +631,62 @@ class MovieRateService(
         self.rate_repository = MovieRateRepository()
         self.movie_repository = MovieRepository()
 
+    async def get_movie_rate_list(
+        self,
+        pagination_data: dict,
+        filter_data: dict,
+        db: AsyncSession,
+        current_user: UserModel
+    ) -> dict:
+        try:
+            limit, offset = self.get_limit_offset(pagination_data)
+            filter_expressions = self.get_filter_expressions(filter_data)
+
+            if current_user.group.name == "user":
+                filter_expressions.append(
+                    MovieRateModel.profile_id == current_user.profile.id
+                )
+
+            total_rates = await self.rate_repository.acount(
+                db=db,
+                expressions=filter_expressions
+            )
+            total_pages = self.get_total_pages(
+                total_items=total_rates,
+                per_page=pagination_data["per_page"]
+            )
+
+            rates = await self.rate_repository.aget_all(
+                db=db,
+                expressions=filter_expressions,
+                limit=limit,
+                offset=offset,
+                order_by_columns=[MovieRateModel.id]
+            )
+
+            prev_page, next_page = self.get_prev_next_urls_pages(
+                "/movie-rates/",
+                page=pagination_data["page"],
+                total_pages=total_pages,
+                query_params={
+                    **pagination_data,
+                    **filter_data
+                }
+            )
+
+            return {
+                "rates": rates,
+                "total_rates": total_rates,
+                "total_pages": total_pages,
+                "prev": prev_page,
+                "next": next_page
+            }
+        except SQLAlchemyError:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while getting list with movie rates"
+            )
+
     async def get_movie_rate_detail(
         self,
         rate_id: int,
