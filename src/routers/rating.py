@@ -316,3 +316,22 @@ async def create_movie_rate(
         data=data.model_dump(),
         current_user=current_user
     )
+
+
+@router.put(
+    "/movies-rates/{rate_id}/",
+    response_model=schemas.MovieRateDetailResponseSchema
+)
+async def update_movie_rate(
+    rate_id: int,
+    data: schemas.MovieRateUpdateRequestSchema,
+    db: AsyncSession = Depends(get_db),
+    rate_service: services.MovieRateService = Depends(services.MovieRateService),
+    current_user: UserModel = Depends(auth.get_current_user)
+) -> MovieRateModel:
+    return await rate_service.update_movie_rate(
+        db=db,
+        rate_id=rate_id,
+        data=data.model_dump(),
+        current_user=current_user
+    )
