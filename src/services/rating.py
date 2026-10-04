@@ -18,7 +18,7 @@ from src.database.models.rating import (
     CommentReplyModel,
     CommentLikeModel,
     MovieRateModel,
-    FavoriteMoviesModel
+    FavoriteMovieModel
 )
 from src.database.models.accounts import UserModel
 

@@ -33,7 +33,7 @@ class MovieRateRepository(AsyncBaseRepository[rating.MovieRateModel]):
         super().__init__(rating.MovieRateModel)
 
 
-class FavoriteMovieRepository(AsyncBaseRepository[rating.FavoriteMoviesModel]):
+class FavoriteMovieRepository(AsyncBaseRepository[rating.FavoriteMovieModel]):
 
     def __init__(self) -> None:
-        super().__init__(rating.FavoriteMoviesModel)
+        super().__init__(rating.FavoriteMovieModel)

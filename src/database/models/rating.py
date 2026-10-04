@@ -158,7 +158,7 @@ class MovieRateModel(Base):
     )
 
 
-class FavoriteMoviesModel(Base):
+class FavoriteMovieModel(Base):
     __tablename__ = "favorite_movies"
 
     id = Column(Integer, primary_key=True, index=True)
