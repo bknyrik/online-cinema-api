@@ -1,7 +1,8 @@
 from typing import Sequence
 
-from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy import select, func, delete
+from sqlalchemy.sql.elements import ColumnElement
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -10,19 +11,104 @@ class AsyncBaseRepository[T]:
     def __init__(self, model_type: type[T]) -> None:
         self._model_type = model_type
 
-    async def aget_all(self, db: AsyncSession) -> Sequence[T]:
-        result = await db.execute(select(self._model_type))
+    async def acount(
+        self,
+        db: AsyncSession,
+        expressions: list[ColumnElement[bool]] | None = None
+    ) -> int:
+        stmt = select(func.count()).select_from(self._model_type)
+
+        if expressions is not None:
+            stmt = stmt.where(*expressions)
+
+        result = await db.execute(stmt)
+        return result.scalar_one()
+
+    async def aget_all(
+        self,
+        db: AsyncSession,
+        offset: int | None = None,
+        limit: int | None = None,
+        join_relationships: list[str] | None = None,
+        expressions: list[ColumnElement[bool]] | None = None,
+        order_by_columns: list[ColumnElement[T]] | None = None,
+    ) -> Sequence[T]:
+        stmt = select(self._model_type)
+
+        if join_relationships is not None:
+            for relationship in join_relationships:
+                stmt = stmt.options(
+                    joinedload(getattr(self._model_type, relationship))
+                )
+
+        if expressions is not None:
+            stmt = stmt.where(*expressions)
+
+        if order_by_columns is not None:
+            stmt = stmt.order_by(*order_by_columns)
+
+        if limit is not None:
+            stmt = stmt.limit(limit)
+
+        if offset is not None:
+            stmt = stmt.offset(offset)
+
+        result = await db.execute(stmt)
+
+        return result.unique().scalars().all()
+
+    async def aget_by_ids(self, db: AsyncSession, ids: list[int]) -> Sequence[T]:
+        result = await db.execute(
+            select(self._model_type)
+            .where(self._model_type.id.in_(ids))
+        )
         return result.scalars().all()
 
-    async def aget_by_id(self, db: AsyncSession, id_: int) -> T | None:
-        result = await db.execute(
+    async def aget_by_id(
+        self,
+        db: AsyncSession,
+        id_: int,
+        join_relationships: list[str] | None = None
+    ) -> T | None:
+        stmt = (
             select(self._model_type)
             .where(self._model_type.id == id_)
         )
-        return result.scalar_one_or_none()
+
+        if join_relationships:
+            for relationship in join_relationships:
+                stmt = stmt.options(
+                    joinedload(getattr(self._model_type, relationship))
+                )
+
+        result = await db.execute(stmt)
+        return result.unique().scalar_one_or_none()
+
+    async def aget_by(
+        self,
+        db: AsyncSession,
+        expressions: list[ColumnElement[bool]],
+        join_relationships: list[str] | None = None
+    ) -> T | None:
+        stmt = select(self._model_type)
+
+        if join_relationships:
+            for relationship in join_relationships:
+                stmt = stmt.options(
+                    joinedload(getattr(self._model_type, relationship))
+                )
+
+        stmt = stmt.where(*expressions)
+
+        result = await db.execute(stmt)
+        return result.unique().scalar_one_or_none()
+
 
     async def acreate(self, db: AsyncSession, data: dict) -> T:
-        instance = self._model_type(**data)
+        instance = self._model_type()
+
+        for name, value in data.items():
+            setattr(instance, name, value)
 
         db.add(instance)
         await db.flush()
@@ -57,6 +143,22 @@ class AsyncBaseRepository[T]:
             return instance
 
         await db.delete(instance)
+        return instance
+
+    async def adelete_by(
+        self,
+        db: AsyncSession,
+        expressions: list[ColumnElement[bool]]
+    ) -> T | None:
+        instance = await self.aget_by(
+            db=db,
+            expressions=expressions
+        )
+
+        if not instance:
+            return None
+
+        await self.adelete(db, instance)
         return instance
 
     @staticmethod
