@@ -852,3 +852,32 @@ class FavoriteMovieService(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while adding movie to favorites"
             )
+
+    async def delete_movie_from_favorites(
+        self,
+        favorite_id: int,
+        db: AsyncSession,
+        current_user: UserModel
+    ) -> None:
+        try:
+            self.has_profile(current_user)
+
+            favorite_movie = await self.favorite_movie_repository.aget_by_id(
+                db=db,
+                id_=favorite_id
+            )
+
+            self.validate_item_by_id_not_found(
+                item=favorite_movie,
+                id_=favorite_id,
+                item_type="Favorite movie"
+            )
+
+            await self.favorite_movie_repository.adelete(db, favorite_movie)
+            await db.commit()
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while deletion movie from favorites"
+            )
