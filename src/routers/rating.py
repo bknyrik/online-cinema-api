@@ -300,6 +300,23 @@ async def delete_comment_like(
     )
 
 
+@router.get(
+    "/movie-rates/{rate_id}/",
+    response_model=schemas.MovieRateDetailResponseSchema,
+)
+async def get_movie_rate_detail(
+    rate_id: int,
+    db: AsyncSession = Depends(get_db),
+    rate_service: services.MovieRateService = Depends(services.MovieRateService),
+    current_user: UserModel = Depends(auth.get_current_user)
+) -> MovieRateModel:
+    return await rate_service.get_movie_rate_detail(
+        db=db,
+        rate_id=rate_id,
+        current_user=current_user
+    )
+
+
 @router.post(
     "/movie-rates/",
     status_code=status.HTTP_201_CREATED,
