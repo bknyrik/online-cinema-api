@@ -13,7 +13,8 @@ from src.database.models.rating import (
     MovieCommentModel,
     CommentReplyModel,
     CommentLikeModel,
-    MovieRateModel
+    MovieRateModel,
+    FavoriteMovieModel
 )
 
 
@@ -386,5 +387,23 @@ async def delete_movie_rate(
     return await rate_service.delete_movie_rate(
         db=db,
         rate_id=rate_id,
+        current_user=current_user
+    )
+
+
+@router.post(
+    "/movie-favorites/",
+    status_code=status.HTTP_201_CREATED,
+    response_model=schemas.FavoriteMovieDetailResponseSchema
+)
+async def add_movie_to_favorites(
+    data: schemas.FavoriteMovieCreateRequestSchema,
+    db: AsyncSession = Depends(get_db),
+    favorite_service: services.FavoriteMovieService = Depends(services.FavoriteMovieService),
+    current_user: UserModel = Depends(auth.get_current_user)
+) -> FavoriteMovieModel:
+    return await favorite_service.add_movie_to_favorites(
+        db=db,
+        data=data.model_dump(),
         current_user=current_user
     )
