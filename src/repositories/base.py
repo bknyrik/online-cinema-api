@@ -1,7 +1,8 @@
 from typing import Sequence
 
-from sqlalchemy import select, func, delete
-from sqlalchemy.sql.elements import ColumnElement
+from sqlalchemy import select, func
+from sqlalchemy.orm import InstrumentedAttribute
+from sqlalchemy.sql.elements import ColumnElement, UnaryExpression
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -31,7 +32,7 @@ class AsyncBaseRepository[T]:
         limit: int | None = None,
         join_relationships: list[str] | None = None,
         expressions: list[ColumnElement[bool]] | None = None,
-        order_by_columns: list[ColumnElement[T]] | None = None,
+        order_by_columns: list[InstrumentedAttribute | UnaryExpression] | None = None,
     ) -> Sequence[T]:
         stmt = select(self._model_type)
 
