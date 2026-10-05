@@ -810,6 +810,69 @@ class FavoriteMovieService(
        self.favorite_movie_repository = FavoriteMovieRepository()
        self.movie_repository = MovieRepository()
 
+    async def get_favorite_movie_list(
+        self,
+        filter_data: dict,
+        search_data: dict,
+        sort_data: dict,
+        pagination_data: dict,
+        db: AsyncSession,
+        current_user: UserModel
+    ) -> dict:
+        try:
+            self.has_profile(current_user)
+            limit, offset = self.get_limit_offset(pagination_data)
+
+            filter_expressions = self.get_filter_expressions(filter_data)
+            sorting_expressions = self.get_sort_columns(sort_data)
+            search_expressions = self.get_search_expressions(search_data)
+            expressions = filter_expressions + search_expressions
+
+            total_movies = await self.favorite_movie_repository.acount(
+                db=db,
+                expressions=expressions,
+            )
+            total_pages = self.get_total_pages(
+                total_items=total_movies,
+                per_page=pagination_data["per_page"]
+            )
+
+            movies = await self.favorite_movie_repository.aget_all(
+                db=db,
+                expressions=expressions,
+                limit=limit,
+                offset=offset,
+                join_relationships=["movie"],
+                order_by_columns=(
+                    [FavoriteMovieModel.id] if sort_data is None
+                    else sorting_expressions
+                )
+            )
+
+            prev_page, next_page = self.get_prev_next_urls_pages(
+                url="/movie-favorites/",
+                page=pagination_data["page"],
+                total_pages=total_pages,
+                query_params={
+                    **pagination_data,
+                    **filter_data,
+                    **search_data,
+                    **sort_data
+                }
+            )
+            return {
+                "movies": [favorite.movie for favorite in movies],
+                "total_movies": total_movies,
+                "total_pages": total_pages,
+                "prev": prev_page,
+                "next": next_page
+            }
+        except SQLAlchemyError:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while getting list with favorite movies"
+            )
+
     async def add_movie_to_favorites(
         self,
         data: dict,
