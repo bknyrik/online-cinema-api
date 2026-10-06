@@ -5,6 +5,7 @@ from fastapi import HTTPException, status
 from sqlalchemy import UnaryExpression, ColumnElement
 from sqlalchemy.orm import InstrumentedAttribute
 
+from src.database.models.base import Base
 from src.database.models.accounts import UserModel
 
 
@@ -63,11 +64,11 @@ class PaginationLimitOffsetMixin:
             )
 
 
-class ModelItemsMixin[T]:
+class ModelItemsMixin:
 
     @staticmethod
     def validate_item_by_id_not_found(
-        item: T | None,
+        item: Base | None,
         id_: int,
         item_type: str
     ) -> None:
@@ -79,7 +80,7 @@ class ModelItemsMixin[T]:
 
     @staticmethod
     def validate_item_by_attrs_exists(
-        item: T | None,
+        item: Base | None,
         attrs: dict,
         item_type: str
     ) -> None:
@@ -96,8 +97,8 @@ class ModelItemsMixin[T]:
 
     @staticmethod
     def validate_item_by_attrs_with_another_item_exists(
-        item: T | None,
-        another_item: T | None,
+        item: Base | None,
+        another_item: Base | None,
         attrs: dict,
         item_type: str
     ) -> None:
@@ -114,7 +115,7 @@ class ModelItemsMixin[T]:
 
     @staticmethod
     def validate_items_by_ids_not_found(
-        items: list,
+        items: list[Base],
         ids: list[int],
         item_type: str
     ) -> None:

@@ -25,7 +25,7 @@ from src.database.models.accounts import UserModel
 
 class MovieLikeService(
     mixins.PaginationLimitOffsetMixin,
-    mixins.ModelItemsMixin[MovieLikeModel]
+    mixins.ModelItemsMixin
 ):
     def __init__(self) -> None:
         self.like_repository = MovieLikeRepository()
