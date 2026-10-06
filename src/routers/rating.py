@@ -5,8 +5,10 @@ from src.dependencies.database import get_db
 from src.dependencies.pagination import PaginationDep
 from src.dependencies import authentication as auth
 from src.dependencies.rating import CommentFilterDep, CommentReplyFilterDep
+from src.dependencies.movies import MovieFilterDep, MovieSearchDep, MovieSortDep
 from src.services import rating as services
 from src.schemas import rating as schemas
+from src.schemas.movies import MovieListResponseSchema
 from src.database.models.accounts import UserModel
 from src.database.models.rating import (
     MovieLikeModel,
@@ -387,6 +389,29 @@ async def delete_movie_rate(
     return await rate_service.delete_movie_rate(
         db=db,
         rate_id=rate_id,
+        current_user=current_user
+    )
+
+
+@router.get(
+    "/movie-favorites/",
+    response_model=MovieListResponseSchema
+)
+async def get_favorite_movie_list(
+    pagination_data: PaginationDep,
+    search_data: MovieSearchDep,
+    filter_data: MovieFilterDep,
+    sort_data: MovieSortDep,
+    db: AsyncSession = Depends(get_db),
+    favorite_service: services.FavoriteMovieService = Depends(services.FavoriteMovieService),
+    current_user: UserModel = Depends(auth.get_current_user)
+) -> dict:
+    return await favorite_service.get_favorite_movie_list(
+        db=db,
+        filter_data=filter_data,
+        pagination_data=pagination_data,
+        search_data=search_data,
+        sort_data=sort_data,
         current_user=current_user
     )
 
