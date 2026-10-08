@@ -12,6 +12,7 @@ from src.repositories.rating import (
     MovieRateRepository,
     FavoriteMovieRepository
 )
+from src.database.models.movies import MovieModel
 from src.database.models.rating import (
     MovieLikeModel,
     MovieCommentModel,
@@ -824,7 +825,7 @@ class FavoriteMovieService(
             limit, offset = self.get_limit_offset(pagination_data)
 
             filter_expressions = self.get_filter_expressions(filter_data)
-            sorting_expressions = self.get_sort_columns(sort_data)
+            sorting_expressions = self.get_sort_columns(sort_data, MovieModel)
             search_expressions = self.get_search_expressions(search_data)
             expressions = filter_expressions + search_expressions
 

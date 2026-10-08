@@ -87,7 +87,7 @@ class MovieService(
             filter_expressions = self.get_filter_expressions(filter_data)
             search_expressions = self.get_search_expressions(search_data)
             sort_columns = (
-                self.get_sort_columns(sort_data)
+                self.get_sort_columns(sort_data, MovieModel)
                 if any(value is not None for value in sort_data.values())
                 else [MovieModel.id]
             )
