@@ -83,10 +83,10 @@ class MovieService(
         sort_data: dict
     ) -> dict:
         try:
-            filter_expressions = self.get_filter_expressions(filter_data, MovieModel)
-            search_expressions = self.get_search_expressions(search_data, MovieModel)
+            filter_expressions = self.get_filter_expressions(filter_data)
+            search_expressions = self.get_search_expressions(search_data)
             sort_columns = (
-                self.get_sort_columns(sort_data, self.model_type)
+                self.get_sort_columns(sort_data)
                 if any(value is not None for value in sort_data.values())
                 else [self.model_type.id]
             )
