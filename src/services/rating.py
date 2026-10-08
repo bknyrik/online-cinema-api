@@ -363,7 +363,8 @@ class CommentReplyService(
                 db=db,
                 expressions=filter_expressions,
                 limit=limit,
-                offset=offset
+                offset=offset,
+                order_by_columns=[CommentReplyModel.id]
             )
 
             prev_page, next_page = self.get_prev_next_urls_pages(
