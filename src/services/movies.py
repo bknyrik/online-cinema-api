@@ -180,9 +180,9 @@ class MovieService(
             movie = await self.movie_repository.aget_by(
                 db=db,
                 expressions=[
-                    MovieModel.name == data["name"],
-                    MovieModel.year == data["year"],
-                    MovieModel.time == data["time"]
+                    self.model_type.name == data["name"],
+                    self.model_type.year == data["year"],
+                    self.model_type.time == data["time"]
                 ]
             )
 
