@@ -84,7 +84,7 @@ class MovieService(
         sort_data: dict
     ) -> dict:
         try:
-            filter_expressions = self.get_filter_expressions(filter_data)
+            filter_expressions = self.get_filter_expressions(filter_data, MovieModel)
             search_expressions = self.get_search_expressions(search_data, MovieModel)
             sort_columns = (
                 self.get_sort_columns(sort_data, MovieModel)
