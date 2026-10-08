@@ -235,9 +235,8 @@ class FilterItemsMixin:
             if name.endswith("_id") and value is not None
         ]
 
-    @classmethod
+    @staticmethod
     def _get_multiple_ids_expressions(
-        cls,
         filter_data: dict,
         model_type: type[Base]
     ) -> list[ColumnElement[bool]]:
