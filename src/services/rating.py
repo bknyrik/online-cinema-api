@@ -155,7 +155,6 @@ class MovieCommentService(
     mixins.UserPermissionsMixin,
     mixins.FilterItemsMixin
 ):
-    MODEL_TYPE = MovieCommentModel
 
     def __init__(self) -> None:
         self.movie_repository = MovieRepository()
