@@ -17,8 +17,6 @@ class MovieService(
     mixins.FilterItemsMixin
 ):
 
-    MODEL_TYPE: type = MovieModel
-
     def __init__(
         self,
         movie_repository: movies.MovieRepository,
