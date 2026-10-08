@@ -252,11 +252,9 @@ class FilterItemsMixin:
 
         return expressions
 
-    @classmethod
     def get_filter_expressions(
-        cls,
-        filter_data: dict,
-        model_type: type[Base]
+        self,
+        filter_data: dict
     ) -> list[ColumnElement[bool]]:
         filter_data = {
             key.replace("filter_by_", ""): value
@@ -264,9 +262,9 @@ class FilterItemsMixin:
         }
 
         return (
-            cls._get_min_max_filter_expressions(filter_data, model_type) +
-            cls._get_single_id_expressions(filter_data, model_type) +
-            cls._get_multiple_ids_expressions(filter_data, model_type)
+            self._get_min_max_filter_expressions(filter_data, self.model_type) +
+            self._get_single_id_expressions(filter_data, self.model_type) +
+            self._get_multiple_ids_expressions(filter_data, self.model_type)
         )
 
 
