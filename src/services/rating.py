@@ -40,6 +40,8 @@ class MovieLikeService(
         current_user: UserModel
     ) -> dict:
         try:
+            self.has_profile(current_user)
+
             expressions = [
                 MovieLikeModel.profile_id == current_user.profile.id
             ]
