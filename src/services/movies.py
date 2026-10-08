@@ -25,6 +25,7 @@ class MovieService(
         director_repository: movies.DirectorRepository,
         certification_repository: movies.CertificationRepository
     ) -> None:
+        self.model_type = MovieModel
         self.movie_repository = movie_repository
         self.genre_repository = genre_repository
         self.star_repository = star_repository
