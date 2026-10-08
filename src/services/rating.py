@@ -826,7 +826,7 @@ class FavoriteMovieService(
 
             filter_expressions = self.get_filter_expressions(filter_data)
             sorting_expressions = self.get_sort_columns(sort_data, MovieModel)
-            search_expressions = self.get_search_expressions(search_data)
+            search_expressions = self.get_search_expressions(search_data, MovieModel)
             expressions = filter_expressions + search_expressions
 
             total_movies = await self.favorite_movie_repository.acount(
