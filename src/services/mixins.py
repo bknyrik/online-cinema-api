@@ -223,9 +223,8 @@ class FilterItemsMixin:
 
         return expressions
 
-    @classmethod
+    @staticmethod
     def _get_single_id_expressions(
-        cls,
         filter_data: dict,
         model_type: type[Base]
     ) -> list[ColumnElement[bool]]:
