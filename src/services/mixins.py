@@ -137,11 +137,9 @@ class ModelItemsMixin:
 
 class SortingItemsMixin:
 
-    @classmethod
     def get_sort_columns(
-        cls,
+        self,
         sort_data: dict,
-        model_type: type[Base]
     ) -> list[InstrumentedAttribute | UnaryExpression]:
         sort_data = {
             key.replace("sort_by_", ""): value
@@ -151,7 +149,7 @@ class SortingItemsMixin:
 
         for name, order in sort_data.items():
             if order is not None:
-                column = getattr(model_type, name)
+                column = getattr(self.model_type, name)
                 sort_columns.append(
                     column if order == SortingOrderEnum.ASC else column.desc()
                 )
