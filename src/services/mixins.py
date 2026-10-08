@@ -161,11 +161,9 @@ class SortingItemsMixin:
 
 class SearchItemsMixin:
 
-    @classmethod
     def get_search_expressions(
-        cls,
+        self,
         search_data: dict,
-        model_type: type[Base]
     ) -> list[ColumnElement[bool]]:
         search_data = {
             key.replace("search_by_", ""): value
@@ -178,11 +176,11 @@ class SearchItemsMixin:
             if value is not None:
                 if isinstance(value, str):
                     search_expressions.append(
-                        getattr(model_type, name).icontains(value)
+                        getattr(self.model_type, name).icontains(value)
                     )
 
                 if name.endswith("_ids"):
-                    column = getattr(model_type, name.replace("_ids", ""))
+                    column = getattr(self.model_type, name.replace("_ids", ""))
                     child_model = column.prop.argument
                     search_expressions.append(
                         column.any(child_model.id.in_(value))
