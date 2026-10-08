@@ -171,6 +171,8 @@ class MovieCommentService(
         current_user: UserModel,
     ) -> dict:
         try:
+            self.has_profile(current_user)
+
             limit, offset = self.get_limit_offset(pagination_data)
 
             filter_expressions = self.get_filter_expressions(filter_data, MovieCommentModel)
