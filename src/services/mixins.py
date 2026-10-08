@@ -193,9 +193,8 @@ class SearchItemsMixin:
 
 class FilterItemsMixin:
 
-    @classmethod
+    @staticmethod
     def _get_min_max_filter_expressions(
-        cls,
         filter_data: dict,
         model_type: type[Base]
     ) -> list[ColumnElement[bool]]:
