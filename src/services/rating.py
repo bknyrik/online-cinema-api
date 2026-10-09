@@ -270,6 +270,8 @@ class MovieCommentService(
         current_user: UserModel
     ) -> MovieCommentModel:
         try:
+            self.has_profile(current_user)
+
             data["profile_id"] = current_user.profile.id
             comment = await self.comment_repository.acreate(
                 db=db,
