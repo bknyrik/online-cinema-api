@@ -177,7 +177,7 @@ class MovieCommentService(
 
             limit, offset = self.get_limit_offset(pagination_data)
 
-            filter_expressions = self.get_filter_expressions(filter_data, MovieCommentModel)
+            filter_expressions = self.get_filter_expressions(filter_data)
 
             if current_user.group.name == "user":
                 filter_expressions.append(
