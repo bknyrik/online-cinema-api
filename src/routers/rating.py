@@ -103,7 +103,8 @@ async def get_movie_comment_detail(
 ) -> MovieCommentModel:
     return await comment_service.get_movie_comment_detail(
         db=db,
-        comment_id=comment_id
+        comment_id=comment_id,
+        current_user=current_user
     )
 
 
