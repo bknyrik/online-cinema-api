@@ -300,7 +300,7 @@ class MovieCommentService(
         current_user: UserModel
     ) -> MovieCommentModel:
         try:
-            self.has_profile(current_user)
+            self.has_profile_or_is_admin_or_moderator(current_user)
 
             comment = await self.comment_repository.aget_by_id(
                 db=db,
