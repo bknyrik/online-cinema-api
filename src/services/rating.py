@@ -492,6 +492,8 @@ class CommentReplyService(
         current_user: UserModel
     ) -> CommentReplyModel:
         try:
+            self.has_profile_or_is_admin_or_moderator(current_user)
+
             data["profile_id"] = current_user.profile.id
 
             reply = await self.reply_repository.aget_by_id(
@@ -499,11 +501,15 @@ class CommentReplyService(
                 id_=reply_id
             )
 
-            self.validate_item_by_id_not_found(reply, reply_id, "Reply")
+            self.validate_item_by_id_not_found(
+                item=reply,
+                id_=reply_id,
+                item_type="Comment reply"
+            )
             self.belongs_to_profile_or_is_admin_or_moderator(
                 current_user=current_user,
                 child_object=reply,
-                child_object_type="Reply"
+                child_object_type="Comment reply"
             )
 
             await self.reply_repository.aupdate(db, reply, data)
