@@ -530,16 +530,22 @@ class CommentReplyService(
         current_user: UserModel
     ) -> None:
         try:
+            self.has_profile_or_is_admin_or_moderator(current_user)
+
             reply = await self.reply_repository.aget_by(
                 db=db,
                 expressions=[CommentReplyModel.id == reply_id]
             )
 
-            self.validate_item_by_id_not_found(reply, reply_id, "Reply")
+            self.validate_item_by_id_not_found(
+                item=reply,
+                id_=reply_id,
+                item_type="Comment reply"
+            )
             self.belongs_to_profile_or_is_admin_or_moderator(
                 current_user=current_user,
                 child_object=reply,
-                child_object_type="Reply"
+                child_object_type="Comment reply"
             )
 
             await self.reply_repository.adelete(db, reply)
