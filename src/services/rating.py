@@ -469,6 +469,8 @@ class CommentReplyService(
         current_user: UserModel
     ) -> CommentReplyModel:
         try:
+            self.has_profile(current_user)
+
             data["profile_id"] = current_user.profile.id
 
             reply = await self.reply_repository.acreate(db=db, data=data)
