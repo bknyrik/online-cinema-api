@@ -218,7 +218,7 @@ class MovieCommentService(
             )
 
             prev_page, next_page = self.get_prev_next_urls_pages(
-                url="/api/rating/comments/",
+                url="/api/rating/movie-comments/",
                 page=pagination_data["page"],
                 total_pages=total_pages,
                 query_params={
