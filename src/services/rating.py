@@ -439,8 +439,11 @@ class CommentReplyService(
         self,
         reply_id: int,
         db: AsyncSession,
+        current_user: UserModel
     ) -> CommentReplyModel:
         try:
+            self.has_profile(current_user)
+
             reply = await self.reply_repository.aget_by_id(
                 db=db,
                 id_=reply_id

@@ -193,7 +193,8 @@ async def get_comment_reply_detail(
 ) -> CommentReplyModel:
     return await reply_service.get_comment_reply_detail(
         reply_id=reply_id,
-        db=db
+        db=db,
+        current_user=current_user
     )
 
 
