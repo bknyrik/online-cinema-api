@@ -30,6 +30,7 @@ class MovieLikeService(
     mixins.UserPermissionsMixin
 ):
     def __init__(self) -> None:
+        self.model_type = MovieLikeModel
         self.like_repository = MovieLikeRepository()
         self.movie_repository = MovieRepository()
 
