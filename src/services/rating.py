@@ -161,6 +161,7 @@ class MovieCommentService(
 ):
 
     def __init__(self) -> None:
+        self.model_type = MovieCommentModel
         self.movie_repository = MovieRepository()
         self.comment_repository = MovieCommentRepository()
 
