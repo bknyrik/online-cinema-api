@@ -134,6 +134,8 @@ class MovieLikeService(
         current_user: UserModel
     ) -> None:
         try:
+            self.has_profile(current_user)
+
             like = await self.like_repository.adelete_by(
                 db=db,
                 expressions=[
