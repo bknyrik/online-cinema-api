@@ -44,7 +44,7 @@ class MovieLikeService(
             self.has_profile(current_user)
 
             expressions = [
-                MovieLikeModel.profile_id == current_user.profile.id
+                self.model_type.profile_id == current_user.profile.id
             ]
             limit, offset = self.get_limit_offset(pagination_data)
             total_likes = await self.like_repository.acount(
@@ -100,8 +100,8 @@ class MovieLikeService(
             like = await self.like_repository.aget_by(
                 db=db,
                 expressions=[
-                    MovieLikeModel.movie_id == data["movie_id"],
-                    MovieLikeModel.profile_id == current_user.profile.id
+                    self.model_type.movie_id == data["movie_id"],
+                    self.model_type.profile_id == current_user.profile.id
                 ]
             )
 
@@ -137,8 +137,8 @@ class MovieLikeService(
             like = await self.like_repository.adelete_by(
                 db=db,
                 expressions=[
-                    MovieLikeModel.id == like_movie_id,
-                    MovieLikeModel.profile_id == current_user.profile.id
+                    self.model_type.id == like_movie_id,
+                    self.model_type.profile_id == current_user.profile.id
                 ]
             )
 
