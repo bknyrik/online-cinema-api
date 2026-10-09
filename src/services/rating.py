@@ -292,6 +292,8 @@ class MovieCommentService(
         current_user: UserModel
     ) -> MovieCommentModel:
         try:
+            self.has_profile(current_user)
+
             comment = await self.comment_repository.aget_by_id(
                 db=db,
                 id_=comment_id
