@@ -237,7 +237,10 @@ class MovieCommentService(
         except SQLAlchemyError:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="An error occurred while getting list with comments"
+                detail=(
+                    "An error occurred while getting list "
+                    "with movie comments"
+                )
             )
 
     async def get_movie_comment_detail(
