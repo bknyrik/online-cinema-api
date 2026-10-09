@@ -192,7 +192,7 @@ class MovieCommentService(
 
             if current_user.group.name == "user":
                 filter_expressions.append(
-                    MovieCommentModel.profile_id == current_user.profile.id
+                    self.model_type.profile_id == current_user.profile.id
                 )
 
             total_comments = await self.comment_repository.acount(
