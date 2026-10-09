@@ -108,7 +108,7 @@ class MovieLikeService(
             self.validate_item_by_attrs_exists(
                 item=like,
                 attrs=data,
-                item_type="Like"
+                item_type="Movie like"
             )
 
             data["profile_id"] = current_user.profile.id
