@@ -64,7 +64,7 @@ class MovieLikeService(
                 order_by_columns=[MovieLikeModel.id]
             )
             prev_page, next_page = self.get_prev_next_urls_pages(
-                url="/api/movie-likes/",
+                url="/api/rating/movie-likes/",
                 page=pagination_data["page"],
                 total_pages=total_pages,
                 query_params=pagination_data
