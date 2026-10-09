@@ -391,7 +391,7 @@ class CommentReplyService(
 
             if current_user.group.name == "user":
                 filter_expressions.append(
-                    CommentReplyModel.profile_id == current_user.profile.id
+                    self.model_type.profile_id == current_user.profile.id
                 )
 
             total_replies = await self.reply_repository.acount(
@@ -408,7 +408,7 @@ class CommentReplyService(
                 expressions=filter_expressions,
                 limit=limit,
                 offset=offset,
-                order_by_columns=[CommentReplyModel.id]
+                order_by_columns=[self.model_type.id]
             )
 
             prev_page, next_page = self.get_prev_next_urls_pages(
