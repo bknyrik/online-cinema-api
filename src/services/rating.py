@@ -251,7 +251,11 @@ class MovieCommentService(
                 id_=comment_id
             )
 
-            self.validate_item_by_id_not_found(comment, comment_id, "Comment")
+            self.validate_item_by_id_not_found(
+                item=comment,
+                id_=comment_id,
+                item_type="Movie comment"
+            )
             return comment
         except SQLAlchemyError:
             raise HTTPException(
