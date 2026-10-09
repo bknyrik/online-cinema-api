@@ -374,6 +374,7 @@ class CommentReplyService(
 ):
 
     def __init__(self) -> None:
+        self.model_type = CommentReplyModel
         self.reply_repository = CommentReplyRepository()
         self.comment_repository = MovieCommentRepository()
 
