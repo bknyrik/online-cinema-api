@@ -297,11 +297,16 @@ class MovieCommentService(
                 id_=comment_id
             )
 
-            self.validate_item_by_id_not_found(comment, comment_id, "Comment")
+            self.validate_item_by_id_not_found(
+                item=comment,
+                id_=comment_id,
+                item_type="Movie comment"
+            )
+
             self.belongs_to_profile_or_is_admin_or_moderator(
                 current_user=current_user,
                 child_object=comment,
-                child_object_type="Comment"
+                child_object_type="Movie comment"
             )
 
             await self.comment_repository.aupdate(
@@ -316,7 +321,7 @@ class MovieCommentService(
             await db.rollback()
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="An error occurred while updating comment"
+                detail="An error occurred while updating movie comment"
             )
 
     async def delete_movie_comment(
