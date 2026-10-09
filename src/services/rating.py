@@ -341,6 +341,8 @@ class MovieCommentService(
         current_user: UserModel
     ) -> None:
         try:
+            self.has_profile(current_user)
+
             comment = await self.comment_repository.aget_by_id(db, comment_id)
 
             self.validate_item_by_id_not_found(comment, comment_id, "Comment")
