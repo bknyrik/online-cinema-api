@@ -90,6 +90,8 @@ class MovieLikeService(
         current_user: UserModel
     ) -> MovieLikeModel:
         try:
+            self.has_profile(current_user)
+
             movie = await self.movie_repository.aget_by_id(
                 db=db,
                 id_=data["movie_id"]
