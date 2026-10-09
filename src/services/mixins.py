@@ -272,6 +272,20 @@ class UserPermissionsMixin:
             )
 
     @staticmethod
+    def has_profile_or_is_admin_or_moderator(current_user: UserModel) -> None:
+        if (
+            current_user.profile is None
+            and current_user.group.name not in ("admin", "moderator")
+        ):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=(
+                    "User doesn't have a profile and not an admin/moderator"
+                    " to perform this action"
+                )
+            )
+
+    @staticmethod
     def belongs_to_profile_or_is_admin_or_moderator(
         current_user: UserModel,
         child_object,
