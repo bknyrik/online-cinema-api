@@ -449,7 +449,11 @@ class CommentReplyService(
                 id_=reply_id
             )
 
-            self.validate_item_by_id_not_found(reply, reply_id, "Reply")
+            self.validate_item_by_id_not_found(
+                item=reply,
+                id_=reply_id,
+                item_type="Comment reply"
+            )
 
             return reply
         except SQLAlchemyError:
