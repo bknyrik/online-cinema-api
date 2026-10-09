@@ -136,22 +136,29 @@ class MovieLikeService(
         try:
             self.has_profile(current_user)
 
-            like = await self.like_repository.adelete_by(
+            like = await self.like_repository.aget_by_id(
                 db=db,
-                expressions=[
-                    self.model_type.id == like_movie_id,
-                    self.model_type.profile_id == current_user.profile.id
-                ]
+                id_=like_movie_id
             )
 
-            self.validate_item_by_id_not_found(like, like_movie_id, "Like")
+            self.validate_item_by_id_not_found(
+                item=like,
+                id_=like_movie_id,
+                item_type="Movie like"
+            )
+            self.belongs_to_profile_or_is_admin_or_moderator(
+                current_user=current_user,
+                child_object=like,
+                child_object_type="Movie like"
+            )
 
+            await self.like_repository.adelete(db, like)
             await db.commit()
         except SQLAlchemyError:
             await db.rollback()
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="An error occurred while like movie deletion"
+                detail="An error occurred while movie like deletion"
             )
 
 
