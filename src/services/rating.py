@@ -124,7 +124,7 @@ class MovieLikeService(
             await db.rollback()
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="An error occurred while like movie creation"
+                detail="An error occurred while movie like creation"
             )
 
     async def delete_movie_like(
