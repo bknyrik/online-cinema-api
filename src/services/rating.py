@@ -345,11 +345,15 @@ class MovieCommentService(
 
             comment = await self.comment_repository.aget_by_id(db, comment_id)
 
-            self.validate_item_by_id_not_found(comment, comment_id, "Comment")
+            self.validate_item_by_id_not_found(
+                item=comment,
+                id_=comment_id,
+                item_type="Movie comment"
+            )
             self.belongs_to_profile_or_is_admin_or_moderator(
                 current_user=current_user,
                 child_object=comment,
-                child_object_type="Comment"
+                child_object_type="Movie comment"
             )
 
             await self.comment_repository.adelete(db, comment)
@@ -358,7 +362,7 @@ class MovieCommentService(
             await db.rollback()
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="An error occurred while comment deletion"
+                detail="An error occurred while movie comment deletion"
             )
 
 
