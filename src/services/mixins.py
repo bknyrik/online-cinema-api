@@ -267,7 +267,7 @@ class UserPermissionsMixin:
     def has_profile(current_user: UserModel) -> None:
         if current_user.profile is None:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
+                status_code=status.HTTP_403_FORBIDDEN,
                 detail="User doesn't have a profile"
             )
 
