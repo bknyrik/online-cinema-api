@@ -10,14 +10,7 @@ from src.services import rating as services
 from src.schemas import rating as schemas
 from src.schemas.cinema import MovieListResponseSchema
 from src.database.models.accounts import UserModel
-from src.database.models.rating import (
-    MovieLikeModel,
-    MovieCommentModel,
-    CommentReplyModel,
-    CommentLikeModel,
-    MovieRateModel,
-    FavoriteMovieModel
-)
+from src.database.models import rating as models
 
 
 router = APIRouter()
@@ -47,7 +40,7 @@ async def create_movie_like(
     db: AsyncSession = Depends(get_db),
     like_service: services.MovieLikeService = Depends(services.MovieLikeService),
     current_user: UserModel = Depends(auth.get_current_user)
-) -> MovieLikeModel:
+) -> models.MovieLikeModel:
     return await like_service.create_movie_like(
         db=db,
         data=data.model_dump(),
@@ -100,7 +93,7 @@ async def get_movie_comment_detail(
     db: AsyncSession = Depends(get_db),
     comment_service: services.MovieCommentService = Depends(services.MovieCommentService),
     current_user: UserModel = Depends(auth.get_current_user)
-) -> MovieCommentModel:
+) -> models.MovieCommentModel:
     return await comment_service.get_movie_comment_detail(
         db=db,
         comment_id=comment_id,
@@ -118,7 +111,7 @@ async def create_movie_comment(
     db: AsyncSession = Depends(get_db),
     current_user: UserModel = Depends(auth.get_current_user),
     comment_service: services.MovieCommentService = Depends(services.MovieCommentService)
-) -> MovieCommentModel:
+) -> models.MovieCommentModel:
     return await comment_service.create_movie_comment(
         db=db,
         data=data.model_dump(),
@@ -136,7 +129,7 @@ async def update_movie_comment(
     db: AsyncSession = Depends(get_db),
     comment_service: services.MovieCommentService = Depends(services.MovieCommentService),
     current_user: UserModel = Depends(auth.get_current_user),
-):
+) -> models.MovieCommentModel:
     return await comment_service.update_movie_comment(
         db=db,
         data=data.model_dump(),
@@ -190,7 +183,7 @@ async def get_comment_reply_detail(
     db: AsyncSession = Depends(get_db),
     reply_service: services.CommentReplyService = Depends(services.CommentReplyService),
     current_user: UserModel = Depends(auth.get_current_user)
-) -> CommentReplyModel:
+) -> models.CommentReplyModel:
     return await reply_service.get_comment_reply_detail(
         reply_id=reply_id,
         db=db,
@@ -208,7 +201,7 @@ async def create_comment_reply(
     db: AsyncSession = Depends(get_db),
     reply_service: services.CommentReplyService = Depends(services.CommentReplyService),
     current_user: UserModel = Depends(auth.get_current_user)
-):
+) -> models.CommentReplyModel:
     return await reply_service.create_comment_reply(
         db=db,
         data=data.model_dump(),
@@ -226,7 +219,7 @@ async def update_comment_reply(
     db: AsyncSession = Depends(get_db),
     reply_service: services.CommentReplyService = Depends(services.CommentReplyService),
     current_user: UserModel = Depends(auth.get_current_user)
-) -> CommentReplyModel:
+) -> models.CommentReplyModel:
     return await reply_service.update_comment_reply(
         db=db,
         reply_id=reply_id,
@@ -281,7 +274,7 @@ async def create_comment_like(
     db: AsyncSession = Depends(get_db),
     like_service: services.CommentLikeService = Depends(services.CommentLikeService),
     current_user: UserModel = Depends(auth.get_current_user)
-) -> CommentLikeModel:
+) -> models.CommentLikeModel:
     return await like_service.create_comment_like(
         db=db,
         data=data.model_dump(),
@@ -334,7 +327,7 @@ async def get_movie_rate_detail(
     db: AsyncSession = Depends(get_db),
     rate_service: services.MovieRateService = Depends(services.MovieRateService),
     current_user: UserModel = Depends(auth.get_current_user)
-) -> MovieRateModel:
+) -> models.MovieRateModel:
     return await rate_service.get_movie_rate_detail(
         db=db,
         rate_id=rate_id,
@@ -352,7 +345,7 @@ async def create_movie_rate(
     db: AsyncSession = Depends(get_db),
     rate_service: services.MovieRateService = Depends(services.MovieRateService),
     current_user: UserModel = Depends(auth.get_current_user)
-) -> MovieRateModel:
+) -> models.MovieRateModel:
     return await rate_service.create_movie_rate(
         db=db,
         data=data.model_dump(),
@@ -370,7 +363,7 @@ async def update_movie_rate(
     db: AsyncSession = Depends(get_db),
     rate_service: services.MovieRateService = Depends(services.MovieRateService),
     current_user: UserModel = Depends(auth.get_current_user)
-) -> MovieRateModel:
+) -> models.MovieRateModel:
     return await rate_service.update_movie_rate(
         db=db,
         rate_id=rate_id,
@@ -429,7 +422,7 @@ async def add_movie_to_favorites(
     db: AsyncSession = Depends(get_db),
     favorite_service: services.FavoriteMovieService = Depends(services.FavoriteMovieService),
     current_user: UserModel = Depends(auth.get_current_user)
-) -> FavoriteMovieModel:
+) -> models.FavoriteMovieModel:
     return await favorite_service.add_movie_to_favorites(
         db=db,
         data=data.model_dump(),
