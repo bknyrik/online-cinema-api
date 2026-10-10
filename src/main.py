@@ -32,8 +32,8 @@ app.include_router(
 )
 app.include_router(
     movies.router,
-    prefix=f"{api_prefix}/movies",
-    tags=["movies"]
+    prefix=f"{api_prefix}/cinema",
+    tags=["cinema"]
 )
 app.include_router(
     genres.router,
