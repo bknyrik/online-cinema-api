@@ -184,7 +184,7 @@ class MovieCommentService(
         current_user: UserModel,
     ) -> dict:
         try:
-            self.has_profile(current_user)
+            self.has_profile_or_is_admin_or_moderator(current_user)
 
             limit, offset = self.get_limit_offset(pagination_data)
 
