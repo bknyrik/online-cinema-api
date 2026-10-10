@@ -942,7 +942,7 @@ class FavoriteMovieService(
             )
 
             prev_page, next_page = self.get_prev_next_urls_pages(
-                url="/movie-favorites/",
+                url="/api/rating/movie-favorites/",
                 page=pagination_data["page"],
                 total_pages=total_pages,
                 query_params={
