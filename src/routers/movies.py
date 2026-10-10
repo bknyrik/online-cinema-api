@@ -100,3 +100,84 @@ async def delete_movie(
         db=db,
         movie_id=movie_id
     )
+
+
+@router.get(
+    "/genres/",
+    response_model=schemas.GenreListResponseSchema
+)
+async def get_genre_list(
+    pagination_data: PaginationDep,
+    db: AsyncSession = Depends(get_db),
+    genre_service: services.GenreService = Depends(services.GenreService),
+) -> dict:
+    return await genre_service.get_genre_list(
+        db=db,
+        pagination_data=pagination_data
+    )
+
+
+@router.get(
+    "/genres/{genre_id}/",
+    response_model=schemas.GenreMoviesDetailResponseSchema
+)
+async def get_genre_detail(
+    genre_id: int,
+    db: AsyncSession = Depends(get_db),
+    genre_service: services.GenreService = Depends(services.GenreService),
+) -> models.GenreModel:
+    return await genre_service.get_genre_detail(
+        db=db,
+        genre_id=genre_id
+    )
+
+
+@router.post(
+    "/genres/",
+    status_code=status.HTTP_201_CREATED,
+    response_model=schemas.GenreDetailResponseSchema
+)
+async def create_genre(
+    data: schemas.GenreDataRequestSchema,
+    db: AsyncSession = Depends(get_db),
+    genre_service: services.GenreService = Depends(services.GenreService),
+    current_user: UserModel = Depends(get_current_moderator_or_admin)
+) -> models.GenreModel:
+    return await genre_service.create_genre(
+        db=db,
+        data=data.model_dump()
+    )
+
+
+@router.put(
+    "/genres/{genre_id}/",
+    response_model=schemas.GenreDetailResponseSchema
+)
+async def update_genre(
+    genre_id: int,
+    data: schemas.GenreDataRequestSchema,
+    db: AsyncSession = Depends(get_db),
+    genre_service: services.GenreService = Depends(services.GenreService),
+    current_user: UserModel = Depends(get_current_moderator_or_admin)
+) -> models.GenreModel:
+    return await genre_service.update_genre(
+        db=db,
+        genre_id=genre_id,
+        data=data.model_dump()
+    )
+
+
+@router.delete(
+    "/genres/{genre_id}/",
+    status_code=status.HTTP_204_NO_CONTENT
+)
+async def delete_genre(
+    genre_id: int,
+    db: AsyncSession = Depends(get_db),
+    genre_service: services.GenreService = Depends(services.GenreService),
+    current_user: UserModel = Depends(get_current_moderator_or_admin)
+) -> None:
+    return await genre_service.delete_genre(
+        db=db,
+        genre_id=genre_id
+    )
