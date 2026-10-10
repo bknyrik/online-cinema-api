@@ -566,6 +566,7 @@ class CommentLikeService(
 ):
 
     def __init__(self) -> None:
+        self.model_type = CommentLikeModel
         self.like_repository = CommentLikeRepository()
         self.comment_repository = MovieCommentRepository()
 
