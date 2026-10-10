@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from src.routers import (
     accounts,
     profiles,
-    movies,
+    cinema,
     rating
 )
 
@@ -27,7 +27,7 @@ app.include_router(
     tags=["profiles",]
 )
 app.include_router(
-    movies.router,
+    cinema.router,
     prefix=f"{api_prefix}/cinema",
     tags=["cinema"]
 )
