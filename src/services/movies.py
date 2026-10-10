@@ -577,7 +577,7 @@ class GenreService(
         try:
             genre = await self.genre_repository.aget_by(
                 db=db,
-                expressions=[models.GenreModel.name == data["name"]]
+                expressions=[self.model_type.name == data["name"]]
             )
 
             self.validate_item_by_attrs_exists(
