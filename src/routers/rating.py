@@ -5,7 +5,7 @@ from src.dependencies.database import get_db
 from src.dependencies.pagination import PaginationDep
 from src.dependencies import authentication as auth
 from src.dependencies.rating import CommentFilterDep, CommentReplyFilterDep
-from src.dependencies.movies import MovieFilterDep, MovieSearchDep, MovieSortDep
+from src.dependencies.cinema import MovieFilterDep, MovieSearchDep, MovieSortDep
 from src.services import rating as services
 from src.schemas import rating as schemas
 from src.schemas.movies import MovieListResponseSchema

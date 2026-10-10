@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.schemas import movies as schemas
-from src.dependencies import database, authentication, movies, pagination
+from src.dependencies import database, authentication, cinema, pagination
 from src.services import movies as services
 from src.database.models import cinema as models
 from src.database.models.accounts import UserModel
@@ -14,9 +14,9 @@ router = APIRouter()
 @router.get("/movies/", response_model=schemas.MovieListResponseSchema)
 async def get_movie_list(
     pagination_data: pagination.PaginationDep,
-    search_data: movies.MovieSearchDep,
-    filter_data: movies.MovieFilterDep,
-    sort_data: movies.MovieSortDep,
+    search_data: cinema.MovieSearchDep,
+    filter_data: cinema.MovieFilterDep,
+    sort_data: cinema.MovieSortDep,
     db: AsyncSession = Depends(database.get_db),
     movie_service: services.MovieService = Depends(services.MovieService)
 ) -> dict:
