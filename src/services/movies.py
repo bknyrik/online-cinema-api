@@ -492,8 +492,8 @@ class GenreService(
     mixins.PaginationLimitOffsetMixin
 ):
 
-    def __init__(self, genre_repository: repositories.GenreRepository) -> None:
-        self.genre_repository = genre_repository
+    def __init__(self) -> None:
+        self.genre_repository = repositories.GenreRepository()
 
     async def get_genre_list(
         self,

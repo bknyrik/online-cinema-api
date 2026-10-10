@@ -2,8 +2,6 @@ from datetime import timedelta
 
 from src.settings import settings
 from src.services.accounts import UserService
-from src.services.movies import MovieService
-from src.services.genres import GenreService
 from src.services.stars import StarService
 from src.services.directors import DirectorService
 from src.services.certifications import CertificationService
@@ -73,12 +71,6 @@ def get_user_service() -> UserService:
 def get_profile_service() -> UserProfileService:
     return UserProfileService(
         profile_repository=UserProfileRepository()
-    )
-
-
-def get_genre_service() -> GenreService:
-    return GenreService(
-        genre_repository=GenreRepository()
     )
 
 
