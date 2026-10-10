@@ -17,20 +17,13 @@ class MovieService(
     mixins.FilterItemsMixin
 ):
 
-    def __init__(
-        self,
-        movie_repository: repositories.MovieRepository,
-        genre_repository: repositories.GenreRepository,
-        star_repository: repositories.StarRepository,
-        director_repository: repositories.DirectorRepository,
-        certification_repository: repositories.CertificationRepository
-    ) -> None:
+    def __init__(self) -> None:
         self.model_type = models.MovieModel
-        self.movie_repository = movie_repository
-        self.genre_repository = genre_repository
-        self.star_repository = star_repository
-        self.director_repository = director_repository
-        self.certification_repository = certification_repository
+        self.movie_repository = repositories.MovieRepository()
+        self.genre_repository = repositories.GenreRepository()
+        self.star_repository = repositories.StarRepository()
+        self.director_repository = repositories.DirectorRepository()
+        self.certification_repository = repositories.CertificationRepository()
 
     async def handle_movie_data_parent_objects(
         self,

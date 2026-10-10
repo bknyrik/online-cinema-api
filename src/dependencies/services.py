@@ -76,16 +76,6 @@ def get_profile_service() -> UserProfileService:
     )
 
 
-def get_movie_service() -> MovieService:
-    return MovieService(
-        movie_repository=MovieRepository(),
-        genre_repository=GenreRepository(),
-        star_repository=StarRepository(),
-        director_repository=DirectorRepository(),
-        certification_repository=CertificationRepository()
-    )
-
-
 def get_genre_service() -> GenreService:
     return GenreService(
         genre_repository=GenreRepository()
