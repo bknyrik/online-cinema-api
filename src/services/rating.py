@@ -532,9 +532,9 @@ class CommentReplyService(
         try:
             self.has_profile_or_is_admin_or_moderator(current_user)
 
-            reply = await self.reply_repository.aget_by(
+            reply = await self.reply_repository.aget_by_id(
                 db=db,
-                expressions=[CommentReplyModel.id == reply_id]
+                id_=reply_id
             )
 
             self.validate_item_by_id_not_found(
