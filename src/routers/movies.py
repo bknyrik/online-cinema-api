@@ -18,7 +18,7 @@ from src.dependencies.pagination import PaginationDep
 router = APIRouter()
 
 
-@router.get("/", response_model=schemas.MovieListResponseSchema)
+@router.get("/movies/", response_model=schemas.MovieListResponseSchema)
 async def get_movie_list(
     pagination_data: PaginationDep,
     search_data: MovieSearchDep,
@@ -37,7 +37,7 @@ async def get_movie_list(
 
 
 @router.get(
-    "/{movie_id}/",
+    "/movies/{movie_id}/",
     response_model=schemas.MovieDetailResponseSchema
 )
 async def get_detail_movie(
@@ -52,7 +52,7 @@ async def get_detail_movie(
 
 
 @router.post(
-    "/",
+    "/movies/",
     response_model=schemas.MovieDetailResponseSchema,
     status_code=status.HTTP_201_CREATED
 )
@@ -69,7 +69,7 @@ async def create_movie(
 
 
 @router.patch(
-    "/{movie_id}/",
+    "/movies/{movie_id}/",
     response_model=schemas.MovieDetailResponseSchema
 )
 async def update_movie(
@@ -87,7 +87,7 @@ async def update_movie(
 
 
 @router.delete(
-    "/{movie_id}/",
+    "/movies/{movie_id}/",
     status_code=status.HTTP_204_NO_CONTENT
 )
 async def delete_movie(
