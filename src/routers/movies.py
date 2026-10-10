@@ -3,10 +3,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.schemas import movies as schemas
 from src.dependencies.database import get_db
-from src.services.movies import MovieService
+from src.services import movies as services
 from src.database.models import movies as models
 from src.database.models.accounts import UserModel
-from src.dependencies.services import get_movie_service
 from src.dependencies.authentication import get_current_moderator_or_admin
 from src.dependencies.movies import (
     MovieFilterDep,
@@ -26,7 +25,7 @@ async def get_movie_list(
     filter_data: MovieFilterDep,
     sort_data: MovieSortDep,
     db: AsyncSession = Depends(get_db),
-    movie_service: MovieService = Depends(get_movie_service)
+    movie_service: services.MovieService = Depends(services.MovieService)
 ) -> dict:
     return await movie_service.get_movie_list(
         db=db,
@@ -44,7 +43,7 @@ async def get_movie_list(
 async def get_detail_movie(
     movie_id: int,
     db: AsyncSession = Depends(get_db),
-    movie_service: MovieService = Depends(get_movie_service)
+    movie_service: services.MovieService = Depends(services.MovieService)
 ) -> models.MovieModel:
     return await movie_service.get_detail_movie(
         db=db,
@@ -59,7 +58,7 @@ async def get_detail_movie(
 )
 async def create_movie(
     data: schemas.MovieDataRequestSchema,
-    movie_service: MovieService = Depends(get_movie_service),
+    movie_service: services.MovieService = Depends(services.MovieService),
     db: AsyncSession = Depends(get_db),
     current_user: UserModel = Depends(get_current_moderator_or_admin)
 ) -> models.MovieModel:
@@ -77,7 +76,7 @@ async def update_movie(
     movie_id: int,
     data: schemas.MovieUpdateRequestSchema,
     db: AsyncSession = Depends(get_db),
-    movie_service: MovieService = Depends(get_movie_service),
+    movie_service: services.MovieService = Depends(services.MovieService),
     current_user: UserModel = Depends(get_current_moderator_or_admin)
 ) -> models.MovieModel:
     return await movie_service.update_movie(
@@ -94,7 +93,7 @@ async def update_movie(
 async def delete_movie(
     movie_id: int,
     db: AsyncSession = Depends(get_db),
-    movie_service: MovieService = Depends(get_movie_service),
+    movie_service: services.MovieService = Depends(services.MovieService),
     current_user: UserModel = Depends(get_current_moderator_or_admin)
 ) -> None:
     return await movie_service.delete_movie(
