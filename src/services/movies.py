@@ -520,7 +520,7 @@ class GenreService(
                     db=db,
                     offset=offset,
                     limit=limit,
-                    order_by_columns=[models.GenreModel.id]
+                    order_by_columns=[self.model_type.id]
                 )
             )
             count_movies = await self.genre_repository.acount_movies(db)
