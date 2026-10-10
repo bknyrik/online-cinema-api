@@ -860,7 +860,7 @@ class DirectorService(
             )
 
             prev_page, next_page = self.get_prev_next_urls_pages(
-                "/api/directors/",
+                "/api/cinema/directors/",
                 page=pagination_data["page"],
                 total_pages=total_pages,
                 query_params=pagination_data
