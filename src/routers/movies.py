@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.schemas import movies as movies_schemas
+from src.schemas import movies as schemas
 from src.dependencies.database import get_db
 from src.services.movies import MovieService
-from src.database.models.movies import MovieModel
+from src.database.models import movies as models
 from src.database.models.accounts import UserModel
 from src.dependencies.services import get_movie_service
 from src.dependencies.authentication import get_current_moderator_or_admin
@@ -19,7 +19,7 @@ from src.dependencies.pagination import PaginationDep
 router = APIRouter()
 
 
-@router.get("/", response_model=movies_schemas.MovieListResponseSchema)
+@router.get("/", response_model=schemas.MovieListResponseSchema)
 async def get_movie_list(
     pagination_data: PaginationDep,
     search_data: MovieSearchDep,
@@ -39,13 +39,13 @@ async def get_movie_list(
 
 @router.get(
     "/{movie_id}/",
-    response_model=movies_schemas.MovieDetailResponseSchema
+    response_model=schemas.MovieDetailResponseSchema
 )
 async def get_detail_movie(
     movie_id: int,
     db: AsyncSession = Depends(get_db),
     movie_service: MovieService = Depends(get_movie_service)
-) -> MovieModel:
+) -> models.MovieModel:
     return await movie_service.get_detail_movie(
         db=db,
         movie_id=movie_id
@@ -54,15 +54,15 @@ async def get_detail_movie(
 
 @router.post(
     "/",
-    response_model=movies_schemas.MovieDetailResponseSchema,
+    response_model=schemas.MovieDetailResponseSchema,
     status_code=status.HTTP_201_CREATED
 )
 async def create_movie(
-    data: movies_schemas.MovieDataRequestSchema,
+    data: schemas.MovieDataRequestSchema,
     movie_service: MovieService = Depends(get_movie_service),
     db: AsyncSession = Depends(get_db),
     current_user: UserModel = Depends(get_current_moderator_or_admin)
-) -> MovieModel:
+) -> models.MovieModel:
     return await movie_service.create_movie(
         db=db,
         data=data.model_dump()
@@ -71,15 +71,15 @@ async def create_movie(
 
 @router.patch(
     "/{movie_id}/",
-    response_model=movies_schemas.MovieDetailResponseSchema
+    response_model=schemas.MovieDetailResponseSchema
 )
 async def update_movie(
     movie_id: int,
-    data: movies_schemas.MovieUpdateRequestSchema,
+    data: schemas.MovieUpdateRequestSchema,
     db: AsyncSession = Depends(get_db),
     movie_service: MovieService = Depends(get_movie_service),
     current_user: UserModel = Depends(get_current_moderator_or_admin)
-) -> MovieModel:
+) -> models.MovieModel:
     return await movie_service.update_movie(
         db=db,
         data=data.model_dump(exclude_defaults=True),
