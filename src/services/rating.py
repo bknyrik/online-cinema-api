@@ -4,14 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from src.services import mixins
 from src.repositories.cinema import MovieRepository
-from src.repositories.rating import (
-    MovieLikeRepository,
-    MovieCommentRepository,
-    CommentReplyRepository,
-    CommentLikeRepository,
-    MovieRateRepository,
-    FavoriteMovieRepository
-)
+from src.repositories import rating as repositories
 from src.database.models.cinema import MovieModel
 from src.database.models import rating as models
 from src.database.models.accounts import UserModel
@@ -24,7 +17,7 @@ class MovieLikeService(
 ):
     def __init__(self) -> None:
         self.model_type = models.MovieLikeModel
-        self.like_repository = MovieLikeRepository()
+        self.like_repository = repositories.MovieLikeRepository()
         self.movie_repository = MovieRepository()
 
     async def get_movie_like_list(
@@ -167,7 +160,7 @@ class MovieCommentService(
     def __init__(self) -> None:
         self.model_type = models.MovieCommentModel
         self.movie_repository = MovieRepository()
-        self.comment_repository = MovieCommentRepository()
+        self.comment_repository = repositories.MovieCommentRepository()
 
     async def get_movie_comment_list(
         self,
@@ -368,8 +361,8 @@ class CommentReplyService(
 
     def __init__(self) -> None:
         self.model_type = models.CommentReplyModel
-        self.reply_repository = CommentReplyRepository()
-        self.comment_repository = MovieCommentRepository()
+        self.reply_repository = repositories.CommentReplyRepository()
+        self.comment_repository = repositories.MovieCommentRepository()
 
     async def get_comment_reply_list(
         self,
@@ -560,8 +553,8 @@ class CommentLikeService(
 
     def __init__(self) -> None:
         self.model_type = models.CommentLikeModel
-        self.like_repository = CommentLikeRepository()
-        self.comment_repository = MovieCommentRepository()
+        self.like_repository = repositories.CommentLikeRepository()
+        self.comment_repository = repositories.MovieCommentRepository()
 
     async def get_comment_like_list(
         self,
@@ -713,7 +706,7 @@ class MovieRateService(
 
     def __init__(self) -> None:
         self.model_type = models.MovieRateModel
-        self.rate_repository = MovieRateRepository()
+        self.rate_repository = repositories.MovieRateRepository()
         self.movie_repository = MovieRepository()
 
     async def get_movie_rate_list(
@@ -891,7 +884,7 @@ class FavoriteMovieService(
 
     def __init__(self) -> None:
        self.model_type = models.FavoriteMovieModel
-       self.favorite_movie_repository = FavoriteMovieRepository()
+       self.favorite_movie_repository = repositories.FavoriteMovieRepository()
        self.movie_repository = MovieRepository()
 
     async def get_favorite_movie_list(
