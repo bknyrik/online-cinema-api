@@ -9,9 +9,46 @@ from pydantic import (
     Field
 )
 
-from src.schemas.genres import GenreDetailResponseSchema
 from src.schemas.stars import StarDetailResponseSchema
 from src.schemas.directors import DirectorDetailResponseSchema
+
+
+class GenreDetailResponseSchema(BaseModel):
+    id: int
+    name: str
+
+
+class GenreListItemSchema(GenreDetailResponseSchema):
+    movies: int
+
+
+class GenreListResponseSchema(BaseModel):
+    genres: list[GenreListItemSchema]
+    total_genres: int
+    total_pages: int
+    prev: str | None
+    next: str | None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class GenreDetailMoviesSchema(BaseModel):
+    id: int
+    name: str
+    year: int
+    time: int
+    imdb: float
+    description: str
+
+
+class GenreMoviesDetailResponseSchema(GenreDetailResponseSchema):
+    movies: list[GenreDetailMoviesSchema]
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class GenreDataRequestSchema(BaseModel):
+    name: str = Field(min_length=5, strict=True)
 
 
 class CertificationDetailResponseSchema(BaseModel):
