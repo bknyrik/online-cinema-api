@@ -439,7 +439,7 @@ class CertificationService(
 
             another_certification = await self.certification_repository.aget_by(
                 db=db,
-                expressions=[models.CertificationModel.name == data["name"]]
+                expressions=[self.model_type.name == data["name"]]
             )
 
             self.validate_item_by_attrs_with_another_item_exists(
