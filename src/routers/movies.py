@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.schemas import movies as schemas
+from src.schemas import cinema as schemas
 from src.dependencies import database, authentication, cinema, pagination
 from src.services import movies as services
 from src.database.models import cinema as models

@@ -8,7 +8,7 @@ from src.dependencies.rating import CommentFilterDep, CommentReplyFilterDep
 from src.dependencies.cinema import MovieFilterDep, MovieSearchDep, MovieSortDep
 from src.services import rating as services
 from src.schemas import rating as schemas
-from src.schemas.movies import MovieListResponseSchema
+from src.schemas.cinema import MovieListResponseSchema
 from src.database.models.accounts import UserModel
 from src.database.models.rating import (
     MovieLikeModel,
