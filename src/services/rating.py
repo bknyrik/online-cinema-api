@@ -414,7 +414,7 @@ class CommentReplyService(
             )
 
             prev_page, next_page = self.get_prev_next_urls_pages(
-                "/comment-replies/",
+                "/api/rating/comment-replies/",
                 page=pagination_data["page"],
                 total_pages=total_pages,
                 query_params={
