@@ -262,3 +262,81 @@ async def delete_certification(
         db=db,
         certification_id=certification_id
     )
+
+
+@router.get("/directors/", response_model=schemas.DirectorListResponseSchema)
+async def get_director_list(
+    pagination_data: PaginationDep,
+    db: AsyncSession = Depends(get_db),
+    director_service: services.DirectorService = Depends(services.DirectorService)
+) -> dict:
+    return await director_service.get_director_list(
+        db=db,
+        pagination_data=pagination_data
+    )
+
+
+@router.get(
+    "/directors/{director_id}/",
+    response_model=schemas.DirectorDetailResponseSchema
+)
+async def get_director_detail(
+    director_id: int,
+    db: AsyncSession = Depends(get_db),
+    director_service: services.DirectorService = Depends(services.DirectorService)
+) -> models.DirectorModel:
+    return await director_service.get_director_detail(
+        db=db,
+        director_id=director_id
+    )
+
+
+@router.post(
+    "/directors/",
+    response_model=schemas.DirectorDetailResponseSchema,
+    status_code=status.HTTP_201_CREATED
+)
+async def create_director(
+    data: schemas.DirectorDataRequestSchema,
+    db: AsyncSession = Depends(get_db),
+    director_service: services.DirectorService = Depends(services.DirectorService),
+    current_user: UserModel = Depends(get_current_moderator_or_admin)
+) -> models.DirectorModel:
+    return await director_service.create_director(
+        db=db,
+        data=data.model_dump()
+    )
+
+
+@router.put(
+    "/directors/{director_id}/",
+    response_model=schemas.DirectorDetailResponseSchema
+)
+async def update_director(
+    director_id: int,
+    data: schemas.DirectorDataRequestSchema,
+    db: AsyncSession = Depends(get_db),
+    director_service: services.DirectorService = Depends(services.DirectorService),
+    current_user: UserModel = Depends(get_current_moderator_or_admin)
+) -> models.DirectorModel:
+    return await director_service.update_director(
+        db=db,
+        data=data.model_dump(),
+        director_id=director_id
+    )
+
+
+@router.delete(
+    "/directors/{director_id}/",
+     status_code=status.HTTP_204_NO_CONTENT
+)
+async def delete_director(
+    director_id: int,
+    db: AsyncSession = Depends(get_db),
+    director_service: services.DirectorService = Depends(services.DirectorService),
+    current_user: UserModel = Depends(get_current_moderator_or_admin)
+) -> None:
+    return await director_service.delete_director(
+        db=db,
+        director_id=director_id
+    )
