@@ -897,6 +897,7 @@ class FavoriteMovieService(
 ):
 
     def __init__(self) -> None:
+       self.model_type = FavoriteMovieModel
        self.favorite_movie_repository = FavoriteMovieRepository()
        self.movie_repository = MovieRepository()
 
@@ -913,9 +914,9 @@ class FavoriteMovieService(
             self.has_profile(current_user)
             limit, offset = self.get_limit_offset(pagination_data)
 
-            filter_expressions = self.get_filter_expressions(filter_data, MovieModel)
-            sorting_expressions = self.get_sort_columns(sort_data, MovieModel)
-            search_expressions = self.get_search_expressions(search_data, MovieModel)
+            filter_expressions = self.get_filter_expressions(filter_data)
+            sorting_expressions = self.get_sort_columns(sort_data)
+            search_expressions = self.get_search_expressions(search_data)
             expressions = filter_expressions + search_expressions
 
             total_movies = await self.favorite_movie_repository.acount(
