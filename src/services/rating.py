@@ -987,8 +987,8 @@ class FavoriteMovieService(
             favorite_movie = await self.favorite_movie_repository.aget_by(
                 db=db,
                 expressions=[
-                    FavoriteMovieModel.profile_id == data["profile_id"],
-                    FavoriteMovieModel.movie_id == data["movie_id"]
+                    self.model_type.profile_id == data["profile_id"],
+                    self.model_type.movie_id == data["movie_id"]
                 ]
             )
 
