@@ -609,7 +609,7 @@ class CommentLikeService(
             )
 
             prev_page, next_page = self.get_prev_next_urls_pages(
-                url="/comment-likes/",
+                url="/api/rating/comment-likes/",
                 page=pagination_data["page"],
                 total_pages=total_pages,
                 query_params={
