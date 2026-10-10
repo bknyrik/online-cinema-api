@@ -935,8 +935,9 @@ class FavoriteMovieService(
                 offset=offset,
                 join_relationships=["movie"],
                 order_by_columns=(
-                    [self.model_type.id] if sort_data is None
-                    else sorting_expressions
+                    sorting_expressions
+                    if any(value is not None for value in sort_data.values())
+                    else [self.model_type.id]
                 )
             )
 
