@@ -312,6 +312,7 @@ class CertificationService(
 ):
 
     def __init__(self) -> None:
+        self.model_type = models.CertificationModel
         self.certification_repository = repositories.CertificationRepository()
 
     async def get_certification_list(
