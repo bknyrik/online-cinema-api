@@ -883,7 +883,7 @@ class FavoriteMovieService(
 ):
 
     def __init__(self) -> None:
-       self.model_type = models.FavoriteMovieModel
+       self.model_type = MovieModel
        self.favorite_movie_repository = repositories.FavoriteMovieRepository()
        self.movie_repository = MovieRepository()
 
@@ -973,8 +973,8 @@ class FavoriteMovieService(
             favorite_movie = await self.favorite_movie_repository.aget_by(
                 db=db,
                 expressions=[
-                    self.model_type.profile_id == data["profile_id"],
-                    self.model_type.movie_id == data["movie_id"]
+                    models.FavoriteMovieModel.profile_id == data["profile_id"],
+                    models.FavoriteMovieModel.movie_id == data["movie_id"]
                 ]
             )
 
