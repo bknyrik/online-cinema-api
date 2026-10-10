@@ -669,6 +669,8 @@ class CommentLikeService(
         current_user: UserModel
     ) -> None:
         try:
+            self.has_profile(current_user)
+
             like = await self.like_repository.aget_by_id(
                 db=db,
                 id_=like_id
