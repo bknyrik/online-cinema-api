@@ -2,7 +2,6 @@ from datetime import timedelta
 
 from src.settings import settings
 from src.services.accounts import UserService
-from src.services.directors import DirectorService
 from src.services.profiles import UserProfileService
 from src.services.security import PasswordSecurityService, JWTAuthService
 from src.services.email_sender import EmailSenderService
@@ -13,9 +12,6 @@ from src.repositories.accounts import (
     UserGroupRepository
 )
 from src.repositories.profiles import UserProfileRepository
-from src.repositories.movies import (
-    DirectorRepository,
-)
 from src.database.models import accounts
 
 
@@ -65,10 +61,4 @@ def get_user_service() -> UserService:
 def get_profile_service() -> UserProfileService:
     return UserProfileService(
         profile_repository=UserProfileRepository()
-    )
-
-
-def get_director_service() -> DirectorService:
-    return DirectorService(
-        director_repository=DirectorRepository()
     )

@@ -824,8 +824,8 @@ class DirectorService(
     mixins.PaginationLimitOffsetMixin,
     mixins.ModelItemsMixin
 ):
-    def __init__(self, director_repository: repositories.DirectorRepository) -> None:
-        self.director_repository = director_repository
+    def __init__(self) -> None:
+        self.director_repository = repositories.DirectorRepository()
 
     async def get_director_list(
         self,
