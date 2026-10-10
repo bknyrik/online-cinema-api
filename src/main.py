@@ -5,7 +5,6 @@ from src.routers import (
     profiles,
     movies,
     stars,
-    directors,
     rating
 )
 
@@ -37,11 +36,6 @@ app.include_router(
     stars.router,
     prefix=f"{api_prefix}/stars",
     tags=["stars"]
-)
-app.include_router(
-    directors.router,
-    prefix=f"{api_prefix}/directors",
-    tags=["directors"]
 )
 app.include_router(
     rating.router,
