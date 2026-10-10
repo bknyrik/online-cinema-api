@@ -337,7 +337,8 @@ class CertificationService(
             certifications = await self.certification_repository.aget_all(
                 db=db,
                 limit=limit,
-                offset=offset
+                offset=offset,
+                order_by_columns=[self.model_type.id]
             )
 
             prev_page, next_page = self.get_prev_next_urls_pages(
