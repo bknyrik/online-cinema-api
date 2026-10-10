@@ -181,3 +181,84 @@ async def delete_genre(
         db=db,
         genre_id=genre_id
     )
+
+
+@router.get(
+    "/certifications/",
+    response_model=schemas.CertificationListResponseSchema
+)
+async def get_certification_list(
+    pagination_data: PaginationDep,
+    db: AsyncSession = Depends(get_db),
+    certification_service: services.CertificationService = Depends(services.CertificationService),
+) -> dict:
+    return await certification_service.get_certification_list(
+        pagination_data=pagination_data,
+        db=db
+    )
+
+
+@router.get(
+    "/certifications/{certification_id}/",
+    response_model=schemas.CertificationDetailResponseSchema
+)
+async def get_certification_detail(
+    certification_id: int,
+    db: AsyncSession = Depends(get_db),
+    certification_service: services.CertificationService = Depends(services.CertificationService),
+) -> models.CertificationModel:
+    return await certification_service.get_certification_detail(
+        db=db,
+        certification_id=certification_id
+    )
+
+
+@router.post(
+    "/certifications/",
+    status_code=status.HTTP_201_CREATED,
+    response_model=schemas.CertificationDetailResponseSchema
+)
+async def create_certification(
+    data: schemas.CertificationDataRequestSchema,
+    db: AsyncSession = Depends(get_db),
+    certification_service: services.CertificationService = Depends(services.CertificationService),
+    current_user: UserModel = Depends(get_current_moderator_or_admin)
+) -> models.CertificationModel:
+    return await certification_service.create_certification(
+        db=db,
+        data=data.model_dump()
+    )
+
+
+@router.put(
+    "/certifications/{certification_id}/",
+    response_model=schemas.CertificationDetailResponseSchema
+)
+async def update_certification(
+    certification_id: int,
+    data: schemas.CertificationDataRequestSchema,
+    db: AsyncSession = Depends(get_db),
+    certification_service: services.CertificationService = Depends(services.CertificationService),
+    current_user: UserModel = Depends(get_current_moderator_or_admin)
+) -> models.CertificationModel:
+    return await certification_service.update_certification(
+        db=db,
+        certification_id=certification_id,
+        data=data.model_dump()
+    )
+
+
+@router.delete(
+    "/certifications/{certification_id}/",
+    status_code=status.HTTP_204_NO_CONTENT
+)
+async def delete_certification(
+    certification_id: int,
+    db: AsyncSession = Depends(get_db),
+    certification_service: services.CertificationService = Depends(services.CertificationService),
+    current_user: UserModel = Depends(get_current_moderator_or_admin)
+) -> None:
+    return await certification_service.delete_certification(
+        db=db,
+        certification_id=certification_id
+    )
