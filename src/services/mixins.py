@@ -268,7 +268,7 @@ class UserPermissionsMixin:
         if current_user.profile is None:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="User doesn't have a profile"
+                detail="User doesn't have a profile to perform this action"
             )
 
     @staticmethod
