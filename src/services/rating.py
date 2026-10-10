@@ -13,14 +13,7 @@ from src.repositories.rating import (
     FavoriteMovieRepository
 )
 from src.database.models.cinema import MovieModel
-from src.database.models.rating import (
-    MovieLikeModel,
-    MovieCommentModel,
-    CommentReplyModel,
-    CommentLikeModel,
-    MovieRateModel,
-    FavoriteMovieModel
-)
+from src.database.models import rating as models
 from src.database.models.accounts import UserModel
 
 
@@ -30,7 +23,7 @@ class MovieLikeService(
     mixins.UserPermissionsMixin
 ):
     def __init__(self) -> None:
-        self.model_type = MovieLikeModel
+        self.model_type = models.MovieLikeModel
         self.like_repository = MovieLikeRepository()
         self.movie_repository = MovieRepository()
 
@@ -61,7 +54,7 @@ class MovieLikeService(
                 limit=limit,
                 offset=offset,
                 expressions=expressions,
-                order_by_columns=[MovieLikeModel.id]
+                order_by_columns=[models.MovieLikeModel.id]
             )
             prev_page, next_page = self.get_prev_next_urls_pages(
                 url="/api/rating/movie-likes/",
@@ -88,7 +81,7 @@ class MovieLikeService(
         db: AsyncSession,
         data: dict,
         current_user: UserModel
-    ) -> MovieLikeModel:
+    ) -> models.MovieLikeModel:
         try:
             self.has_profile(current_user)
 
@@ -172,7 +165,7 @@ class MovieCommentService(
 ):
 
     def __init__(self) -> None:
-        self.model_type = MovieCommentModel
+        self.model_type = models.MovieCommentModel
         self.movie_repository = MovieRepository()
         self.comment_repository = MovieCommentRepository()
 
@@ -248,7 +241,7 @@ class MovieCommentService(
         db: AsyncSession,
         comment_id: int,
         current_user: UserModel
-    ) -> MovieCommentModel:
+    ) -> models.MovieCommentModel:
         try:
             self.has_profile_or_is_admin_or_moderator(current_user)
 
@@ -274,7 +267,7 @@ class MovieCommentService(
         db: AsyncSession,
         data: dict,
         current_user: UserModel
-    ) -> MovieCommentModel:
+    ) -> models.MovieCommentModel:
         try:
             self.has_profile(current_user)
 
@@ -298,7 +291,7 @@ class MovieCommentService(
         comment_id: int,
         data: dict,
         current_user: UserModel
-    ) -> MovieCommentModel:
+    ) -> models.MovieCommentModel:
         try:
             self.has_profile_or_is_admin_or_moderator(current_user)
 
@@ -374,7 +367,7 @@ class CommentReplyService(
 ):
 
     def __init__(self) -> None:
-        self.model_type = CommentReplyModel
+        self.model_type = models.CommentReplyModel
         self.reply_repository = CommentReplyRepository()
         self.comment_repository = MovieCommentRepository()
 
@@ -440,7 +433,7 @@ class CommentReplyService(
         reply_id: int,
         db: AsyncSession,
         current_user: UserModel
-    ) -> CommentReplyModel:
+    ) -> models.CommentReplyModel:
         try:
             self.has_profile_or_is_admin_or_moderator(current_user)
 
@@ -467,7 +460,7 @@ class CommentReplyService(
         data: dict,
         db: AsyncSession,
         current_user: UserModel
-    ) -> CommentReplyModel:
+    ) -> models.CommentReplyModel:
         try:
             self.has_profile(current_user)
 
@@ -490,7 +483,7 @@ class CommentReplyService(
         data: dict,
         db: AsyncSession,
         current_user: UserModel
-    ) -> CommentReplyModel:
+    ) -> models.CommentReplyModel:
         try:
             self.has_profile_or_is_admin_or_moderator(current_user)
 
@@ -566,7 +559,7 @@ class CommentLikeService(
 ):
 
     def __init__(self) -> None:
-        self.model_type = CommentLikeModel
+        self.model_type = models.CommentLikeModel
         self.like_repository = CommentLikeRepository()
         self.comment_repository = MovieCommentRepository()
 
@@ -584,7 +577,7 @@ class CommentLikeService(
 
             if current_user.group.name == "user":
                 filter_expressions.append(
-                    CommentLikeModel.profile_id == current_user.profile.id
+                    models.CommentLikeModel.profile_id == current_user.profile.id
                 )
 
             limit, offset = self.get_limit_offset(pagination_data)
@@ -639,7 +632,7 @@ class CommentLikeService(
         data: dict,
         db: AsyncSession,
         current_user: UserModel
-    ) -> CommentLikeModel:
+    ) -> models.CommentLikeModel:
         try:
             self.has_profile(current_user)
 
@@ -719,7 +712,7 @@ class MovieRateService(
 ):
 
     def __init__(self) -> None:
-        self.model_type = MovieRateModel
+        self.model_type = models.MovieRateModel
         self.rate_repository = MovieRateRepository()
         self.movie_repository = MovieRepository()
 
@@ -784,7 +777,7 @@ class MovieRateService(
         rate_id: int,
         db: AsyncSession,
         current_user: UserModel
-    ) -> MovieRateModel:
+    ) -> models.MovieRateModel:
         try:
             self.has_profile(current_user)
 
@@ -807,13 +800,13 @@ class MovieRateService(
         data: dict,
         db: AsyncSession,
         current_user: UserModel
-    ) -> MovieRateModel:
+    ) -> models.MovieRateModel:
         try:
             self.has_profile(current_user)
 
             rate = await self.rate_repository.aget_by(
                 db=db,
-                expressions=[MovieRateModel.movie_id == data["movie_id"]]
+                expressions=[models.MovieRateModel.movie_id == data["movie_id"]]
             )
 
             self.validate_item_by_attrs_exists(rate, data, "Movie rate")
@@ -837,7 +830,7 @@ class MovieRateService(
         data: dict,
         db: AsyncSession,
         current_user: UserModel
-    ) -> MovieRateModel:
+    ) -> models.MovieRateModel:
         try:
             self.has_profile(current_user)
 
@@ -897,7 +890,7 @@ class FavoriteMovieService(
 ):
 
     def __init__(self) -> None:
-       self.model_type = FavoriteMovieModel
+       self.model_type = models.FavoriteMovieModel
        self.favorite_movie_repository = FavoriteMovieRepository()
        self.movie_repository = MovieRepository()
 
@@ -970,7 +963,7 @@ class FavoriteMovieService(
         data: dict,
         db: AsyncSession,
         current_user: UserModel
-    ) -> FavoriteMovieModel:
+    ) -> models.FavoriteMovieModel:
         try:
             self.has_profile(current_user)
 
