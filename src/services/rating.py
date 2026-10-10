@@ -736,7 +736,7 @@ class MovieRateService(
 
             if current_user.group.name == "user":
                 filter_expressions.append(
-                    MovieRateModel.profile_id == current_user.profile.id
+                    self.model_type.profile_id == current_user.profile.id
                 )
 
             total_rates = await self.rate_repository.acount(
@@ -753,7 +753,7 @@ class MovieRateService(
                 expressions=filter_expressions,
                 limit=limit,
                 offset=offset,
-                order_by_columns=[MovieRateModel.id]
+                order_by_columns=[self.model_type.id]
             )
 
             prev_page, next_page = self.get_prev_next_urls_pages(
