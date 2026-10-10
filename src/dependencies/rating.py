@@ -10,12 +10,6 @@ async def rating_filter_params(
     filter_by_profile_id: int = Query(default=None),
     current_user: UserModel = Depends(get_current_user)
 ) -> dict:
-    if current_user.profile is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Profile not found"
-        )
-
     if (
         filter_by_profile_id is not None
         and current_user.group.name not in ("admin", "moderator")
