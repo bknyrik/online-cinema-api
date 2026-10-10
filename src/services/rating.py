@@ -719,6 +719,7 @@ class MovieRateService(
 ):
 
     def __init__(self) -> None:
+        self.model_type = MovieRateModel
         self.rate_repository = MovieRateRepository()
         self.movie_repository = MovieRepository()
 
