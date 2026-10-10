@@ -493,6 +493,7 @@ class GenreService(
 ):
 
     def __init__(self) -> None:
+        self.model_type = models.GenreModel
         self.genre_repository = repositories.GenreRepository()
 
     async def get_genre_list(
