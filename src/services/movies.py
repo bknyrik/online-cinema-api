@@ -4,13 +4,7 @@ from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 
-from src.database.models.movies import (
-    MovieModel,
-    CertificationModel,
-    GenreModel,
-    StarModel,
-    DirectorModel
-)
+from src.database.models import movies as models
 from src.repositories import movies
 from src.services import mixins
 
@@ -31,7 +25,7 @@ class MovieService(
         director_repository: movies.DirectorRepository,
         certification_repository: movies.CertificationRepository
     ) -> None:
-        self.model_type = MovieModel
+        self.model_type = models.MovieModel
         self.movie_repository = movie_repository
         self.genre_repository = genre_repository
         self.star_repository = star_repository
@@ -155,7 +149,7 @@ class MovieService(
                 "next": next_page
             }
 
-    async def get_detail_movie(self, db: AsyncSession, movie_id: int) -> MovieModel:
+    async def get_detail_movie(self, db: AsyncSession, movie_id: int) -> models.MovieModel:
         try:
             movie = await self.movie_repository.aget_by_id(
                 db=db,
@@ -181,7 +175,7 @@ class MovieService(
                 detail="An error occurred while getting movie"
             )
 
-    async def create_movie(self, db: AsyncSession, data: dict) -> MovieModel:
+    async def create_movie(self, db: AsyncSession, data: dict) -> models.MovieModel:
         try:
             movie = await self.movie_repository.aget_by(
                 db=db,
@@ -236,7 +230,7 @@ class MovieService(
         db: AsyncSession,
         movie_id: int,
         data: dict
-    ) -> MovieModel:
+    ) -> models.MovieModel:
         try:
             movie = await self.movie_repository.aget_by_id(
                 db=db,
@@ -381,7 +375,7 @@ class CertificationService(
         self,
         db: AsyncSession,
         certification_id: int
-    ) -> CertificationModel:
+    ) -> models.CertificationModel:
         try:
             certification = await self.certification_repository.aget_by_id(
                 db=db,
@@ -405,11 +399,11 @@ class CertificationService(
         self,
         db: AsyncSession,
         data: dict
-    ) -> CertificationModel:
+    ) -> models.CertificationModel:
         try:
             certification = await self.certification_repository.aget_by(
                 db=db,
-                expressions=[CertificationModel.name == data["name"]]
+                expressions=[models.CertificationModel.name == data["name"]]
             )
 
             self.validate_item_by_attrs_exists(
@@ -437,7 +431,7 @@ class CertificationService(
         db: AsyncSession,
         certification_id: int,
         data: dict
-    ) -> CertificationModel:
+    ) -> models.CertificationModel:
         try:
             certification = await self.certification_repository.aget_by_id(
                 db=db,
@@ -452,7 +446,7 @@ class CertificationService(
 
             another_certification = await self.certification_repository.aget_by(
                 db=db,
-                expressions=[CertificationModel.name == data["name"]]
+                expressions=[models.CertificationModel.name == data["name"]]
             )
 
             self.validate_item_by_attrs_with_another_item_exists(
@@ -532,7 +526,7 @@ class GenreService(
                     db=db,
                     offset=offset,
                     limit=limit,
-                    order_by_columns=[GenreModel.id]
+                    order_by_columns=[models.GenreModel.id]
                 )
             )
             count_movies = await self.genre_repository.acount_movies(db)
@@ -564,7 +558,7 @@ class GenreService(
         self,
         db: AsyncSession,
         genre_id: int
-    ) -> GenreModel:
+    ) -> models.GenreModel:
         try:
             genre = await self.genre_repository.aget_by_id(
                 db=db,
@@ -585,11 +579,11 @@ class GenreService(
         self,
         db: AsyncSession,
         data: dict,
-    ) -> GenreModel:
+    ) -> models.GenreModel:
         try:
             genre = await self.genre_repository.aget_by(
                 db=db,
-                expressions=[GenreModel.name == data["name"]]
+                expressions=[models.GenreModel.name == data["name"]]
             )
 
             self.validate_item_by_attrs_exists(
@@ -616,7 +610,7 @@ class GenreService(
         db: AsyncSession,
         genre_id: int,
         data: dict
-    ) -> GenreModel:
+    ) -> models.GenreModel:
         try:
             genre = await self.genre_repository.aget_by_id(
                 db=db,
@@ -627,7 +621,7 @@ class GenreService(
 
             another_genre = await self.genre_repository.aget_by(
                 db=db,
-                expressions=[GenreModel.name == data["name"]]
+                expressions=[models.GenreModel.name == data["name"]]
             )
 
             self.validate_item_by_attrs_with_another_item_exists(
@@ -700,7 +694,7 @@ class StarService(
                 db=db,
                 limit=limit,
                 offset=offset,
-                order_by_columns=[StarModel.id]
+                order_by_columns=[models.StarModel.id]
             )
 
             prev_page, next_page = self.get_prev_next_urls_pages(
@@ -727,7 +721,7 @@ class StarService(
         self,
         db: AsyncSession,
         star_id: int
-    ) -> StarModel:
+    ) -> models.StarModel:
         try:
             star = await self.star_repository.aget_by_id(
                 db=db,
@@ -747,11 +741,11 @@ class StarService(
         self,
         db: AsyncSession,
         data: dict
-    ) -> StarModel:
+    ) -> models.StarModel:
         try:
             star = await self.star_repository.aget_by(
                 db=db,
-                expressions=[StarModel.name == data["name"]]
+                expressions=[models.StarModel.name == data["name"]]
             )
 
             self.validate_item_by_attrs_exists(
@@ -779,7 +773,7 @@ class StarService(
         db: AsyncSession,
         data: dict,
         star_id: int
-    ) -> StarModel:
+    ) -> models.StarModel:
         try:
             star = await self.star_repository.aget_by_id(
                 db=db,
@@ -794,7 +788,7 @@ class StarService(
 
             another_star = await self.star_repository.aget_by(
                 db=db,
-                expressions=[StarModel.name == data["name"]]
+                expressions=[models.StarModel.name == data["name"]]
             )
 
             self.validate_item_by_attrs_with_another_item_exists(
@@ -866,7 +860,7 @@ class DirectorService(
                 db=db,
                 limit=limit,
                 offset=offset,
-                order_by_columns=[DirectorModel.id]
+                order_by_columns=[models.DirectorModel.id]
             )
 
             prev_page, next_page = self.get_prev_next_urls_pages(
@@ -893,7 +887,7 @@ class DirectorService(
         self,
         db: AsyncSession,
         director_id: int
-    ) -> DirectorModel:
+    ) -> models.DirectorModel:
         try:
             director = await self.director_repository.aget_by_id(
                 db=db,
@@ -917,11 +911,11 @@ class DirectorService(
         self,
         db: AsyncSession,
         data: dict
-    ) -> DirectorModel:
+    ) -> models.DirectorModel:
         try:
             director = await self.director_repository.aget_by(
                 db=db,
-                expressions=[DirectorModel.name == data["name"]]
+                expressions=[models.DirectorModel.name == data["name"]]
             )
 
             self.validate_item_by_attrs_exists(
@@ -948,7 +942,7 @@ class DirectorService(
         db: AsyncSession,
         data: dict,
         director_id: int
-    ) -> DirectorModel:
+    ) -> models.DirectorModel:
         try:
             director = await self.director_repository.aget_by_id(
                 db=db,
@@ -963,7 +957,7 @@ class DirectorService(
 
             another_director = await self.director_repository.aget_by(
                 db=db,
-                expressions=[DirectorModel.name == data["name"]]
+                expressions=[models.DirectorModel.name == data["name"]]
             )
 
             self.validate_item_by_attrs_with_another_item_exists(
