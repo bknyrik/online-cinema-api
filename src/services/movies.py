@@ -115,15 +115,10 @@ class MovieService(
                     order_by_columns=sort_columns
                 ),
             )
-        except SQLAlchemyError:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="An error occurred while getting list with movies"
-            )
-        else:
+
             prev_page, next_page = (
                 self.get_prev_next_urls_pages(
-                    "/api/movies/",
+                    "/api/cinema/movies/",
                     page=pagination_data["page"],
                     total_pages=total_pages,
                     query_params={
@@ -141,6 +136,12 @@ class MovieService(
                 "prev": prev_page,
                 "next": next_page
             }
+        except SQLAlchemyError:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while getting list with movies"
+            )
+
 
     async def get_detail_movie(self, db: AsyncSession, movie_id: int) -> models.MovieModel:
         try:
