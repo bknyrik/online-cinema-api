@@ -693,7 +693,7 @@ class StarService(
             )
 
             prev_page, next_page = self.get_prev_next_urls_pages(
-                "/api/stars/",
+                "/api/cinema/stars/",
                 page=pagination_data["page"],
                 total_pages=total_pages,
                 query_params=pagination_data
