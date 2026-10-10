@@ -577,6 +577,8 @@ class CommentLikeService(
         current_user: UserModel
     ) -> dict:
         try:
+            self.has_profile(current_user)
+
             filter_expressions = self.get_filter_expressions(filter_data)
 
             if current_user.group.name == "user":
