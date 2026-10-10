@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 
 from src.database.models import movies as models
-from src.repositories import movies
+from src.repositories import movies as repositories
 from src.services import mixins
 
 
@@ -19,11 +19,11 @@ class MovieService(
 
     def __init__(
         self,
-        movie_repository: movies.MovieRepository,
-        genre_repository: movies.GenreRepository,
-        star_repository: movies.StarRepository,
-        director_repository: movies.DirectorRepository,
-        certification_repository: movies.CertificationRepository
+        movie_repository: repositories.MovieRepository,
+        genre_repository: repositories.GenreRepository,
+        star_repository: repositories.StarRepository,
+        director_repository: repositories.DirectorRepository,
+        certification_repository: repositories.CertificationRepository
     ) -> None:
         self.model_type = models.MovieModel
         self.movie_repository = movie_repository
@@ -319,7 +319,7 @@ class CertificationService(
 
     def __init__(
         self,
-        certification_repository: movies.CertificationRepository
+        certification_repository: repositories.CertificationRepository
     ) -> None:
         self.certification_repository = certification_repository
 
@@ -499,7 +499,7 @@ class GenreService(
     mixins.PaginationLimitOffsetMixin
 ):
 
-    def __init__(self, genre_repository: movies.GenreRepository) -> None:
+    def __init__(self, genre_repository: repositories.GenreRepository) -> None:
         self.genre_repository = genre_repository
 
     async def get_genre_list(
@@ -668,7 +668,7 @@ class StarService(
     mixins.ModelItemsMixin
 ):
 
-    def __init__(self, star_repository: movies.StarRepository) -> None:
+    def __init__(self, star_repository: repositories.StarRepository) -> None:
         self.star_repository = star_repository
 
     async def get_star_list(
@@ -834,7 +834,7 @@ class DirectorService(
     mixins.PaginationLimitOffsetMixin,
     mixins.ModelItemsMixin
 ):
-    def __init__(self, director_repository: movies.DirectorRepository) -> None:
+    def __init__(self, director_repository: repositories.DirectorRepository) -> None:
         self.director_repository = director_repository
 
     async def get_director_list(
