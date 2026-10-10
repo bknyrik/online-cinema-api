@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.schemas import movies as schemas
 from src.dependencies import database, authentication, movies, pagination
 from src.services import movies as services
-from src.database.models import movies as models
+from src.database.models import cinema as models
 from src.database.models.accounts import UserModel
 
 

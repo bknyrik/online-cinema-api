@@ -12,7 +12,7 @@ from src.repositories.rating import (
     MovieRateRepository,
     FavoriteMovieRepository
 )
-from src.database.models.movies import MovieModel
+from src.database.models.cinema import MovieModel
 from src.database.models.rating import (
     MovieLikeModel,
     MovieCommentModel,

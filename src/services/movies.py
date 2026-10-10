@@ -4,7 +4,7 @@ from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 
-from src.database.models import movies as models
+from src.database.models import cinema as models
 from src.repositories import movies as repositories
 from src.services import mixins
 

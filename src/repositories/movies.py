@@ -4,20 +4,20 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 
 from src.repositories.base import AsyncBaseRepository
-from src.database.models import movies
+from src.database.models import cinema
 
 
-class GenreRepository(AsyncBaseRepository[movies.GenreModel]):
+class GenreRepository(AsyncBaseRepository[cinema.GenreModel]):
 
     def __init__(self) -> None:
-        super().__init__(movies.GenreModel)
+        super().__init__(cinema.GenreModel)
 
     async def acount_movies(self, db: AsyncSession) -> Sequence[int]:
         result = await db.execute(
-            select(func.count(movies.MoviesGenresModel.c.movie_id))
+            select(func.count(cinema.MoviesGenresModel.c.movie_id))
             .join_from(
                 self._model_type,
-                movies.MoviesGenresModel,
+                cinema.MoviesGenresModel,
                 isouter=True
             )
             .group_by(self._model_type.id)
@@ -26,25 +26,25 @@ class GenreRepository(AsyncBaseRepository[movies.GenreModel]):
         return result.scalars().all()
 
 
-class StarRepository(AsyncBaseRepository[movies.StarModel]):
+class StarRepository(AsyncBaseRepository[cinema.StarModel]):
 
     def __init__(self) -> None:
-        super().__init__(movies.StarModel)
+        super().__init__(cinema.StarModel)
 
 
-class DirectorRepository(AsyncBaseRepository[movies.DirectorModel]):
-
-    def __init__(self) -> None:
-        super().__init__(movies.DirectorModel)
-
-
-class CertificationRepository(AsyncBaseRepository[movies.CertificationModel]):
+class DirectorRepository(AsyncBaseRepository[cinema.DirectorModel]):
 
     def __init__(self) -> None:
-        super().__init__(movies.CertificationModel)
+        super().__init__(cinema.DirectorModel)
 
 
-class MovieRepository(AsyncBaseRepository[movies.MovieModel]):
+class CertificationRepository(AsyncBaseRepository[cinema.CertificationModel]):
 
     def __init__(self) -> None:
-        super().__init__(movies.MovieModel)
+        super().__init__(cinema.CertificationModel)
+
+
+class MovieRepository(AsyncBaseRepository[cinema.MovieModel]):
+
+    def __init__(self) -> None:
+        super().__init__(cinema.MovieModel)
