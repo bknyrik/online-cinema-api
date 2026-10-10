@@ -340,3 +340,84 @@ async def delete_director(
         db=db,
         director_id=director_id
     )
+
+
+@router.get(
+    "/stars/",
+    response_model=schemas.StarListResponseSchema
+)
+async def get_star_list(
+    pagination_data: PaginationDep,
+    db: AsyncSession = Depends(get_db),
+    star_service: services.StarService = Depends(services.StarService),
+) -> dict:
+    return await star_service.get_star_list(
+        pagination_data=pagination_data,
+        db=db
+    )
+
+
+@router.get(
+    "/stars/{star_id}/",
+    response_model=schemas.StarDetailResponseSchema
+)
+async def get_star_detail(
+    star_id: int,
+    db: AsyncSession = Depends(get_db),
+    star_service: services.StarService = Depends(services.StarService),
+) -> models.StarModel:
+    return await star_service.get_star_detail(
+        db=db,
+        star_id=star_id
+    )
+
+
+@router.post(
+    "/stars/",
+    status_code=status.HTTP_201_CREATED,
+    response_model=schemas.StarDetailResponseSchema
+)
+async def create_star(
+    data: schemas.StarDataRequestSchema,
+    db: AsyncSession = Depends(get_db),
+    star_service: services.StarService = Depends(services.StarService),
+    current_user: UserModel = Depends(get_current_moderator_or_admin)
+) -> models.StarModel:
+    return await star_service.create_star(
+        db=db,
+        data=data.model_dump()
+    )
+
+
+@router.put(
+    "/stars/{star_id}/",
+    response_model=schemas.StarDetailResponseSchema
+)
+async def update_star(
+    star_id: int,
+    data: schemas.StarDataRequestSchema,
+    db: AsyncSession = Depends(get_db),
+    star_service: services.StarService = Depends(services.StarService),
+    current_user: UserModel = Depends(get_current_moderator_or_admin)
+) -> models.StarModel:
+    return await star_service.update_star(
+        db=db,
+        data=data.model_dump(),
+        star_id=star_id
+    )
+
+
+@router.delete(
+    "/stars/{star_id}/",
+    status_code=status.HTTP_204_NO_CONTENT
+)
+async def delete_star(
+    star_id: int,
+    db: AsyncSession = Depends(get_db),
+    star_service: services.StarService = Depends(services.StarService),
+    current_user: UserModel = Depends(get_current_moderator_or_admin)
+) -> None:
+    return await star_service.delete_star(
+        db=db,
+        star_id=star_id
+    )
