@@ -651,6 +651,20 @@ class CommentLikeService(
 
             data["profile_id"] = current_user.profile.id
 
+            like = await self.like_repository.aget_by(
+                db=db,
+                expressions=[
+                    self.model_type.comment_id == data["comment_id"],
+                    self.model_type.profile_id == data["profile_id"]
+                ]
+            )
+
+            self.validate_item_by_attrs_exists(
+                item=like,
+                attrs=data,
+                item_type="Comment like"
+            )
+
             like = await self.like_repository.acreate(
                 db=db,
                 data=data
