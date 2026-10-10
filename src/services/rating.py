@@ -638,6 +638,8 @@ class CommentLikeService(
         current_user: UserModel
     ) -> CommentLikeModel:
         try:
+            self.has_profile(current_user)
+
             comment = await self.comment_repository.aget_by_id(
                 db=db,
                 id_=data["comment_id"]
