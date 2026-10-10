@@ -658,8 +658,8 @@ class StarService(
     mixins.ModelItemsMixin
 ):
 
-    def __init__(self, star_repository: repositories.StarRepository) -> None:
-        self.star_repository = star_repository
+    def __init__(self) -> None:
+        self.star_repository = repositories.StarRepository()
 
     async def get_star_list(
         self,
