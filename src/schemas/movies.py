@@ -10,9 +10,27 @@ from pydantic import (
 )
 
 from src.schemas.genres import GenreDetailResponseSchema
-from src.schemas.certifications import CertificationDetailResponseSchema
 from src.schemas.stars import StarDetailResponseSchema
 from src.schemas.directors import DirectorDetailResponseSchema
+
+
+class CertificationDetailResponseSchema(BaseModel):
+    id: int
+    name: str
+
+
+class CertificationListResponseSchema(BaseModel):
+    certifications: list[CertificationDetailResponseSchema]
+    total_certifications: int
+    total_pages: int
+    prev: str | None
+    next: str | None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class CertificationDataRequestSchema(BaseModel):
+    name: str = Field(min_length=1, strict=True)
 
 
 class MovieDetailBaseSchema(BaseModel):
