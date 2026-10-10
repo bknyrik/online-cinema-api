@@ -608,7 +608,7 @@ class CommentLikeService(
                 expressions=filter_expressions,
                 offset=offset,
                 limit=limit,
-                order_by_columns=[CommentLikeModel.id]
+                order_by_columns=[self.model_type.id]
             )
 
             prev_page, next_page = self.get_prev_next_urls_pages(
