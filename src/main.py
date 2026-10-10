@@ -4,7 +4,6 @@ from src.routers import (
     accounts,
     profiles,
     movies,
-    certifications,
     stars,
     directors,
     rating
@@ -33,11 +32,6 @@ app.include_router(
     movies.router,
     prefix=f"{api_prefix}/cinema",
     tags=["cinema"]
-)
-app.include_router(
-    certifications.router,
-    prefix=f"{api_prefix}/certifications",
-    tags=["certifications"]
 )
 app.include_router(
     stars.router,
