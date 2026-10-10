@@ -663,6 +663,7 @@ class StarService(
 ):
 
     def __init__(self) -> None:
+        self.model_type = models.StarModel
         self.star_repository = repositories.StarRepository()
 
     async def get_star_list(
@@ -688,7 +689,7 @@ class StarService(
                 db=db,
                 limit=limit,
                 offset=offset,
-                order_by_columns=[models.StarModel.id]
+                order_by_columns=[self.model_type.id]
             )
 
             prev_page, next_page = self.get_prev_next_urls_pages(
@@ -739,7 +740,7 @@ class StarService(
         try:
             star = await self.star_repository.aget_by(
                 db=db,
-                expressions=[models.StarModel.name == data["name"]]
+                expressions=[self.model_type.name == data["name"]]
             )
 
             self.validate_item_by_attrs_exists(
@@ -782,7 +783,7 @@ class StarService(
 
             another_star = await self.star_repository.aget_by(
                 db=db,
-                expressions=[models.StarModel.name == data["name"]]
+                expressions=[self.model_type.name == data["name"]]
             )
 
             self.validate_item_by_attrs_with_another_item_exists(
