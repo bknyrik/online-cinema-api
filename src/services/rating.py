@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 
 from src.services import mixins
-from src.repositories.movies import MovieRepository
+from src.repositories.cinema import MovieRepository
 from src.repositories.rating import (
     MovieLikeRepository,
     MovieCommentRepository,

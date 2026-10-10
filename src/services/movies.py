@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 
 from src.database.models import cinema as models
-from src.repositories import movies as repositories
+from src.repositories import cinema as repositories
 from src.services import mixins
 
 
