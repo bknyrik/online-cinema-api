@@ -310,11 +310,8 @@ class CertificationService(
     mixins.ModelItemsMixin
 ):
 
-    def __init__(
-        self,
-        certification_repository: repositories.CertificationRepository
-    ) -> None:
-        self.certification_repository = certification_repository
+    def __init__(self) -> None:
+        self.certification_repository = repositories.CertificationRepository()
 
     async def get_certification_list(
         self,

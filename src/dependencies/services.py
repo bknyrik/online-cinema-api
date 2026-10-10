@@ -4,7 +4,6 @@ from src.settings import settings
 from src.services.accounts import UserService
 from src.services.stars import StarService
 from src.services.directors import DirectorService
-from src.services.certifications import CertificationService
 from src.services.profiles import UserProfileService
 from src.services.security import PasswordSecurityService, JWTAuthService
 from src.services.email_sender import EmailSenderService
@@ -71,12 +70,6 @@ def get_user_service() -> UserService:
 def get_profile_service() -> UserProfileService:
     return UserProfileService(
         profile_repository=UserProfileRepository()
-    )
-
-
-def get_certification_service() -> CertificationService:
-    return CertificationService(
-        certification_repository=CertificationRepository()
     )
 
 
