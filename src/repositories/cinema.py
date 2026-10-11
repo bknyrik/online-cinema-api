@@ -1,7 +1,7 @@
 from typing import Sequence
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func, ColumnElement, UnaryExpression
+from sqlalchemy import select, func, ColumnElement, UnaryExpression, Row
 from sqlalchemy.orm import joinedload, InstrumentedAttribute
 
 from src.repositories.base import AsyncBaseRepository
@@ -26,6 +26,28 @@ class GenreRepository(AsyncBaseRepository[cinema.GenreModel]):
             .order_by(self._model_type.id)
         )
         return result.scalars().all()
+
+    async def aget_all_with_movie_count(
+        self,
+        db: AsyncSession,
+        limit: int,
+        offset: int
+    ) -> Sequence[Row]:
+        result = await db.execute(
+            select(
+                self._model_type.id,
+                self._model_type.name,
+                func.count(cinema.MoviesGenresModel.c.movie_id)
+                .label("movies")
+            )
+            .join(cinema.MoviesGenresModel, isouter=True)
+            .group_by(cinema.GenreModel.id)
+            .order_by(cinema.GenreModel.id)
+            .limit(limit)
+            .offset(offset)
+        )
+
+        return result.all()
 
 
 class StarRepository(AsyncBaseRepository[cinema.StarModel]):
