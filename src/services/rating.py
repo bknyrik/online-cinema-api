@@ -47,7 +47,7 @@ class MovieLikeService(
                 limit=limit,
                 offset=offset,
                 expressions=expressions,
-                order_by_columns=[models.MovieLikeModel.id]
+                order_by_columns=[self.model_type.id]
             )
             prev_page, next_page = self.get_prev_next_urls_pages(
                 url="/api/rating/movie-likes/",
