@@ -914,12 +914,18 @@ class FavoriteMovieService(
                 per_page=pagination_data["per_page"]
             )
 
-            movies = await self.favorite_movie_repository.aget_all(
+            movies = await self.movie_repository.aget_all_by_profile_favorites(
                 db=db,
+                profile_id=current_user.profile.id,
                 expressions=expressions,
                 limit=limit,
                 offset=offset,
-                join_relationships=["movie"],
+                join_relationships=[
+                    "certification",
+                    "genres",
+                    "stars",
+                    "directors"
+                ],
                 order_by_columns=(
                     sorting_expressions
                     if any(value is not None for value in sort_data.values())
@@ -939,7 +945,7 @@ class FavoriteMovieService(
                 }
             )
             return {
-                "movies": [favorite.movie for favorite in movies],
+                "movies": movies,
                 "total_movies": total_movies,
                 "total_pages": total_pages,
                 "prev": prev_page,
