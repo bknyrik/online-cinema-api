@@ -524,12 +524,7 @@ class GenreService(
                 )
             )
             count_movies = await self.genre_repository.acount_movies(db)
-        except SQLAlchemyError:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="An error occurred while getting list with genres"
-            )
-        else:
+
             prev_page, next_page = self.get_prev_next_urls_pages(
                 "/api/cinema/genres/",
                 page=pagination_data["page"],
@@ -547,6 +542,11 @@ class GenreService(
                 "prev": prev_page,
                 "next": next_page
             }
+        except SQLAlchemyError:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while getting list with genres"
+            )
 
     async def get_genre_detail(
         self,
