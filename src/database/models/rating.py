@@ -7,7 +7,7 @@ from sqlalchemy import (
     Text,
     DateTime,
     UniqueConstraint,
-    Table
+    Boolean
 )
 from sqlalchemy.orm import relationship
 
@@ -80,6 +80,7 @@ class CommentReplyModel(Base):
         default=datetime.now(timezone.utc),
         nullable=False
     )
+    is_read = Column(Boolean, default=False)
     comment_id = Column(
         Integer,
         ForeignKey("movie_comments.id", ondelete="CASCADE"),
@@ -104,6 +105,7 @@ class CommentLikeModel(Base):
         default=datetime.now(timezone.utc),
         nullable=False
     )
+    is_read = Column(Boolean, default=False)
     comment_id = Column(
         Integer,
         ForeignKey("movie_comments.id", ondelete="CASCADE"),
