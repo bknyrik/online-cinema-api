@@ -14,19 +14,6 @@ class GenreRepository(AsyncBaseRepository[cinema.GenreModel]):
     def __init__(self) -> None:
         super().__init__(cinema.GenreModel)
 
-    async def acount_movies(self, db: AsyncSession) -> Sequence[int]:
-        result = await db.execute(
-            select(func.count(cinema.MoviesGenresModel.c.movie_id))
-            .join_from(
-                self._model_type,
-                cinema.MoviesGenresModel,
-                isouter=True
-            )
-            .group_by(self._model_type.id)
-            .order_by(self._model_type.id)
-        )
-        return result.scalars().all()
-
     async def aget_all_with_movie_count(
         self,
         db: AsyncSession,
