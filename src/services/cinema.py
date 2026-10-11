@@ -516,14 +516,12 @@ class GenreService(
             )
 
             genres = list(
-                await self.genre_repository.aget_all(
+                await self.genre_repository.aget_all_with_movie_count(
                     db=db,
                     offset=offset,
                     limit=limit,
-                    order_by_columns=[self.model_type.id]
                 )
             )
-            count_movies = await self.genre_repository.acount_movies(db)
 
             prev_page, next_page = self.get_prev_next_urls_pages(
                 "/api/cinema/genres/",
@@ -531,10 +529,6 @@ class GenreService(
                 total_pages=total_pages,
                 query_params=pagination_data
             )
-            genres = [
-                {"id": genre.id, "name": genre.name, "movies": count}
-                for genre, count in zip(genres, count_movies)
-            ]
             return {
                 "genres": genres,
                 "total_genres": total_genres,
