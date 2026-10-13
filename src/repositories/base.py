@@ -1,6 +1,6 @@
 from typing import Sequence
 
-from sqlalchemy import select, func, delete
+from sqlalchemy import select, func, delete, update
 from sqlalchemy.orm import InstrumentedAttribute
 from sqlalchemy.sql.elements import ColumnElement, UnaryExpression
 from sqlalchemy.orm import Session, joinedload
@@ -136,6 +136,18 @@ class AsyncBaseRepository[T]:
 
         await self.aupdate(db, instance, data)
         return instance
+
+    async def aupdate_by(
+        self,
+        db: AsyncSession,
+        data: dict,
+        expressions: list[ColumnElement[bool]]
+    ) -> None:
+        await db.execute(
+            update(self._model_type)
+            .values(**data)
+            .where(*expressions)
+        )
 
     async def adelete_by_id(self, db: AsyncSession, id_: int) -> T | None:
         instance = await self.aget_by_id(db, id_)
