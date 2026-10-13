@@ -268,7 +268,8 @@ class FilterItemsMixin:
         return (
             self._get_min_max_filter_expressions(filter_data, self.model_type) +
             self._get_single_id_expressions(filter_data, self.model_type) +
-            self._get_multiple_ids_expressions(filter_data, self.model_type)
+            self._get_multiple_ids_expressions(filter_data, self.model_type) +
+            self._get_boolean_expressions(filter_data, self.model_type)
         )
 
 
