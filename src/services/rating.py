@@ -697,6 +697,38 @@ class CommentLikeService(
                 detail="An error occurred while comment like deletion"
             )
 
+    async def mark_comment_like_has_read(
+        self,
+        db: AsyncSession,
+        data: dict,
+        current_user: UserModel
+    ) -> None:
+        try:
+            self.has_profile_or_is_admin_or_moderator(current_user)
+
+            comment = await self.comment_repository.aget_by_id(
+                db=db,
+                id_=data["comment_id"]
+            )
+            self.validate_item_by_id_not_found(
+                item=comment,
+                id_=data["comment_id"],
+                item_type="Movie comment"
+            )
+
+            await self.like_repository.aupdate_by(
+                db=db,
+                expressions=[self.model_type.comment_id == comment.id],
+                data={"has_read": True}
+            )
+            await db.commit()
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while marking comment likes as read"
+            )
+
 
 class MovieRateService(
     mixins.PaginationLimitOffsetMixin,
