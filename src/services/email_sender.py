@@ -76,27 +76,6 @@ class EmailSenderService:
             body=body
         )
 
-    async def send_user_got_comment_likes_email(
-        self,
-        receiver_email: str,
-        comment_likes_link: str,
-        count_likes: int
-    ) -> None:
-        template_path = Path("src/templates/emails/got_comment_likes.html")
-        body = self.parse_html_template(
-            template_path=template_path,
-            mapping={
-                "link": comment_likes_link,
-                "count_likes": count_likes
-            }
-        )
-        await self.send_email(
-            sender="online.cinema.org",
-            receiver=receiver_email,
-            subject="Your movie comment got likes",
-            body=body
-        )
-
 
 class SyncEmailSender:
 
@@ -125,3 +104,24 @@ class SyncEmailSender:
     @staticmethod
     def parse_html_template(template_path: Path, mapping: dict) -> str:
         return Template(template_path.read_text()).substitute(mapping)
+
+    def send_user_got_comment_likes_email(
+        self,
+        receiver_email: str,
+        comment_likes_link: str,
+        count_likes: int
+    ) -> None:
+        template_path = Path("src/templates/emails/got_comment_likes.html")
+        body = self.parse_html_template(
+            template_path=template_path,
+            mapping={
+                "link": comment_likes_link,
+                "count_likes": count_likes
+            }
+        )
+        self.send_email(
+            sender="online.cinema.org",
+            receiver=receiver_email,
+            subject="Your movie comment got likes",
+            body=body
+        )
