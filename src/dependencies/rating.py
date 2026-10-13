@@ -36,10 +36,12 @@ async def comment_filter_params(
 
 async def comment_reply_filter_params(
     filter_by_comment_id: int = Query(default=None),
+    filter_by_has_read: bool = Query(default=None),
     rating_filter_queries: dict = Depends(rating_filter_params)
 ) -> dict:
     return {
         "filter_by_comment_id": filter_by_comment_id,
+        "filter_by_has_read": filter_by_has_read,
         **rating_filter_queries
     }
 
