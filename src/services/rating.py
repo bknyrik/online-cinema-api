@@ -413,8 +413,8 @@ class CommentReplyService(
                 "replies": replies,
                 "total_replies": total_replies,
                 "total_pages": total_pages,
-                "prev_page": next_page,
-                "next_page": prev_page
+                "prev": next_page,
+                "next": prev_page
             }
         except SQLAlchemyError:
             raise HTTPException(
