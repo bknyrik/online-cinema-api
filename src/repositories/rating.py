@@ -1,4 +1,4 @@
-from src.repositories.base import AsyncBaseRepository
+from src.repositories.base import AsyncBaseRepository, SyncBaseRepository
 
 from src.database.models import rating
 
@@ -21,7 +21,10 @@ class CommentReplyRepository(AsyncBaseRepository[rating.CommentReplyModel]):
         super().__init__(rating.CommentReplyModel)
 
 
-class CommentLikeRepository(AsyncBaseRepository[rating.CommentLikeModel]):
+class CommentLikeRepository(
+    AsyncBaseRepository[rating.CommentLikeModel],
+    SyncBaseRepository[rating.CommentLikeModel]
+):
 
     def __init__(self) -> None:
         super().__init__(rating.CommentLikeModel)
