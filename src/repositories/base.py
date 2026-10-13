@@ -172,6 +172,18 @@ class SyncBaseRepository[T]:
     def __init__(self, model_type: type[T]) -> None:
         self._model_type = model_type
 
+    def count(
+        self,
+        db: Session,
+        expressions: list[ColumnElement[bool]] | None = None
+    ) -> int:
+        stmt = select(func.count(self._model_type))
+
+        if expressions is not None:
+            stmt = stmt.where(*expressions)
+
+        return db.execute(stmt).scalar_one()
+
     def get_all(self, db: Session) -> Sequence[T]:
         result = db.execute(select(self._model_type))
         return result.scalars().all()
