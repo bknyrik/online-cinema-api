@@ -4,7 +4,7 @@ from src.settings import settings
 from src.services.accounts import UserService
 from src.services.profiles import UserProfileService
 from src.services.security import PasswordSecurityService, JWTAuthService
-from src.services.email_sender import EmailSenderService
+from src.services.email_sender import EmailSenderService, SyncEmailSenderService
 from src.services.s3 import S3Service
 from src.repositories.accounts import (
     UserRepository,
@@ -34,6 +34,13 @@ def get_jwt_auth_service() -> JWTAuthService:
 
 def get_email_sender_service() -> EmailSenderService:
     return EmailSenderService(
+        host=settings.SMTP_HOST,
+        port=settings.SMTP_PORT
+    )
+
+
+def get_sync_email_sender_service() -> SyncEmailSenderService:
+    return SyncEmailSenderService(
         host=settings.SMTP_HOST,
         port=settings.SMTP_PORT
     )
