@@ -1,6 +1,6 @@
 from typing import Sequence
 
-from sqlalchemy import select, func
+from sqlalchemy import select, func, delete
 from sqlalchemy.orm import InstrumentedAttribute
 from sqlalchemy.sql.elements import ColumnElement, UnaryExpression
 from sqlalchemy.orm import Session, joinedload
@@ -238,6 +238,13 @@ class SyncBaseRepository[T]:
 
         db.delete(instance)
         return instance
+
+    def delete_by(
+        self,
+        db: Session,
+        expressions: list[ColumnElement[bool]]
+    ) -> None:
+        db.execute(delete(self._model_type).where(*expressions))
 
     @staticmethod
     def delete(db: Session, instance: T) -> None:
