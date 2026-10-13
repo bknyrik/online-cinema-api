@@ -77,7 +77,7 @@ class EmailSenderService:
         )
 
 
-class SyncEmailSender:
+class SyncEmailSenderService:
 
     def __init__(self, host: str, port: int) -> None:
         self.host = host
