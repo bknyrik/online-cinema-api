@@ -176,6 +176,17 @@ class SyncBaseRepository[T]:
         result = db.execute(select(self._model_type))
         return result.scalars().all()
 
+    def get_by(
+        self,
+        db: Session,
+        expressions: list[ColumnElement[bool]]
+    ) -> T | None:
+        result = db.execute(
+            select(self._model_type)
+            .where(*expressions)
+        )
+        return result.scalar_one_or_none()
+
     def get_by_id(self, db: Session, id_: int) -> T | None:
         result = db.execute(
             select(self._model_type)
