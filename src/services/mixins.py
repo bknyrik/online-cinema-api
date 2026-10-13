@@ -245,6 +245,17 @@ class FilterItemsMixin:
 
         return expressions
 
+    @staticmethod
+    def _get_boolean_expressions(
+        filter_data: dict,
+        model_type: type[Base]
+    ) -> list[ColumnElement[bool]]:
+        return [
+            getattr(model_type, name) == value
+            for name, value in filter_data.items()
+            if isinstance(value, bool)
+        ]
+
     def get_filter_expressions(
         self,
         filter_data: dict
