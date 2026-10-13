@@ -1,3 +1,4 @@
+import smtplib
 from email.message import EmailMessage
 from pathlib import Path
 from string import Template
@@ -95,3 +96,32 @@ class EmailSenderService:
             subject="Your movie comment got likes",
             body=body
         )
+
+
+class SyncEmailSender:
+
+    def __init__(self, host: str, port: int) -> None:
+        self.host = host
+        self.port = port
+
+    def send_email(
+        self,
+        sender: str,
+        receiver: str,
+        subject: str,
+        body: str
+    ) -> None:
+        with smtplib.SMTP(host=self.host, port=self.port) as smtp_server:
+            smtp_server.ehlo()
+
+            message = EmailMessage()
+            message["from"] = sender
+            message["to"] = receiver
+            message["subject"] = subject
+
+            message.set_content(body, "html")
+            smtp_server.send_message(message)
+
+    @staticmethod
+    def parse_html_template(template_path: Path, mapping: dict) -> str:
+        return Template(template_path.read_text()).substitute(mapping)
