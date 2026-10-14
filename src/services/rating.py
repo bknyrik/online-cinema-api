@@ -578,6 +578,7 @@ class CommentLikeService(
         self.model_type = models.CommentLikeModel
         self.like_repository = repositories.CommentLikeRepository()
         self.comment_repository = repositories.MovieCommentRepository()
+        self.notification_repository = NotificationRepository()
 
     async def get_comment_like_list(
         self,
