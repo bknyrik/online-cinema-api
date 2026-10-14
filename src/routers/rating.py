@@ -301,23 +301,6 @@ async def delete_comment_like(
     )
 
 
-@router.post(
-    "/comment-likes/mark-has-read/",
-    status_code=status.HTTP_204_NO_CONTENT
-)
-async def mark_comment_like_has_read(
-    data: schemas.CommentLikeMarkHasReadRequestSchema,
-    db: AsyncSession = Depends(database.get_db),
-    current_user: UserModel = Depends(authentication.get_current_user),
-    like_service: services.CommentLikeService = Depends(services.CommentLikeService)
-) -> None:
-    return await like_service.mark_comment_like_has_read(
-        db=db,
-        data=data.model_dump(),
-        current_user=current_user
-    )
-
-
 @router.get(
     "/movie-rates/",
     response_model=schemas.MovieRateDetailResponseSchema,
