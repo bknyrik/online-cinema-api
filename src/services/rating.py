@@ -458,6 +458,18 @@ class CommentReplyService(
         try:
             self.has_profile(current_user)
 
+            comment = await self.comment_repository.aget_by_id(
+                db=db,
+                id_=data["comment_id"],
+                join_relationships=["profile"]
+            )
+
+            self.validate_item_by_id_not_found(
+                item=comment,
+                id_=data["comment_id"],
+                item_type="Movie comment"
+            )
+
             data["profile_id"] = current_user.profile.id
 
             reply = await self.reply_repository.acreate(db=db, data=data)
