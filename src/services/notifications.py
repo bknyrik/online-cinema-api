@@ -119,3 +119,22 @@ class NotificationService(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while notifications deletion"
             )
+
+    async def mark_notifications_as_read(
+        self,
+        db: AsyncSession,
+        current_user: UserModel
+    ) -> None:
+        try:
+            await self.notification_repository.aupdate_by(
+                db=db,
+                expressions=[self.model_type.user_id == current_user.id],
+                data={"is_read": True}
+            )
+            await db.commit()
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while marking notifications are read"
+            )
