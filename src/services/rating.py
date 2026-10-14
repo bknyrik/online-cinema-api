@@ -5,6 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from src.services import mixins
 from src.repositories.cinema import MovieRepository
 from src.repositories import rating as repositories
+from src.repositories.notifications import NotificationRepository
 from src.database.models.cinema import MovieModel
 from src.database.models import rating as models
 from src.database.models.accounts import UserModel
@@ -364,6 +365,7 @@ class CommentReplyService(
         self.model_type = models.CommentReplyModel
         self.reply_repository = repositories.CommentReplyRepository()
         self.comment_repository = repositories.MovieCommentRepository()
+        self.notification_repository = NotificationRepository()
 
     async def get_comment_reply_list(
         self,
