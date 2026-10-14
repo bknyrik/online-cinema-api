@@ -476,13 +476,14 @@ class CommentReplyService(
 
             reply = await self.reply_repository.acreate(db=db, data=data)
 
-            await self.notification_repository.acreate(
-                db=db,
-                data={
-                    "user_id": comment.profile.user_id,
-                    "text": f"You got a reply to the comment \"{comment.text}\""
-                }
-            )
+            if current_user.id != comment.profile.user_id:
+                await self.notification_repository.acreate(
+                    db=db,
+                    data={
+                        "user_id": comment.profile.user_id,
+                        "text": f"You got a reply to the comment \"{comment.text}\""
+                    }
+                )
 
             await db.commit()
             return reply
