@@ -67,3 +67,30 @@ class NotificationService(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while getting list with notifications"
             )
+
+    async def delete_notification(
+        self,
+        db: AsyncSession,
+        notification_id: int,
+        current_user: UserModel
+    ) -> None:
+        try:
+            notification = await self.notification_repository.aget_by_id(
+                db=db,
+                id_=notification_id
+            )
+
+            self.belongs_to_user_or_is_admin_or_moderator(
+                current_user=current_user,
+                child_object=notification,
+                child_object_type="Notification"
+            )
+
+            await self.notification_repository.adelete(db, notification)
+            await db.commit()
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while notification deletion"
+            )
