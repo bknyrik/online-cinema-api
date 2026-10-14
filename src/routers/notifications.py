@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.dependencies import database, authentication, pagination
@@ -19,5 +19,22 @@ async def get_notification_list(
     return await notification_service.get_notification_list(
         db=db,
         pagination_data=pagination_data,
+        current_user=current_user
+    )
+
+
+@router.delete(
+    "/{notification_id}/",
+    status_code=status.HTTP_204_NO_CONTENT
+)
+async def delete_notification(
+    notification_id: int,
+    db: AsyncSession = Depends(database.get_db),
+    notification_service: NotificationService = Depends(NotificationService),
+    current_user: UserModel = Depends(authentication.get_current_user)
+) -> None:
+    return await notification_service.delete_notification(
+        db=db,
+        notification_id=notification_id,
         current_user=current_user
     )
