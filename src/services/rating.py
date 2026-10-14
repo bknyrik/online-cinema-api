@@ -679,8 +679,16 @@ class CommentLikeService(
                 db=db,
                 data=data
             )
-            await db.commit()
 
+            await self.notification_repository.acreate(
+                db=db,
+                data={
+                    "user_id": comment.profile.user_id,
+                    "text": f"You got a like to the comment \"{comment.text}\""
+                }
+            )
+
+            await db.commit()
             return like
         except SQLAlchemyError:
             await db.rollback()
