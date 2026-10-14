@@ -81,6 +81,12 @@ class NotificationService(
                 id_=notification_id
             )
 
+            self.validate_item_by_id_not_found(
+                item=notification,
+                id_=notification_id,
+                item_type="Notification"
+            )
+
             self.belongs_to_user_or_is_admin_or_moderator(
                 current_user=current_user,
                 child_object=notification,
