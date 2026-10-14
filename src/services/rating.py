@@ -656,7 +656,8 @@ class CommentLikeService(
 
             comment = await self.comment_repository.aget_by_id(
                 db=db,
-                id_=data["comment_id"]
+                id_=data["comment_id"],
+                join_relationships=["profile"]
             )
             self.validate_item_by_id_not_found(comment, data["comment_id"], "Comment")
 
