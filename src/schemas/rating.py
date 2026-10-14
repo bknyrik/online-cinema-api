@@ -56,7 +56,6 @@ class MovieCommentUpdateRequestSchema(BaseModel):
 class CommentReplyDetailResponseSchema(BaseModel):
     id: int
     created_at: datetime
-    has_read: bool
     comment_id: int
     profile_id: int
     text: str
@@ -88,7 +87,6 @@ class CommentReplyUpdateRequestSchema(BaseModel):
 class CommentLikeDetailResponseSchema(BaseModel):
     id: int
     created_at: datetime
-    has_read: bool
     comment_id: int
     profile_id: int
 
