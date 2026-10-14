@@ -298,6 +298,25 @@ class UserPermissionsMixin:
             )
 
     @staticmethod
+    def belongs_to_user_or_is_admin_or_moderator(
+        current_user: UserModel,
+        child_object: type[Base],
+        child_object_type: str
+    ) -> None:
+        if (
+            child_object.user_id != current_user.id
+            and current_user.group.name not in ("admin", "moderator")
+        ):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=(
+                    f"{child_object_type} with id {child_object.id}"
+                    " does not belong to user and user "
+                    "is not an admin/moderator to perform this action"
+                )
+            )
+
+    @staticmethod
     def belongs_to_profile_or_is_admin_or_moderator(
         current_user: UserModel,
         child_object,
