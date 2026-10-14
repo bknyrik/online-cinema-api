@@ -26,7 +26,6 @@ class Settings(BaseSettings):
     LINK_RESET_PASSWORD = (
         "http://localhost:8000/api/accounts/me/reset_password/complete/"
     )
-    COMMENT_LIKES_LINK = "http://localhost:8000/api/rating/comment-likes/"
 
     class Config:
         env_file = ".env"
