@@ -10,7 +10,8 @@ from src.repositories.notifications import NotificationRepository
 
 class NotificationService(
     mixins.PaginationLimitOffsetMixin,
-    mixins.UserPermissionsMixin
+    mixins.UserPermissionsMixin,
+    mixins.ModelItemsMixin
 ):
 
     def __init__(self) -> None:
