@@ -107,12 +107,6 @@ class CommentLikeCreateRequestSchema(BaseModel):
     comment_id: int
 
 
-class CommentLikeMarkHasReadRequestSchema(BaseModel):
-    comment_id: int
-
-    model_config = ConfigDict(strict=True)
-
-
 class MovieRateDetailResponseSchema(BaseModel):
     id: int
     created_at: datetime
