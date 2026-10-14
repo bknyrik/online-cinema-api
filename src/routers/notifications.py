@@ -53,3 +53,18 @@ async def delete_all_notifications(
         db=db,
         current_user=current_user
     )
+
+
+@router.post(
+    "/mark-read/",
+    status_code=status.HTTP_204_NO_CONTENT
+)
+async def mark_notifications_as_read(
+    db: AsyncSession = Depends(database.get_db),
+    notification_service: NotificationService = Depends(NotificationService),
+    current_user: UserModel = Depends(authentication.get_current_user)
+) -> None:
+    return await notification_service.mark_notifications_as_read(
+        db=db,
+        current_user=current_user
+    )
