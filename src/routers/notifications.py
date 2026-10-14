@@ -4,12 +4,16 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.dependencies import database, authentication, pagination
 from src.database.models.accounts import UserModel
 from src.services.notifications import NotificationService
+from src.schemas.notifications import NotificationListResponseSchema
 
 
 router = APIRouter()
 
 
-@router.get("/")
+@router.get(
+    "/",
+    response_model=NotificationListResponseSchema
+)
 async def get_notification_list(
     pagination_data: pagination.PaginationDep,
     db: AsyncSession = Depends(database.get_db),
