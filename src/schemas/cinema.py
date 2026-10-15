@@ -9,6 +9,8 @@ from pydantic import (
     Field
 )
 
+from src.services.mixins import SortingOrderEnum
+
 
 class DirectorDetailResponseSchema(BaseModel):
     id: int
@@ -244,3 +246,14 @@ class MovieUpdateRequestSchema(MovieDataRequestSchema):
     directors: list[int] | None = Field(
         default=None,
     )
+
+
+class MovieSortingSchema(BaseModel):
+    sort_by_name: SortingOrderEnum | None = Field(default=None)
+    sort_by_year: SortingOrderEnum | None = Field(default=None)
+    sort_by_time: SortingOrderEnum | None = Field(default=None)
+    sort_by_imdb: SortingOrderEnum | None = Field(default=None)
+    sort_by_votes: SortingOrderEnum | None = Field(default=None)
+    sort_by_meta_score: SortingOrderEnum | None = Field(default=None)
+    sort_by_gross: SortingOrderEnum | None = Field(default=None)
+    sort_by_price: SortingOrderEnum | None = Field(default=None)
