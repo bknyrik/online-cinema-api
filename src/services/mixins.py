@@ -325,18 +325,13 @@ class UserPermissionsMixin:
 
         if (
             current_user.profile.id != child_object.profile_id
-            and current_user.group.name == "user"
+            and current_user.group.name not in ("admin", "moderator")
         ):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail=(
                     f"{child_object_type} with id {child_object.id}"
                     " doesn't belong to current user profile"
+                    "and you are not admin / moderator to perform this action"
                 )
-            )
-
-        if current_user.group.name not in ("admin", "moderator"):
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="You are not admin/moderator to perform this action"
             )
