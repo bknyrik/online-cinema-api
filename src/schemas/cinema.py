@@ -257,3 +257,10 @@ class MovieSortingSchema(BaseModel):
     sort_by_meta_score: SortingOrderEnum | None = Field(default=None)
     sort_by_gross: SortingOrderEnum | None = Field(default=None)
     sort_by_price: SortingOrderEnum | None = Field(default=None)
+
+
+class MovieSearchSchema(BaseModel):
+    search_by_name: str | None = Field(default=None)
+    search_by_description: str | None = Field(default=None)
+    search_by_stars_ids: list[int] | None = Field(default=None)
+    search_by_directors_ids: list[int] | None = Field(default=None)
