@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.schemas import cinema as schemas
-from src.dependencies import database, authentication, cinema, pagination
+from src.schemas.pagination import PaginationSchema
+from src.dependencies import database, authentication, cinema
 from src.services import cinema as services
 from src.database.models import cinema as models
 from src.database.models.accounts import UserModel
@@ -13,16 +14,16 @@ router = APIRouter()
 
 @router.get("/movies/", response_model=schemas.MovieListResponseSchema)
 async def get_movie_list(
-    pagination_data: pagination.PaginationDep,
     search_data: cinema.MovieSearchDep,
     filter_data: cinema.MovieFilterDep,
     sort_data: cinema.MovieSortDep,
+    pagination_data: PaginationSchema = Depends(PaginationSchema),
     db: AsyncSession = Depends(database.get_db),
     movie_service: services.MovieService = Depends(services.MovieService)
 ) -> dict:
     return await movie_service.get_movie_list(
         db=db,
-        pagination_data=pagination_data,
+        pagination_data=pagination_data.model_dump(),
         filter_data=filter_data,
         search_data=search_data,
         sort_data=sort_data
@@ -100,13 +101,13 @@ async def delete_movie(
     response_model=schemas.GenreListResponseSchema
 )
 async def get_genre_list(
-    pagination_data: pagination.PaginationDep,
+    pagination_data: PaginationSchema = Depends(PaginationSchema),
     db: AsyncSession = Depends(database.get_db),
     genre_service: services.GenreService = Depends(services.GenreService),
 ) -> dict:
     return await genre_service.get_genre_list(
         db=db,
-        pagination_data=pagination_data
+        pagination_data=pagination_data.model_dump()
     )
 
 
@@ -181,12 +182,12 @@ async def delete_genre(
     response_model=schemas.CertificationListResponseSchema
 )
 async def get_certification_list(
-    pagination_data: pagination.PaginationDep,
+    pagination_data: PaginationSchema = Depends(PaginationSchema),
     db: AsyncSession = Depends(database.get_db),
     certification_service: services.CertificationService = Depends(services.CertificationService),
 ) -> dict:
     return await certification_service.get_certification_list(
-        pagination_data=pagination_data,
+        pagination_data=pagination_data.model_dump(),
         db=db
     )
 
@@ -259,13 +260,13 @@ async def delete_certification(
 
 @router.get("/directors/", response_model=schemas.DirectorListResponseSchema)
 async def get_director_list(
-    pagination_data: pagination.PaginationDep,
+    pagination_data: PaginationSchema = Depends(PaginationSchema),
     db: AsyncSession = Depends(database.get_db),
     director_service: services.DirectorService = Depends(services.DirectorService)
 ) -> dict:
     return await director_service.get_director_list(
         db=db,
-        pagination_data=pagination_data
+        pagination_data=pagination_data.model_dump()
     )
 
 
@@ -340,12 +341,12 @@ async def delete_director(
     response_model=schemas.StarListResponseSchema
 )
 async def get_star_list(
-    pagination_data: pagination.PaginationDep,
+    pagination_data: PaginationSchema = Depends(PaginationSchema),
     db: AsyncSession = Depends(database.get_db),
     star_service: services.StarService = Depends(services.StarService),
 ) -> dict:
     return await star_service.get_star_list(
-        pagination_data=pagination_data,
+        pagination_data=pagination_data.model_dump(),
         db=db
     )
 

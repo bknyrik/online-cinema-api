@@ -4,13 +4,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.dependencies import (
     database,
     authentication,
-    pagination,
     rating,
     cinema
 )
 from src.services import rating as services
 from src.schemas import rating as schemas
 from src.schemas.cinema import MovieListResponseSchema
+from src.schemas.pagination import PaginationSchema
 from src.database.models.accounts import UserModel
 from src.database.models import rating as models
 
@@ -20,14 +20,14 @@ router = APIRouter()
 
 @router.get("/movie-likes/", response_model=schemas.MovieLikeListResponseSchema)
 async def get_movie_like_list(
-    pagination_data: pagination.PaginationDep,
+    pagination_data: PaginationSchema = Depends(PaginationSchema),
     db: AsyncSession = Depends(database.get_db),
     like_service: services.MovieLikeService = Depends(services.MovieLikeService),
     current_user: UserModel = Depends(authentication.get_current_user)
 ) -> dict:
     return await like_service.get_movie_like_list(
         db=db,
-        pagination_data=pagination_data,
+        pagination_data=pagination_data.model_dump(),
         current_user=current_user
     )
 
@@ -72,15 +72,15 @@ async def delete_movie_like(
     response_model=schemas.MovieCommentListResponseSchema
 )
 async def get_movie_comment_list(
-    pagination_data: pagination.PaginationDep,
     filter_data: rating.CommentFilterDep,
+    pagination_data: PaginationSchema = Depends(PaginationSchema),
     db: AsyncSession = Depends(database.get_db),
     comment_service: services.MovieCommentService = Depends(services.MovieCommentService),
     current_user: UserModel = Depends(authentication.get_current_user),
 ) -> dict:
     return await comment_service.get_movie_comment_list(
         db=db,
-        pagination_data=pagination_data,
+        pagination_data=pagination_data.model_dump(),
         filter_data=filter_data,
         current_user=current_user
     )
@@ -163,14 +163,14 @@ async def delete_movie_comment(
 )
 async def get_comment_reply_list(
     filter_data: rating.CommentReplyFilterDep,
-    pagination_data: pagination.PaginationDep,
+    pagination_data: PaginationSchema = Depends(PaginationSchema),
     db: AsyncSession = Depends(database.get_db),
     reply_service: services.CommentReplyService = Depends(services.CommentReplyService),
     current_user: UserModel = Depends(authentication.get_current_user)
 ) -> dict:
     return await reply_service.get_comment_reply_list(
         db=db,
-        pagination_data=pagination_data,
+        pagination_data=pagination_data.model_dump(),
         filter_data=filter_data,
         current_user=current_user
     )
@@ -252,15 +252,15 @@ async def delete_comment_reply(
     response_model=schemas.CommentLikeListResponseSchema
 )
 async def get_comment_like_list(
-    pagination_data: pagination.PaginationDep,
     filter_data: rating.CommentReplyFilterDep,
+    pagination_data: PaginationSchema = Depends(PaginationSchema),
     db: AsyncSession = Depends(database.get_db),
     like_service: services.CommentLikeService = Depends(services.CommentLikeService),
     current_user: UserModel = Depends(authentication.get_current_user)
 ) -> dict:
     return await like_service.get_comment_like_list(
         db=db,
-        pagination_data=pagination_data,
+        pagination_data=pagination_data.model_dump(),
         filter_data=filter_data,
         current_user=current_user
     )
@@ -306,14 +306,14 @@ async def delete_comment_like(
     response_model=schemas.MovieRateListResponseSchema,
 )
 async def get_movie_rate_list(
-    pagination_data: pagination.PaginationDep,
     filter_data: rating.CommentFilterDep,
+    pagination_data: PaginationSchema = Depends(PaginationSchema),
     db: AsyncSession = Depends(database.get_db),
     rate_service: services.MovieRateService = Depends(services.MovieRateService),
     current_user: UserModel = Depends(authentication.get_current_user)
 ) -> dict:
     return await rate_service.get_movie_rate_list(
-        pagination_data=pagination_data,
+        pagination_data=pagination_data.model_dump(),
         filter_data=filter_data,
         db=db,
         current_user=current_user
@@ -396,10 +396,10 @@ async def delete_movie_rate(
     response_model=MovieListResponseSchema
 )
 async def get_favorite_movie_list(
-    pagination_data: pagination.PaginationDep,
     search_data: cinema.MovieSearchDep,
     filter_data: cinema.MovieFilterDep,
     sort_data: cinema.MovieSortDep,
+    pagination_data: PaginationSchema = Depends(PaginationSchema),
     db: AsyncSession = Depends(database.get_db),
     favorite_service: services.FavoriteMovieService = Depends(services.FavoriteMovieService),
     current_user: UserModel = Depends(authentication.get_current_user)
@@ -407,7 +407,7 @@ async def get_favorite_movie_list(
     return await favorite_service.get_favorite_movie_list(
         db=db,
         filter_data=filter_data,
-        pagination_data=pagination_data,
+        pagination_data=pagination_data.model_dump(),
         search_data=search_data,
         sort_data=sort_data,
         current_user=current_user

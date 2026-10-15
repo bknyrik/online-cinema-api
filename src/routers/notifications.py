@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.dependencies import database, authentication, pagination
+from src.dependencies import database, authentication
 from src.database.models.accounts import UserModel
 from src.services.notifications import NotificationService
 from src.schemas.notifications import NotificationListResponseSchema
+from src.schemas.pagination import PaginationSchema
 
 
 router = APIRouter()
@@ -15,14 +16,14 @@ router = APIRouter()
     response_model=NotificationListResponseSchema
 )
 async def get_notification_list(
-    pagination_data: pagination.PaginationDep,
+    pagination_data: PaginationSchema = Depends(PaginationSchema),
     db: AsyncSession = Depends(database.get_db),
     notification_service: NotificationService = Depends(NotificationService),
     current_user: UserModel = Depends(authentication.get_current_user),
 ) -> dict:
     return await notification_service.get_notification_list(
         db=db,
-        pagination_data=pagination_data,
+        pagination_data=pagination_data.model_dump(),
         current_user=current_user
     )
 
