@@ -303,7 +303,7 @@ async def delete_comment_like(
 
 @router.get(
     "/movie-rates/",
-    response_model=schemas.MovieRateDetailResponseSchema,
+    response_model=schemas.MovieRateListResponseSchema,
 )
 async def get_movie_rate_list(
     pagination_data: pagination.PaginationDep,
