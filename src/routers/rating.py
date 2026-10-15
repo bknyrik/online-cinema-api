@@ -356,7 +356,7 @@ async def create_movie_rate(
 
 
 @router.put(
-    "/movies-rates/{rate_id}/",
+    "/movie-rates/{rate_id}/",
     response_model=schemas.MovieRateDetailResponseSchema
 )
 async def update_movie_rate(
