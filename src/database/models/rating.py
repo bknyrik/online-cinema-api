@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import timezone
 
 from sqlalchemy import (
     Column,
@@ -7,7 +7,7 @@ from sqlalchemy import (
     Text,
     DateTime,
     UniqueConstraint,
-    Boolean
+    func
 )
 from sqlalchemy.orm import relationship
 
@@ -20,7 +20,7 @@ class MovieLikeModel(Base):
     id = Column(Integer, primary_key=True, index=True)
     created_at = Column(
         DateTime(timezone=True),
-        default=datetime.now(timezone.utc),
+        default=func.now(timezone.utc),
         nullable=False
     )
     movie_id = Column(
@@ -51,7 +51,7 @@ class MovieCommentModel(Base):
     id = Column(Integer, primary_key=True, index=True)
     created_at = Column(
         DateTime(timezone=True),
-        default=datetime.now(timezone.utc),
+        default=func.now(timezone.utc),
         nullable=False
     )
     movie_id = Column(
@@ -77,7 +77,7 @@ class CommentReplyModel(Base):
     id = Column(Integer, primary_key=True, index=True)
     created_at = Column(
         DateTime(timezone=True),
-        default=datetime.now(timezone.utc),
+        default=func.now(timezone.utc),
         nullable=False
     )
     comment_id = Column(
@@ -101,7 +101,7 @@ class CommentLikeModel(Base):
     id = Column(Integer, primary_key=True, index=True)
     created_at = Column(
         DateTime(timezone=True),
-        default=datetime.now(timezone.utc),
+        default=func.now(timezone.utc),
         nullable=False
     )
     comment_id = Column(
@@ -132,7 +132,7 @@ class MovieRateModel(Base):
     id = Column(Integer, primary_key=True, index=True)
     created_at = Column(
         DateTime(timezone=True),
-        default=datetime.now(timezone.utc),
+        default=func.now(timezone.utc),
         nullable=False
     )
     movie_id = Column(
@@ -164,7 +164,7 @@ class FavoriteMovieModel(Base):
     id = Column(Integer, primary_key=True, index=True)
     created_at = Column(
         DateTime(timezone=True),
-        default=datetime.now(timezone.utc),
+        default=func.now(timezone.utc),
         nullable=False
     )
     movie_id = Column(
