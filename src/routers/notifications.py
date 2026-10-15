@@ -28,7 +28,7 @@ async def get_notification_list(
 
 
 @router.delete(
-    "/{notification_id}/",
+    "/delete/{notification_id}/",
     status_code=status.HTTP_204_NO_CONTENT
 )
 async def delete_notification(
