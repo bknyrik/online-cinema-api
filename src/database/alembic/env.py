@@ -9,6 +9,10 @@ from alembic import context
 
 from src.database.config import SQLALCHEMY_DATABASE_URL
 from src.database.models.accounts import *
+from src.database.models.cinema import *
+from src.database.models.rating import *
+from src.database.models.notifications import *
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
@@ -51,6 +55,7 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        compare_server_default=True
     )
 
     with context.begin_transaction():

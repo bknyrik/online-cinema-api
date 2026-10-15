@@ -16,6 +16,7 @@ from sqlalchemy.orm import relationship
 from enum import StrEnum, auto
 
 from src.database.models.base import Base
+from src.database.models.rating import FavoriteMovieModel
 
 
 class UserGroupEnum(StrEnum):
@@ -73,7 +74,8 @@ class UserModel(Base):
     profile = relationship(
         "UserProfileModel",
         back_populates="user",
-        single_parent=True
+        single_parent=True,
+        uselist=False
     )
 
 
@@ -155,4 +157,28 @@ class UserProfileModel(Base):
         UserModel,
         back_populates="profile",
         single_parent=True
+    )
+    favorite_movies = relationship(
+        FavoriteMovieModel,
+        back_populates="profile"
+    )
+    movie_likes = relationship(
+        "MovieLikeModel",
+        back_populates="profile"
+    )
+    movie_comments = relationship(
+        "MovieCommentModel",
+        back_populates="profile"
+    )
+    comment_replies = relationship(
+        "CommentReplyModel",
+        back_populates="profile"
+    )
+    rates = relationship(
+        "MovieRateModel",
+        back_populates="profile"
+    )
+    comment_likes = relationship(
+        "CommentLikeModel",
+        back_populates="profile"
     )
