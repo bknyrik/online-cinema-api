@@ -832,14 +832,17 @@ class MovieRateService(
         try:
             self.has_profile(current_user)
 
+            data["profile_id"] = current_user.profile.id
+
             rate = await self.rate_repository.aget_by(
                 db=db,
-                expressions=[models.MovieRateModel.movie_id == data["movie_id"]]
+                expressions=[
+                    self.model_type.movie_id == data["movie_id"],
+                    self.model_type.profile_id == data["profile_id"]
+                ]
             )
 
             self.validate_item_by_attrs_exists(rate, data, "Movie rate")
-
-            data["profile_id"] = current_user.profile.id
 
             rate = await self.rate_repository.acreate(db, data)
 
