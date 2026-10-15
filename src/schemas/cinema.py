@@ -264,3 +264,16 @@ class MovieSearchSchema(BaseModel):
     search_by_description: str | None = Field(default=None)
     search_by_stars_ids: list[int] | None = Field(default=None)
     search_by_directors_ids: list[int] | None = Field(default=None)
+
+
+class MovieFilterSchema(BaseModel):
+    filter_by_certification_id: int | None = Field(default=None)
+    filter_by_genres_ids: list[int] | None = Field(default=None)
+    filter_by_min_year: int | None = Field(default=None)
+    filter_by_max_year: int | None = Field(default=None)
+    filter_by_min_time: int | None = Field(default=None)
+    filter_by_max_time: int | None = Field(default=None)
+    filter_by_min_imdb: int | None = Field(default=None)
+    filter_by_max_imdb: int | None = Field(default=None)
+    filter_by_min_price: int | None = Field(default=None)
+    filter_by_max_price: int | None = Field(default=None)
