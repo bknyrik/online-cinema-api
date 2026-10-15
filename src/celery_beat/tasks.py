@@ -1,7 +1,5 @@
 from celery import shared_task
-from sqlalchemy_celery_beat.models import PeriodicTask
 
-from src.settings import settings
 from src.database.models.accounts import ActivationTokenModel
 from src.database.config import SyncSessionLocal
 from src.repositories.accounts import TokenRepository
@@ -9,9 +7,6 @@ from src.repositories.celery_beat import (
     PeriodicTaskRepository,
     ClockedScheduleRepository
 )
-from src.database.models.rating import CommentLikeModel
-from src.repositories.rating import CommentLikeRepository
-from src.dependencies.services import get_sync_email_sender_service
 
 
 @shared_task
