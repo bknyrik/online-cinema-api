@@ -1,5 +1,3 @@
-from datetime import timezone
-
 from sqlalchemy import (
     Column,
     Integer,
@@ -20,7 +18,7 @@ class MovieLikeModel(Base):
     id = Column(Integer, primary_key=True, index=True)
     created_at = Column(
         DateTime(timezone=True),
-        server_default=func.now(timezone.utc),
+        server_default=func.now(),
         nullable=False
     )
     movie_id = Column(
@@ -51,7 +49,7 @@ class MovieCommentModel(Base):
     id = Column(Integer, primary_key=True, index=True)
     created_at = Column(
         DateTime(timezone=True),
-        server_default=func.now(timezone.utc),
+        server_default=func.now(),
         nullable=False
     )
     movie_id = Column(
@@ -77,7 +75,7 @@ class CommentReplyModel(Base):
     id = Column(Integer, primary_key=True, index=True)
     created_at = Column(
         DateTime(timezone=True),
-        server_default=func.now(timezone.utc),
+        server_default=func.now(),
         nullable=False
     )
     comment_id = Column(
@@ -101,7 +99,7 @@ class CommentLikeModel(Base):
     id = Column(Integer, primary_key=True, index=True)
     created_at = Column(
         DateTime(timezone=True),
-        server_default=func.now(timezone.utc),
+        server_default=func.now(),
         nullable=False
     )
     comment_id = Column(
@@ -132,7 +130,7 @@ class MovieRateModel(Base):
     id = Column(Integer, primary_key=True, index=True)
     created_at = Column(
         DateTime(timezone=True),
-        server_default=func.now(timezone.utc),
+        server_default=func.now(),
         nullable=False
     )
     movie_id = Column(
@@ -164,7 +162,7 @@ class FavoriteMovieModel(Base):
     id = Column(Integer, primary_key=True, index=True)
     created_at = Column(
         DateTime(timezone=True),
-        server_default=func.now(timezone.utc),
+        server_default=func.now(),
         nullable=False
     )
     movie_id = Column(
