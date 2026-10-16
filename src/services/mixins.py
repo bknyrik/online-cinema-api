@@ -211,6 +211,13 @@ class SearchItemsMixin:
 class FilterItemsMixin:
 
     @staticmethod
+    def get_filter_data(query_data: dict) -> dict:
+        return {
+            key: value for key, value in query_data.items()
+            if key.startswith("filter_by_")
+        }
+
+    @staticmethod
     def _get_min_max_filter_expressions(
         filter_data: dict,
         model_type: type[Base]
