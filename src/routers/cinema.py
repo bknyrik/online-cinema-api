@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.schemas import cinema as schemas
-from src.schemas.pagination import PaginationParams
+from src.schemas import pagination
 from src.dependencies import database, authentication
 from src.services import cinema as services
 from src.database.models import cinema as models
@@ -14,10 +14,10 @@ router = APIRouter()
 
 @router.get("/movies/", response_model=schemas.MovieListResponseSchema)
 async def get_movie_list(
+    pagination_data: pagination.PaginationQuery,
     search_data: schemas.MovieSearchSchema = Depends(schemas.MovieSearchSchema),
     filter_data: schemas.MovieFilterSchema = Depends(schemas.MovieSortingSchema),
     sort_data: schemas.MovieSortingSchema = Depends(schemas.MovieSortingSchema),
-    pagination_data: PaginationParams = Depends(PaginationParams),
     db: AsyncSession = Depends(database.get_db),
     movie_service: services.MovieService = Depends(services.MovieService)
 ) -> dict:
@@ -101,7 +101,7 @@ async def delete_movie(
     response_model=schemas.GenreListResponseSchema
 )
 async def get_genre_list(
-    pagination_data: PaginationParams = Depends(PaginationParams),
+    pagination_data: pagination.PaginationQuery,
     db: AsyncSession = Depends(database.get_db),
     genre_service: services.GenreService = Depends(services.GenreService),
 ) -> dict:
@@ -182,7 +182,7 @@ async def delete_genre(
     response_model=schemas.CertificationListResponseSchema
 )
 async def get_certification_list(
-    pagination_data: PaginationParams = Depends(PaginationParams),
+    pagination_data: pagination.PaginationQuery = Depends(pagination.PaginationQuery),
     db: AsyncSession = Depends(database.get_db),
     certification_service: services.CertificationService = Depends(services.CertificationService),
 ) -> dict:
@@ -260,7 +260,7 @@ async def delete_certification(
 
 @router.get("/directors/", response_model=schemas.DirectorListResponseSchema)
 async def get_director_list(
-    pagination_data: PaginationParams = Depends(PaginationParams),
+    pagination_data: pagination.PaginationQuery = Depends(pagination.PaginationQuery),
     db: AsyncSession = Depends(database.get_db),
     director_service: services.DirectorService = Depends(services.DirectorService)
 ) -> dict:
@@ -341,7 +341,7 @@ async def delete_director(
     response_model=schemas.StarListResponseSchema
 )
 async def get_star_list(
-    pagination_data: PaginationParams = Depends(PaginationParams),
+    pagination_data: pagination.PaginationQuery = Depends(pagination.PaginationQuery),
     db: AsyncSession = Depends(database.get_db),
     star_service: services.StarService = Depends(services.StarService),
 ) -> dict:
