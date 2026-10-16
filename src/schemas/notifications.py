@@ -1,5 +1,7 @@
+from typing import Annotated
 from datetime import datetime
 
+from fastapi import Query
 from pydantic import BaseModel, ConfigDict
 
 
@@ -23,3 +25,6 @@ class NotificationListResponseSchema(BaseModel):
 class NotificationFilterParams(BaseModel):
     user_id: int | None = None
     is_read: bool | None = None
+
+
+NotificationFilterQuery = Annotated[NotificationFilterParams, Query()]
