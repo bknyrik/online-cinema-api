@@ -182,7 +182,7 @@ async def delete_genre(
     response_model=schemas.CertificationListResponseSchema
 )
 async def get_certification_list(
-    pagination_data: pagination.PaginationQuery = Depends(pagination.PaginationQuery),
+    pagination_data: pagination.PaginationQuery,
     db: AsyncSession = Depends(database.get_db),
     certification_service: services.CertificationService = Depends(services.CertificationService),
 ) -> dict:
@@ -260,7 +260,7 @@ async def delete_certification(
 
 @router.get("/directors/", response_model=schemas.DirectorListResponseSchema)
 async def get_director_list(
-    pagination_data: pagination.PaginationQuery = Depends(pagination.PaginationQuery),
+    pagination_data: pagination.PaginationQuery,
     db: AsyncSession = Depends(database.get_db),
     director_service: services.DirectorService = Depends(services.DirectorService)
 ) -> dict:
@@ -341,7 +341,7 @@ async def delete_director(
     response_model=schemas.StarListResponseSchema
 )
 async def get_star_list(
-    pagination_data: pagination.PaginationQuery = Depends(pagination.PaginationQuery),
+    pagination_data: pagination.PaginationQuery,
     db: AsyncSession = Depends(database.get_db),
     star_service: services.StarService = Depends(services.StarService),
 ) -> dict:
