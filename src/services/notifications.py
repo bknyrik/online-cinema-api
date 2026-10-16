@@ -26,6 +26,12 @@ class NotificationService(
         current_user: UserModel
     ) -> dict:
         try:
+            self.is_admin_or_moderator_to_use_query(
+                current_user=current_user,
+                query_params=query_data,
+                query_names=("filter_by_user_id",)
+            )
+
             pagination_data, filter_data = (
                 self.get_pagination_data(query_data),
                 self.get_filter_data(query_data)
