@@ -23,8 +23,8 @@ class NotificationListResponseSchema(BaseModel):
 
 
 class NotificationFilterParams(BaseModel):
-    user_id: int | None = None
-    is_read: bool | None = None
+    filter_by_user_id: int | None = None
+    filter_by_is_read: bool | None = None
 
 
 NotificationFilterQuery = Annotated[NotificationFilterParams, Query()]
