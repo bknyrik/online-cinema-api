@@ -149,6 +149,6 @@ class FavoriteMovieCreateRequestSchema(BaseModel):
     model_config = ConfigDict(strict=True)
 
 
-class MovieLikeFilterSchema(BaseModel):
+class MovieLikeListParams(BaseModel):
     filter_by_profile_id: int | None = None
     filter_by_movie_id: int | None = None
