@@ -28,6 +28,7 @@ async def get_notification_list(
     return await notification_service.get_notification_list(
         db=db,
         pagination_data=pagination_data.model_dump(),
+        filter_data=filter_data.model_dump(),
         current_user=current_user
     )
 

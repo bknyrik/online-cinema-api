@@ -23,10 +23,17 @@ class NotificationService(
         self,
         db: AsyncSession,
         pagination_data: dict,
+        filter_data: dict,
         current_user: UserModel
     ) -> dict:
         try:
-            expressions = [self.model_type.user_id == current_user.id]
+            expressions = self.get_filter_expressions(filter_data)
+
+            if current_user.group.name not in ("admin", "moderator"):
+                expressions.append(
+                    self.model_type.user_id == current_user.id
+                )
+
             limit, offset = self.get_limit_offset(pagination_data)
             total_notifications = await self.notification_repository.acount(
                 db=db,
