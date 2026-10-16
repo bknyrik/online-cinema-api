@@ -335,3 +335,22 @@ class UserPermissionsMixin:
                     "and you are not admin / moderator to perform this action"
                 )
             )
+
+    @staticmethod
+    def is_admin_or_moderator_to_use_query(
+        current_user: UserModel,
+        query_params: dict,
+        query_names: tuple[str, ...]
+    ) -> None:
+        for name in query_names:
+            if (
+                query_params[name] is not None
+                and current_user.group.name not in ("admin", "moderator")
+            ):
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail=(
+                        "User is not an admin/moderator "
+                        f"to use query params: {', '.join(query_names)}"
+                    )
+                )
