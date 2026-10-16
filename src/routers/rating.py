@@ -9,7 +9,7 @@ from src.dependencies import (
 from src.services import rating as services
 from src.schemas import rating as rating_schemas
 from src.schemas import cinema as cinema_schemas
-from src.schemas.pagination import PaginationSchema
+from src.schemas.pagination import PaginationParams
 from src.database.models.accounts import UserModel
 from src.database.models import rating as models
 
@@ -20,7 +20,7 @@ router = APIRouter()
 @router.get("/movie-likes/", response_model=rating_schemas.MovieLikeListResponseSchema)
 async def get_movie_like_list(
     filter_data: rating_schemas.MovieLikeFilterSchema = Depends(rating_schemas.MovieLikeFilterSchema),
-    pagination_data: PaginationSchema = Depends(PaginationSchema),
+    pagination_data: PaginationParams = Depends(PaginationParams),
     db: AsyncSession = Depends(database.get_db),
     like_service: services.MovieLikeService = Depends(services.MovieLikeService),
     current_user: UserModel = Depends(authentication.get_current_user)
@@ -74,7 +74,7 @@ async def delete_movie_like(
 )
 async def get_movie_comment_list(
     filter_data: rating.CommentFilterDep,
-    pagination_data: PaginationSchema = Depends(PaginationSchema),
+    pagination_data: PaginationParams = Depends(PaginationParams),
     db: AsyncSession = Depends(database.get_db),
     comment_service: services.MovieCommentService = Depends(services.MovieCommentService),
     current_user: UserModel = Depends(authentication.get_current_user),
@@ -164,7 +164,7 @@ async def delete_movie_comment(
 )
 async def get_comment_reply_list(
     filter_data: rating.CommentReplyFilterDep,
-    pagination_data: PaginationSchema = Depends(PaginationSchema),
+    pagination_data: PaginationParams = Depends(PaginationParams),
     db: AsyncSession = Depends(database.get_db),
     reply_service: services.CommentReplyService = Depends(services.CommentReplyService),
     current_user: UserModel = Depends(authentication.get_current_user)
@@ -254,7 +254,7 @@ async def delete_comment_reply(
 )
 async def get_comment_like_list(
     filter_data: rating.CommentReplyFilterDep,
-    pagination_data: PaginationSchema = Depends(PaginationSchema),
+    pagination_data: PaginationParams = Depends(PaginationParams),
     db: AsyncSession = Depends(database.get_db),
     like_service: services.CommentLikeService = Depends(services.CommentLikeService),
     current_user: UserModel = Depends(authentication.get_current_user)
@@ -308,7 +308,7 @@ async def delete_comment_like(
 )
 async def get_movie_rate_list(
     filter_data: rating.CommentFilterDep,
-    pagination_data: PaginationSchema = Depends(PaginationSchema),
+    pagination_data: PaginationParams = Depends(PaginationParams),
     db: AsyncSession = Depends(database.get_db),
     rate_service: services.MovieRateService = Depends(services.MovieRateService),
     current_user: UserModel = Depends(authentication.get_current_user)
@@ -400,7 +400,7 @@ async def get_favorite_movie_list(
     search_data: cinema_schemas.MovieSearchSchema = Depends(cinema_schemas.MovieSearchSchema),
     filter_data: cinema_schemas.MovieFilterSchema = Depends(cinema_schemas.MovieFilterSchema),
     sort_data: cinema_schemas.MovieListResponseSchema = Depends(cinema_schemas.MovieSortingSchema),
-    pagination_data: PaginationSchema = Depends(PaginationSchema),
+    pagination_data: PaginationParams = Depends(PaginationParams),
     db: AsyncSession = Depends(database.get_db),
     favorite_service: services.FavoriteMovieService = Depends(services.FavoriteMovieService),
     current_user: UserModel = Depends(authentication.get_current_user)

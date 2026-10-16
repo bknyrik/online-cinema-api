@@ -5,7 +5,7 @@ from src.dependencies import database, authentication
 from src.database.models.accounts import UserModel
 from src.services.notifications import NotificationService
 from src.schemas.notifications import NotificationListResponseSchema
-from src.schemas.pagination import PaginationSchema
+from src.schemas.pagination import PaginationParams
 
 
 router = APIRouter()
@@ -16,7 +16,7 @@ router = APIRouter()
     response_model=NotificationListResponseSchema
 )
 async def get_notification_list(
-    pagination_data: PaginationSchema = Depends(PaginationSchema),
+    pagination_data: PaginationParams = Depends(PaginationParams),
     db: AsyncSession = Depends(database.get_db),
     notification_service: NotificationService = Depends(NotificationService),
     current_user: UserModel = Depends(authentication.get_current_user),
