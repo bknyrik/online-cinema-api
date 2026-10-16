@@ -144,6 +144,13 @@ class ModelItemsMixin:
 
 class SortingItemsMixin:
 
+    @staticmethod
+    def get_sort_data(query_data: dict) -> dict:
+        return {
+            key: value for key, value in query_data.items()
+            if key.startswith("sort_by_")
+        }
+
     def get_sort_columns(
         self,
         sort_data: dict,
