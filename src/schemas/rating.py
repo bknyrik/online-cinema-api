@@ -150,5 +150,5 @@ class FavoriteMovieCreateRequestSchema(BaseModel):
 
 
 class MovieLikeFilterSchema(BaseModel):
-    profile_id: int | None = None
-    movie_id: int | None = None
+    filter_by_profile_id: int | None = None
+    filter_by_movie_id: int | None = None

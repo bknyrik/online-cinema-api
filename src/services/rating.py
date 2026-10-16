@@ -32,7 +32,7 @@ class MovieLikeService(
             self.is_admin_or_moderator_to_use_query(
                 current_user=current_user,
                 query_params=filter_data,
-                query_names=("movie_id", "profile_id")
+                query_names=("filter_by_movie_id", "filter_by_profile_id")
             )
 
             self.has_profile(current_user)
