@@ -163,16 +163,10 @@ class AsyncBaseRepository[T]:
         db: AsyncSession,
         expressions: list[ColumnElement[bool]]
     ) -> T | None:
-        instance = await self.aget_by(
-            db=db,
-            expressions=expressions
+        await db.execute(
+            delete(self._model_type)
+            .where(*expressions)
         )
-
-        if not instance:
-            return None
-
-        await self.adelete(db, instance)
-        return instance
 
     @staticmethod
     async def adelete(db: AsyncSession, instance: T) -> None:
