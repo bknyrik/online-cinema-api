@@ -2,7 +2,7 @@ from typing import Annotated
 from datetime import datetime
 
 from fastapi import Query
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class NotificationDetailSchema(BaseModel):
@@ -28,3 +28,15 @@ class NotificationFilterParams(BaseModel):
 
 
 NotificationFilterQuery = Annotated[NotificationFilterParams, Query()]
+
+
+class NotificationListParams(BaseModel):
+    page: int = Field(default=1, ge=1)
+    per_page: int = Field(default=10, ge=1)
+    filter_by_user_id: int | None = None
+    filter_by_is_read: bool | None = None
+
+    model_config = ConfigDict(extra="forbid")
+
+
+NotificationListQuery = Annotated[NotificationListParams, Query()]
