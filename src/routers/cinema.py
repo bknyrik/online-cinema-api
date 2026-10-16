@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.schemas import cinema as schemas
 from src.schemas.pagination import PaginationSchema
-from src.dependencies import database, authentication, cinema
+from src.dependencies import database, authentication
 from src.services import cinema as services
 from src.database.models import cinema as models
 from src.database.models.accounts import UserModel
@@ -14,7 +14,7 @@ router = APIRouter()
 
 @router.get("/movies/", response_model=schemas.MovieListResponseSchema)
 async def get_movie_list(
-    search_data: cinema.MovieSearchDep,
+    search_data: schemas.MovieSearchSchema = Depends(schemas.MovieSearchSchema),
     filter_data: schemas.MovieFilterSchema = Depends(schemas.MovieSortingSchema),
     sort_data: schemas.MovieSortingSchema = Depends(schemas.MovieSortingSchema),
     pagination_data: PaginationSchema = Depends(PaginationSchema),
@@ -25,7 +25,7 @@ async def get_movie_list(
         db=db,
         pagination_data=pagination_data.model_dump(),
         filter_data=filter_data.model_dump(),
-        search_data=search_data,
+        search_data=search_data.model_dump(),
         sort_data=sort_data.model_dump()
     )
 
