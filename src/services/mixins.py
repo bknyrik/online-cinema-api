@@ -17,6 +17,13 @@ class SortingOrderEnum(StrEnum):
 class PaginationLimitOffsetMixin:
 
     @staticmethod
+    def get_pagination_data(query_params: dict) -> dict:
+        return {
+            key: value for key, value in query_params.items()
+            if key in ("page", "per_page")
+        }
+
+    @staticmethod
     def get_limit_offset(pagination_data: dict[str, int]) -> tuple[int, int]:
         return (
             pagination_data["per_page"],
