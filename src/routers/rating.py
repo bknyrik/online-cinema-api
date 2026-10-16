@@ -7,13 +7,8 @@ from src.dependencies import (
     rating,
 )
 from src.services import rating as services
-from src.schemas import rating as schemas
-from src.schemas.cinema import (
-    MovieListResponseSchema,
-    MovieSortingSchema,
-    MovieFilterSchema,
-    MovieSearchSchema
-)
+from src.schemas import rating as rating_schemas
+from src.schemas import cinema as cinema_schemas
 from src.schemas.pagination import PaginationSchema
 from src.database.models.accounts import UserModel
 from src.database.models import rating as models
@@ -22,7 +17,7 @@ from src.database.models import rating as models
 router = APIRouter()
 
 
-@router.get("/movie-likes/", response_model=schemas.MovieLikeListResponseSchema)
+@router.get("/movie-likes/", response_model=rating_schemas.MovieLikeListResponseSchema)
 async def get_movie_like_list(
     pagination_data: PaginationSchema = Depends(PaginationSchema),
     db: AsyncSession = Depends(database.get_db),
@@ -39,10 +34,10 @@ async def get_movie_like_list(
 @router.post(
     "/movie-likes/",
     status_code=status.HTTP_201_CREATED,
-    response_model=schemas.MovieLikeDetailResponseSchema
+    response_model=rating_schemas.MovieLikeDetailResponseSchema
 )
 async def create_movie_like(
-    data: schemas.MovieLikeDataRequestSchema,
+    data: rating_schemas.MovieLikeDataRequestSchema,
     db: AsyncSession = Depends(database.get_db),
     like_service: services.MovieLikeService = Depends(services.MovieLikeService),
     current_user: UserModel = Depends(authentication.get_current_user)
@@ -73,7 +68,7 @@ async def delete_movie_like(
 
 @router.get(
     "/movie-comments/",
-    response_model=schemas.MovieCommentListResponseSchema
+    response_model=rating_schemas.MovieCommentListResponseSchema
 )
 async def get_movie_comment_list(
     filter_data: rating.CommentFilterDep,
@@ -92,7 +87,7 @@ async def get_movie_comment_list(
 
 @router.get(
     "/movie-comments/{comment_id}/",
-    response_model=schemas.MovieCommentDetailResponseSchema
+    response_model=rating_schemas.MovieCommentDetailResponseSchema
 )
 async def get_movie_comment_detail(
     comment_id: int,
@@ -110,10 +105,10 @@ async def get_movie_comment_detail(
 @router.post(
     "/movie-comments/",
     status_code=status.HTTP_201_CREATED,
-    response_model=schemas.MovieCommentDetailResponseSchema,
+    response_model=rating_schemas.MovieCommentDetailResponseSchema,
 )
 async def create_movie_comment(
-    data: schemas.MovieCommentCreateRequestSchema,
+    data: rating_schemas.MovieCommentCreateRequestSchema,
     db: AsyncSession = Depends(database.get_db),
     current_user: UserModel = Depends(authentication.get_current_user),
     comment_service: services.MovieCommentService = Depends(services.MovieCommentService)
@@ -127,11 +122,11 @@ async def create_movie_comment(
 
 @router.put(
     "/movie-comments/{comment_id}/",
-    response_model=schemas.MovieCommentDetailResponseSchema
+    response_model=rating_schemas.MovieCommentDetailResponseSchema
 )
 async def update_movie_comment(
     comment_id: int,
-    data: schemas.MovieCommentUpdateRequestSchema,
+    data: rating_schemas.MovieCommentUpdateRequestSchema,
     db: AsyncSession = Depends(database.get_db),
     comment_service: services.MovieCommentService = Depends(services.MovieCommentService),
     current_user: UserModel = Depends(authentication.get_current_user),
@@ -163,7 +158,7 @@ async def delete_movie_comment(
 
 @router.get(
     "/comment-replies/",
-    response_model=schemas.CommentReplyListResponseSchema
+    response_model=rating_schemas.CommentReplyListResponseSchema
 )
 async def get_comment_reply_list(
     filter_data: rating.CommentReplyFilterDep,
@@ -182,7 +177,7 @@ async def get_comment_reply_list(
 
 @router.get(
     "/comment-replies/{reply_id}/",
-    response_model=schemas.CommentReplyDetailResponseSchema
+    response_model=rating_schemas.CommentReplyDetailResponseSchema
 )
 async def get_comment_reply_detail(
     reply_id: int,
@@ -200,10 +195,10 @@ async def get_comment_reply_detail(
 @router.post(
     "/comment-replies/",
     status_code=status.HTTP_201_CREATED,
-    response_model=schemas.CommentReplyDetailResponseSchema
+    response_model=rating_schemas.CommentReplyDetailResponseSchema
 )
 async def create_comment_reply(
-    data: schemas.CommentReplyCreateRequestSchema,
+    data: rating_schemas.CommentReplyCreateRequestSchema,
     db: AsyncSession = Depends(database.get_db),
     reply_service: services.CommentReplyService = Depends(services.CommentReplyService),
     current_user: UserModel = Depends(authentication.get_current_user)
@@ -217,11 +212,11 @@ async def create_comment_reply(
 
 @router.put(
     "/comment-replies/{reply_id}/",
-    response_model=schemas.CommentReplyDetailResponseSchema
+    response_model=rating_schemas.CommentReplyDetailResponseSchema
 )
 async def update_comment_reply(
     reply_id: int,
-    data: schemas.CommentReplyUpdateRequestSchema,
+    data: rating_schemas.CommentReplyUpdateRequestSchema,
     db: AsyncSession = Depends(database.get_db),
     reply_service: services.CommentReplyService = Depends(services.CommentReplyService),
     current_user: UserModel = Depends(authentication.get_current_user)
@@ -253,7 +248,7 @@ async def delete_comment_reply(
 
 @router.get(
     "/comment-likes/",
-    response_model=schemas.CommentLikeListResponseSchema
+    response_model=rating_schemas.CommentLikeListResponseSchema
 )
 async def get_comment_like_list(
     filter_data: rating.CommentReplyFilterDep,
@@ -273,10 +268,10 @@ async def get_comment_like_list(
 @router.post(
     "/comment-likes/",
     status_code=status.HTTP_201_CREATED,
-    response_model=schemas.CommentLikeDetailResponseSchema
+    response_model=rating_schemas.CommentLikeDetailResponseSchema
 )
 async def create_comment_like(
-    data: schemas.CommentLikeCreateRequestSchema,
+    data: rating_schemas.CommentLikeCreateRequestSchema,
     db: AsyncSession = Depends(database.get_db),
     like_service: services.CommentLikeService = Depends(services.CommentLikeService),
     current_user: UserModel = Depends(authentication.get_current_user)
@@ -307,7 +302,7 @@ async def delete_comment_like(
 
 @router.get(
     "/movie-rates/",
-    response_model=schemas.MovieRateListResponseSchema,
+    response_model=rating_schemas.MovieRateListResponseSchema,
 )
 async def get_movie_rate_list(
     filter_data: rating.CommentFilterDep,
@@ -326,7 +321,7 @@ async def get_movie_rate_list(
 
 @router.get(
     "/movie-rates/{rate_id}/",
-    response_model=schemas.MovieRateDetailResponseSchema,
+    response_model=rating_schemas.MovieRateDetailResponseSchema,
 )
 async def get_movie_rate_detail(
     rate_id: int,
@@ -344,10 +339,10 @@ async def get_movie_rate_detail(
 @router.post(
     "/movie-rates/",
     status_code=status.HTTP_201_CREATED,
-    response_model=schemas.MovieRateDetailResponseSchema
+    response_model=rating_schemas.MovieRateDetailResponseSchema
 )
 async def create_movie_rate(
-    data: schemas.MovieRateCreateRequestSchema,
+    data: rating_schemas.MovieRateCreateRequestSchema,
     db: AsyncSession = Depends(database.get_db),
     rate_service: services.MovieRateService = Depends(services.MovieRateService),
     current_user: UserModel = Depends(authentication.get_current_user)
@@ -361,11 +356,11 @@ async def create_movie_rate(
 
 @router.put(
     "/movie-rates/{rate_id}/",
-    response_model=schemas.MovieRateDetailResponseSchema
+    response_model=rating_schemas.MovieRateDetailResponseSchema
 )
 async def update_movie_rate(
     rate_id: int,
-    data: schemas.MovieRateUpdateRequestSchema,
+    data: rating_schemas.MovieRateUpdateRequestSchema,
     db: AsyncSession = Depends(database.get_db),
     rate_service: services.MovieRateService = Depends(services.MovieRateService),
     current_user: UserModel = Depends(authentication.get_current_user)
@@ -397,12 +392,12 @@ async def delete_movie_rate(
 
 @router.get(
     "/movie-favorites/",
-    response_model=MovieListResponseSchema
+    response_model=cinema_schemas.MovieListResponseSchema
 )
 async def get_favorite_movie_list(
-    search_data: MovieSearchSchema = Depends(MovieSearchSchema),
-    filter_data: MovieFilterSchema = Depends(MovieFilterSchema),
-    sort_data: MovieListResponseSchema = Depends(MovieSortingSchema),
+    search_data: cinema_schemas.MovieSearchSchema = Depends(cinema_schemas.MovieSearchSchema),
+    filter_data: cinema_schemas.MovieFilterSchema = Depends(cinema_schemas.MovieFilterSchema),
+    sort_data: cinema_schemas.MovieListResponseSchema = Depends(cinema_schemas.MovieSortingSchema),
     pagination_data: PaginationSchema = Depends(PaginationSchema),
     db: AsyncSession = Depends(database.get_db),
     favorite_service: services.FavoriteMovieService = Depends(services.FavoriteMovieService),
@@ -421,10 +416,10 @@ async def get_favorite_movie_list(
 @router.post(
     "/movie-favorites/",
     status_code=status.HTTP_201_CREATED,
-    response_model=schemas.FavoriteMovieDetailResponseSchema
+    response_model=rating_schemas.FavoriteMovieDetailResponseSchema
 )
 async def add_movie_to_favorites(
-    data: schemas.FavoriteMovieCreateRequestSchema,
+    data: rating_schemas.FavoriteMovieCreateRequestSchema,
     db: AsyncSession = Depends(database.get_db),
     favorite_service: services.FavoriteMovieService = Depends(services.FavoriteMovieService),
     current_user: UserModel = Depends(authentication.get_current_user)
