@@ -23,11 +23,18 @@ class MovieLikeService(
 
     async def get_movie_like_list(
         self,
+        filter_data: dict,
         pagination_data: dict,
         db: AsyncSession,
         current_user: UserModel
     ) -> dict:
         try:
+            self.is_admin_or_moderator_to_use_query(
+                current_user=current_user,
+                query_params=filter_data,
+                query_names=("movie_id", "profile_id")
+            )
+
             self.has_profile(current_user)
 
             expressions = [

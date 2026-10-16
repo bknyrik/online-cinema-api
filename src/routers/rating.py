@@ -27,6 +27,7 @@ async def get_movie_like_list(
 ) -> dict:
     return await like_service.get_movie_like_list(
         db=db,
+        filter_data=filter_data.model_dump(),
         pagination_data=pagination_data.model_dump(),
         current_user=current_user
     )
