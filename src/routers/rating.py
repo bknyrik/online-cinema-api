@@ -11,7 +11,8 @@ from src.services import rating as services
 from src.schemas import rating as schemas
 from src.schemas.cinema import (
     MovieListResponseSchema,
-    MovieSortingSchema
+    MovieSortingSchema,
+    MovieFilterSchema
 )
 from src.schemas.pagination import PaginationSchema
 from src.database.models.accounts import UserModel
@@ -400,7 +401,7 @@ async def delete_movie_rate(
 )
 async def get_favorite_movie_list(
     search_data: cinema.MovieSearchDep,
-    filter_data: cinema.MovieFilterDep,
+    filter_data: MovieFilterSchema = Depends(MovieFilterSchema),
     sort_data: MovieListResponseSchema = Depends(MovieSortingSchema),
     pagination_data: PaginationSchema = Depends(PaginationSchema),
     db: AsyncSession = Depends(database.get_db),
@@ -409,7 +410,7 @@ async def get_favorite_movie_list(
 ) -> dict:
     return await favorite_service.get_favorite_movie_list(
         db=db,
-        filter_data=filter_data,
+        filter_data=filter_data.model_dump(),
         pagination_data=pagination_data.model_dump(),
         search_data=search_data,
         sort_data=sort_data.model_dump(),
