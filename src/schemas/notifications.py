@@ -4,6 +4,8 @@ from datetime import datetime
 from fastapi import Query
 from pydantic import BaseModel, ConfigDict, Field
 
+from src.schemas.pagination import PaginationParams
+
 
 class NotificationDetailSchema(BaseModel):
     id: int
@@ -22,9 +24,7 @@ class NotificationListResponseSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class NotificationListParams(BaseModel):
-    page: int = Field(default=1, ge=1)
-    per_page: int = Field(default=10, ge=1)
+class NotificationListParams(PaginationParams):
     filter_by_user_id: int | None = None
     filter_by_is_read: bool | None = None
 
