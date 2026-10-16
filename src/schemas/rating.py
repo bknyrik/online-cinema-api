@@ -2,6 +2,8 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from src.schemas.pagination import PaginationParams
+
 
 class MovieLikeDetailResponseSchema(BaseModel):
     id: int
@@ -149,6 +151,6 @@ class FavoriteMovieCreateRequestSchema(BaseModel):
     model_config = ConfigDict(strict=True)
 
 
-class MovieLikeListParams(BaseModel):
+class MovieLikeListParams(PaginationParams):
     filter_by_profile_id: int | None = None
     filter_by_movie_id: int | None = None
