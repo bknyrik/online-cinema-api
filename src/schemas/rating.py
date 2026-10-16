@@ -1,5 +1,7 @@
+from typing import Annotated
 from datetime import datetime
 
+from fastapi import Query
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.schemas.pagination import PaginationParams
@@ -156,3 +158,6 @@ class MovieLikeListParams(PaginationParams):
     filter_by_movie_id: int | None = None
 
     model_config = ConfigDict(extra="forbid")
+
+
+MovieLikeListQuery = Annotated[MovieLikeListParams, Query()]
