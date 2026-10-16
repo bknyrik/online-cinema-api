@@ -18,3 +18,8 @@ class NotificationListResponseSchema(BaseModel):
     next: str | None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class NotificationFilterParams(BaseModel):
+    user_id: int | None = None
+    is_read: bool | None = None
