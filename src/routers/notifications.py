@@ -26,8 +26,7 @@ async def get_notification_list(
 ) -> dict:
     return await notification_service.get_notification_list(
         db=db,
-        pagination_data={},
-        filter_data={},
+        query_data=notification_query.model_dump(),
         current_user=current_user
     )
 

@@ -22,11 +22,15 @@ class NotificationService(
     async def get_notification_list(
         self,
         db: AsyncSession,
-        pagination_data: dict,
-        filter_data: dict,
+        query_data: dict,
         current_user: UserModel
     ) -> dict:
         try:
+            pagination_data, filter_data = (
+                self.get_pagination_data(query_data),
+                self.get_filter_data(query_data)
+            )
+
             expressions = self.get_filter_expressions(filter_data)
 
             if current_user.group.name not in ("admin", "moderator"):
