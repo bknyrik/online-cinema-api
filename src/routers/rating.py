@@ -78,8 +78,7 @@ async def get_movie_comment_list(
 ) -> dict:
     return await comment_service.get_movie_comment_list(
         db=db,
-        pagination_data={},
-        filter_data={},
+        query_params=query_params.model_dump(),
         current_user=current_user
     )
 
