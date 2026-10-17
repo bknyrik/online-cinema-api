@@ -200,6 +200,12 @@ class MovieCommentService(
         try:
             self.has_profile_or_is_admin_or_moderator(current_user)
 
+            self.is_admin_or_moderator_to_use_query(
+                current_user=current_user,
+                query_params=query_params,
+                query_names=("filter_by_profile_id",)
+            )
+
             pagination_data, filter_data, sort_data, search_data = (
                 self.get_pagination_data(query_params),
                 self.get_filter_data(query_params),
