@@ -19,16 +19,15 @@ router = APIRouter()
 
 @router.get("/movie-likes/", response_model=rating_schemas.MovieLikeListResponseSchema)
 async def get_movie_like_list(
-    pagination_data: pagination.PaginationQuery,
-    filter_data: rating_schemas.MovieLikeListParams,
+    query_params: rating_schemas.MovieLikeListQuery,
     db: AsyncSession = Depends(database.get_db),
     like_service: services.MovieLikeService = Depends(services.MovieLikeService),
     current_user: UserModel = Depends(authentication.get_current_user)
 ) -> dict:
     return await like_service.get_movie_like_list(
         db=db,
-        filter_data=filter_data.model_dump(),
-        pagination_data=pagination_data.model_dump(),
+        filter_data={},
+        pagination_data={},
         current_user=current_user
     )
 
