@@ -254,8 +254,7 @@ async def get_comment_like_list(
 ) -> dict:
     return await like_service.get_comment_like_list(
         db=db,
-        pagination_data={},
-        filter_data={},
+        query_params=query_params.model_dump(),
         current_user=current_user
     )
 
