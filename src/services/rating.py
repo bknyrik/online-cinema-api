@@ -623,6 +623,7 @@ class CommentLikeService(
     mixins.ModelItemsMixin,
     mixins.FilterItemsMixin,
     mixins.SearchItemsMixin,
+    mixins.SortingItemsMixin,
     mixins.UserPermissionsMixin
 ):
 
