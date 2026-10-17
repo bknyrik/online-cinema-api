@@ -206,7 +206,7 @@ class MovieCommentService(
             limit, offset = self.get_limit_offset(pagination_data)
 
             filter_expressions = self.get_filter_expressions(filter_data)
-            sort_columns = self.get_sort_columns(sort_data)
+            sort_columns = self.get_sort_columns(sort_data, [self.model_type.id])
 
             if current_user.group.name not in ("admin", "moderator"):
                 filter_expressions.append(
@@ -233,11 +233,7 @@ class MovieCommentService(
                 limit=limit,
                 offset=offset,
                 expressions=filter_expressions,
-                order_by_columns=(
-                    sort_columns
-                    if any(value is not None for value in sort_data.values())
-                    else [self.model_type.id]
-                )
+                order_by_columns=sort_columns
             )
 
             prev_page, next_page = self.get_prev_next_urls_pages(
