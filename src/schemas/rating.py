@@ -180,6 +180,15 @@ class CommentReplyListParams(PaginationParams):
     model_config = ConfigDict(extra="forbid")
 
 
+class CommentLikeListParams(PaginationParams):
+    filter_by_profile_id: int | None = None
+    filter_by_comment_id: int | None = None
+    sort_by_created_at: SortingOrderEnum | None = None
+
+    model_config = ConfigDict(extra="forbid")
+
+
 MovieLikeListQuery = Annotated[MovieLikeListParams, Query()]
 MovieCommentListQuery = Annotated[MovieCommentListParams, Query()]
 CommentReplyListQuery = Annotated[CommentReplyListParams, Query()]
+CommentLikeListQuery = Annotated[CommentLikeListParams, Query()]
