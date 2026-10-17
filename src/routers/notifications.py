@@ -19,14 +19,14 @@ router = APIRouter()
     response_model=NotificationListResponseSchema
 )
 async def get_notification_list(
-    notification_query: NotificationListQuery,
+    query_params: NotificationListQuery,
     db: AsyncSession = Depends(database.get_db),
     notification_service: NotificationService = Depends(NotificationService),
     current_user: UserModel = Depends(authentication.get_current_user),
 ) -> dict:
     return await notification_service.get_notification_list(
         db=db,
-        query_data=notification_query.model_dump(),
+        query_data=query_params.model_dump(),
         current_user=current_user
     )
 
