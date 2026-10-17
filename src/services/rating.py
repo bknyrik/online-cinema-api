@@ -14,7 +14,8 @@ from src.database.models.accounts import UserModel
 class MovieLikeService(
     mixins.PaginationLimitOffsetMixin,
     mixins.ModelItemsMixin,
-    mixins.UserPermissionsMixin
+    mixins.UserPermissionsMixin,
+    mixins.FilterItemsMixin
 ):
     def __init__(self) -> None:
         self.model_type = models.MovieLikeModel
