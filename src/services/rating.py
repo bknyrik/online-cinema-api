@@ -393,7 +393,8 @@ class CommentReplyService(
     mixins.PaginationLimitOffsetMixin,
     mixins.ModelItemsMixin,
     mixins.UserPermissionsMixin,
-    mixins.FilterItemsMixin
+    mixins.FilterItemsMixin,
+    mixins.SortingItemsMixin
 ):
 
     def __init__(self) -> None:
