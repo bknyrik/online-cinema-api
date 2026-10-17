@@ -154,6 +154,7 @@ class SortingItemsMixin:
     def get_sort_columns(
         self,
         sort_data: dict,
+        default_data: list[InstrumentedAttribute | UnaryExpression] | None = None
     ) -> list[InstrumentedAttribute | UnaryExpression]:
         sort_data = {
             key.replace("sort_by_", ""): value
@@ -168,7 +169,10 @@ class SortingItemsMixin:
                     column if order == SortingOrderEnum.ASC else column.desc()
                 )
 
-        return sort_columns
+        return (
+            default_data if not sort_columns and default_data is not None
+            else sort_columns
+        )
 
 
 class SearchItemsMixin:
