@@ -431,6 +431,12 @@ class CommentReplyService(
                 per_page=pagination_data["per_page"]
             )
 
+            self.validate_page_not_found(
+                page=pagination_data["page"],
+                total_pages=total_pages,
+                total_items=total_replies,
+            )
+
             replies = await self.reply_repository.aget_all(
                 db=db,
                 expressions=filter_expressions,
