@@ -62,6 +62,12 @@ class MovieLikeService(
                 per_page=pagination_data["per_page"]
             )
 
+            self.validate_page_not_found(
+                page=pagination_data["page"],
+                total_pages=total_pages,
+                total_items=total_likes
+            )
+
             likes = await self.like_repository.aget_all(
                 db=db,
                 limit=limit,
