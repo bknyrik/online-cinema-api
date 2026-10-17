@@ -247,16 +247,15 @@ async def delete_comment_reply(
     response_model=rating_schemas.CommentLikeListResponseSchema
 )
 async def get_comment_like_list(
-    filter_data: rating.CommentReplyFilterDep,
-    pagination_data: pagination.PaginationQuery,
+    query_params: rating_schemas.CommentLikeListQuery,
     db: AsyncSession = Depends(database.get_db),
     like_service: services.CommentLikeService = Depends(services.CommentLikeService),
     current_user: UserModel = Depends(authentication.get_current_user)
 ) -> dict:
     return await like_service.get_comment_like_list(
         db=db,
-        pagination_data=pagination_data.model_dump(),
-        filter_data=filter_data,
+        pagination_data={},
+        filter_data={},
         current_user=current_user
     )
 
