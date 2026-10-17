@@ -200,15 +200,17 @@ class MovieCommentService(
         try:
             self.has_profile_or_is_admin_or_moderator(current_user)
 
-            pagination_data, filter_data, sort_data = (
+            pagination_data, filter_data, sort_data, search_data = (
                 self.get_pagination_data(query_params),
                 self.get_filter_data(query_params),
-                self.get_sort_data(query_params)
+                self.get_sort_data(query_params),
+                self.get_search_data(query_params)
             )
 
             limit, offset = self.get_limit_offset(pagination_data)
 
             filter_expressions = self.get_filter_expressions(filter_data)
+            search_expressions = self.get_search_expressions(search_data)
             sort_columns = self.get_sort_columns(sort_data, [self.model_type.id])
 
             if current_user.group.name not in ("admin", "moderator"):
@@ -216,9 +218,11 @@ class MovieCommentService(
                     self.model_type.profile_id == current_user.profile.id
                 )
 
+            expressions = filter_expressions + search_expressions
+
             total_comments = await self.comment_repository.acount(
                 db=db,
-                expressions=filter_expressions
+                expressions=expressions
             )
             total_pages = self.get_total_pages(
                 total_items=total_comments,
@@ -235,7 +239,7 @@ class MovieCommentService(
                 db=db,
                 limit=limit,
                 offset=offset,
-                expressions=filter_expressions,
+                expressions=expressions,
                 order_by_columns=sort_columns
             )
 
