@@ -159,16 +159,15 @@ async def delete_movie_comment(
     response_model=rating_schemas.CommentReplyListResponseSchema
 )
 async def get_comment_reply_list(
-    filter_data: rating.CommentReplyFilterDep,
-    pagination_data: pagination.PaginationQuery,
+    query_params: rating_schemas.CommentReplyListQuery,
     db: AsyncSession = Depends(database.get_db),
     reply_service: services.CommentReplyService = Depends(services.CommentReplyService),
     current_user: UserModel = Depends(authentication.get_current_user)
 ) -> dict:
     return await reply_service.get_comment_reply_list(
         db=db,
-        pagination_data=pagination_data.model_dump(),
-        filter_data=filter_data,
+        pagination_data={},
+        filter_data={},
         current_user=current_user
     )
 
