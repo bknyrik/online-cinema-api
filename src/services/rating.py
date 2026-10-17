@@ -244,10 +244,7 @@ class MovieCommentService(
                 url="/api/rating/movie-comments/",
                 page=pagination_data["page"],
                 total_pages=total_pages,
-                query_params={
-                    **pagination_data,
-                    **filter_data
-                }
+                query_params=query_params
             )
 
             return {
