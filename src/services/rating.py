@@ -110,6 +110,8 @@ class MovieLikeService(
 
             self.validate_item_by_id_not_found(movie, data["movie_id"], "Movie")
 
+            data["profile_id"] = current_user.profile.id
+
             like = await self.like_repository.aget_by(
                 db=db,
                 expressions=[
@@ -123,8 +125,6 @@ class MovieLikeService(
                 attrs=data,
                 item_type="Movie like"
             )
-
-            data["profile_id"] = current_user.profile.id
 
             like = await self.like_repository.acreate(
                 db=db,
