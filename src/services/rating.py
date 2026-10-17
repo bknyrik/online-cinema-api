@@ -30,9 +30,10 @@ class MovieLikeService(
         current_user: UserModel
     ) -> dict:
         try:
-            pagination_data, filter_data = (
+            pagination_data, filter_data, sort_data = (
                 self.get_pagination_data(query_params),
-                self.get_filter_data(query_params)
+                self.get_filter_data(query_params),
+                self.get_sort_data(query_params)
             )
 
             self.is_admin_or_moderator_to_use_query(
@@ -43,13 +44,18 @@ class MovieLikeService(
 
             self.has_profile(current_user)
 
-            expressions = [
-                self.model_type.profile_id == current_user.profile.id
-            ]
+            filter_expressions = self.get_filter_expressions(filter_data)
+            sort_columns = self.get_sort_columns(sort_data)
+
+            if current_user.group.name not in ("admin", "moderator"):
+                filter_expressions.append(
+                    self.model_type.user_id == current_user.id
+                )
+
             limit, offset = self.get_limit_offset(pagination_data)
             total_likes = await self.like_repository.acount(
                 db=db,
-                expressions=expressions
+                expressions=filter_expressions
             )
             total_pages = self.get_total_pages(
                 total_items=total_likes,
@@ -60,9 +66,14 @@ class MovieLikeService(
                 db=db,
                 limit=limit,
                 offset=offset,
-                expressions=expressions,
-                order_by_columns=[self.model_type.id]
+                expressions=filter_expressions,
+                order_by_columns=(
+                    sort_columns
+                    if any(value is not None for value in sort_data.values())
+                    else [self.model_type.id]
+                )
             )
+
             prev_page, next_page = self.get_prev_next_urls_pages(
                 url="/api/rating/movie-likes/",
                 page=pagination_data["page"],
