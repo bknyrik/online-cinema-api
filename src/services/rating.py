@@ -622,6 +622,7 @@ class CommentLikeService(
     mixins.PaginationLimitOffsetMixin,
     mixins.ModelItemsMixin,
     mixins.FilterItemsMixin,
+    mixins.SearchItemsMixin,
     mixins.UserPermissionsMixin
 ):
 
