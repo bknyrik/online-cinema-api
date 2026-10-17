@@ -211,9 +211,9 @@ class SearchItemsMixin:
 class FilterItemsMixin:
 
     @staticmethod
-    def get_filter_data(query_data: dict) -> dict:
+    def get_filter_data(query_params: dict) -> dict:
         return {
-            key: value for key, value in query_data.items()
+            key: value for key, value in query_params.items()
             if key.startswith("filter_by_")
         }
 
