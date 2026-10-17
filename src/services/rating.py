@@ -182,7 +182,8 @@ class MovieCommentService(
     mixins.ModelItemsMixin,
     mixins.UserPermissionsMixin,
     mixins.FilterItemsMixin,
-    mixins.SortingItemsMixin
+    mixins.SortingItemsMixin,
+    mixins.SearchItemsMixin
 ):
 
     def __init__(self) -> None:
