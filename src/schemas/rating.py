@@ -188,7 +188,18 @@ class CommentLikeListParams(PaginationParams):
     model_config = ConfigDict(extra="forbid")
 
 
+class MovieRateListParams(PaginationParams):
+    filter_by_min_scale: int | None = None
+    filter_by_max_scale: int | None = None
+    filter_by_profile_id: int | None = None
+    filter_by_movie_id: int | None = None
+    sort_by_created_at: SortingOrderEnum | None = None
+
+    model_config = ConfigDict(extra="forbid")
+
+
 MovieLikeListQuery = Annotated[MovieLikeListParams, Query()]
 MovieCommentListQuery = Annotated[MovieCommentListParams, Query()]
 CommentReplyListQuery = Annotated[CommentReplyListParams, Query()]
 CommentLikeListQuery = Annotated[CommentLikeListParams, Query()]
+MovieRateListQuery = Annotated[MovieRateListParams, Query()]
