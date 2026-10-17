@@ -174,9 +174,9 @@ class SortingItemsMixin:
 class SearchItemsMixin:
 
     @staticmethod
-    def get_search_data(query_data: dict) -> dict:
+    def get_search_data(query_params: dict) -> dict:
         return {
-            key: value for key, value in query_data.items()
+            key: value for key, value in query_params.items()
             if key.startswith("search_by_")
         }
 
