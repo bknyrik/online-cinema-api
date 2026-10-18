@@ -335,12 +335,12 @@ async def delete_director(
     response_model=schemas.StarListResponseSchema
 )
 async def get_star_list(
-    pagination_data: pagination.PaginationQuery,
+    query_params: pagination.PaginationQuery,
     db: AsyncSession = Depends(database.get_db),
     star_service: services.StarService = Depends(services.StarService),
 ) -> dict:
     return await star_service.get_star_list(
-        pagination_data=pagination_data.model_dump(),
+        pagination_data=query_params.model_dump(),
         db=db
     )
 
