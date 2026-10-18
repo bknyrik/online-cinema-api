@@ -20,10 +20,7 @@ async def get_movie_list(
 ) -> dict:
     return await movie_service.get_movie_list(
         db=db,
-        pagination_data={},
-        filter_data={},
-        search_data={},
-        sort_data={}
+        query_params=query_params.model_dump()
     )
 
 
