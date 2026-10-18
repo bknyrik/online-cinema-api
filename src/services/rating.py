@@ -1009,19 +1009,24 @@ class FavoriteMovieService(
 
     async def get_favorite_movie_list(
         self,
-        filter_data: dict,
-        search_data: dict,
-        sort_data: dict,
-        pagination_data: dict,
+        query_params: dict,
         db: AsyncSession,
         current_user: UserModel
     ) -> dict:
         try:
             self.has_profile(current_user)
+
+            pagination_data, filter_data, search_data, sort_data = (
+                self.get_pagination_data(query_params),
+                self.get_filter_data(query_params),
+                self.get_search_data(query_params),
+                self.get_sort_data(query_params)
+            )
+
             limit, offset = self.get_limit_offset(pagination_data)
 
             filter_expressions = self.get_filter_expressions(filter_data)
-            sorting_expressions = self.get_sort_columns(sort_data)
+            sorting_expressions = self.get_sort_columns(sort_data, [self.model_type.id])
             search_expressions = self.get_search_expressions(search_data)
             expressions = filter_expressions + search_expressions
 
@@ -1046,23 +1051,14 @@ class FavoriteMovieService(
                     "stars",
                     "directors"
                 ],
-                order_by_columns=(
-                    sorting_expressions
-                    if any(value is not None for value in sort_data.values())
-                    else [self.model_type.id]
-                )
+                order_by_columns=sorting_expressions
             )
 
             prev_page, next_page = self.get_prev_next_urls_pages(
                 url="/api/rating/movie-favorites/",
                 page=pagination_data["page"],
                 total_pages=total_pages,
-                query_params={
-                    **pagination_data,
-                    **filter_data,
-                    **search_data,
-                    **sort_data
-                }
+                query_params=query_params
             )
             return {
                 "movies": movies,

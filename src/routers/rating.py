@@ -394,10 +394,7 @@ async def get_favorite_movie_list(
 ) -> dict:
     return await favorite_service.get_favorite_movie_list(
         db=db,
-        filter_data={},
-        pagination_data={},
-        search_data={},
-        sort_data={},
+        query_params=query_params.model_dump(),
         current_user=current_user
     )
 
