@@ -808,6 +808,7 @@ class MovieRateService(
     mixins.PaginationLimitOffsetMixin,
     mixins.ModelItemsMixin,
     mixins.FilterItemsMixin,
+    mixins.SortingItemsMixin,
     mixins.UserPermissionsMixin
 ):
 
