@@ -260,7 +260,7 @@ async def get_director_list(
 ) -> dict:
     return await director_service.get_director_list(
         db=db,
-        pagination_data=query_params.model_dump()
+        query_params=query_params.model_dump()
     )
 
 
