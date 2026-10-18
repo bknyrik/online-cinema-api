@@ -305,8 +305,7 @@ async def get_movie_rate_list(
     current_user: UserModel = Depends(authentication.get_current_user)
 ) -> dict:
     return await rate_service.get_movie_rate_list(
-        pagination_data={},
-        filter_data={},
+        query_params=query_params.model_dump(),
         db=db,
         current_user=current_user
     )

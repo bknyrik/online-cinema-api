@@ -819,14 +819,26 @@ class MovieRateService(
 
     async def get_movie_rate_list(
         self,
-        pagination_data: dict,
-        filter_data: dict,
+        query_params: dict,
         db: AsyncSession,
         current_user: UserModel
     ) -> dict:
         try:
+            self.is_admin_or_moderator_to_use_query(
+                current_user=current_user,
+                query_params=query_params,
+                query_names=("filter_by_profile_id", "filter_by_movie_id")
+            )
+
+            pagination_data, filter_data, sort_data = (
+                self.get_pagination_data(query_params),
+                self.get_filter_data(query_params),
+                self.get_sort_data(query_params)
+            )
+
             limit, offset = self.get_limit_offset(pagination_data)
             filter_expressions = self.get_filter_expressions(filter_data)
+            sort_columns = self.get_sort_columns(sort_data, [self.model_type.id])
 
             if current_user.group.name == "user":
                 filter_expressions.append(
@@ -847,17 +859,14 @@ class MovieRateService(
                 expressions=filter_expressions,
                 limit=limit,
                 offset=offset,
-                order_by_columns=[self.model_type.id]
+                order_by_columns=sort_columns
             )
 
             prev_page, next_page = self.get_prev_next_urls_pages(
                 "/api/rating/movie-rates/",
                 page=pagination_data["page"],
                 total_pages=total_pages,
-                query_params={
-                    **pagination_data,
-                    **filter_data
-                }
+                query_params=query_params
             )
 
             return {
