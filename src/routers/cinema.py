@@ -176,12 +176,12 @@ async def delete_genre(
     response_model=schemas.CertificationListResponseSchema
 )
 async def get_certification_list(
-    pagination_data: pagination.PaginationQuery,
+    query_params: pagination.PaginationQuery,
     db: AsyncSession = Depends(database.get_db),
     certification_service: services.CertificationService = Depends(services.CertificationService),
 ) -> dict:
     return await certification_service.get_certification_list(
-        pagination_data=pagination_data.model_dump(),
+        pagination_data=query_params.model_dump(),
         db=db
     )
 
