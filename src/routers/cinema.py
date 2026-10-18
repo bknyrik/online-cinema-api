@@ -95,13 +95,13 @@ async def delete_movie(
     response_model=schemas.GenreListResponseSchema
 )
 async def get_genre_list(
-    pagination_data: pagination.PaginationQuery,
+    query_params: pagination.PaginationQuery,
     db: AsyncSession = Depends(database.get_db),
     genre_service: services.GenreService = Depends(services.GenreService),
 ) -> dict:
     return await genre_service.get_genre_list(
         db=db,
-        pagination_data=pagination_data.model_dump()
+        pagination_data=query_params.model_dump()
     )
 
 
