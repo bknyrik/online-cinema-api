@@ -299,15 +299,14 @@ async def delete_comment_like(
     response_model=rating_schemas.MovieRateListResponseSchema,
 )
 async def get_movie_rate_list(
-    filter_data: rating.CommentFilterDep,
-    pagination_data: pagination.PaginationQuery,
+    query_params: rating_schemas.MovieRateListQuery,
     db: AsyncSession = Depends(database.get_db),
     rate_service: services.MovieRateService = Depends(services.MovieRateService),
     current_user: UserModel = Depends(authentication.get_current_user)
 ) -> dict:
     return await rate_service.get_movie_rate_list(
-        pagination_data=pagination_data.model_dump(),
-        filter_data=filter_data,
+        pagination_data={},
+        filter_data={},
         db=db,
         current_user=current_user
     )
