@@ -14,19 +14,16 @@ router = APIRouter()
 
 @router.get("/movies/", response_model=schemas.MovieListResponseSchema)
 async def get_movie_list(
-    pagination_data: pagination.PaginationQuery,
-    search_data: schemas.MovieSearchSchema = Depends(schemas.MovieSearchSchema),
-    filter_data: schemas.MovieFilterSchema = Depends(schemas.MovieSortingSchema),
-    sort_data: schemas.MovieSortingSchema = Depends(schemas.MovieSortingSchema),
+    query_params: schemas.MovieListQuery,
     db: AsyncSession = Depends(database.get_db),
     movie_service: services.MovieService = Depends(services.MovieService)
 ) -> dict:
     return await movie_service.get_movie_list(
         db=db,
-        pagination_data=pagination_data.model_dump(),
-        filter_data=filter_data.model_dump(),
-        search_data=search_data.model_dump(),
-        sort_data=sort_data.model_dump()
+        pagination_data={},
+        filter_data={},
+        search_data={},
+        sort_data={}
     )
 
 
