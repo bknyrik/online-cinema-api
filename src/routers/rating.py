@@ -387,20 +387,17 @@ async def delete_movie_rate(
     response_model=cinema_schemas.MovieListResponseSchema
 )
 async def get_favorite_movie_list(
-    pagination_data: pagination.PaginationQuery,
-    search_data: cinema_schemas.MovieSearchSchema = Depends(cinema_schemas.MovieSearchSchema),
-    filter_data: cinema_schemas.MovieFilterSchema = Depends(cinema_schemas.MovieFilterSchema),
-    sort_data: cinema_schemas.MovieListResponseSchema = Depends(cinema_schemas.MovieSortingSchema),
+    query_params: cinema_schemas.MovieListQuery,
     db: AsyncSession = Depends(database.get_db),
     favorite_service: services.FavoriteMovieService = Depends(services.FavoriteMovieService),
     current_user: UserModel = Depends(authentication.get_current_user)
 ) -> dict:
     return await favorite_service.get_favorite_movie_list(
         db=db,
-        filter_data=filter_data.model_dump(),
-        pagination_data=pagination_data.model_dump(),
-        search_data=search_data.model_dump(),
-        sort_data=sort_data.model_dump(),
+        filter_data={},
+        pagination_data={},
+        search_data={},
+        sort_data={},
         current_user=current_user
     )
 
