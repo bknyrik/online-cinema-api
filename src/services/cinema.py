@@ -312,10 +312,12 @@ class CertificationService(
 
     async def get_certification_list(
         self,
-        pagination_data: dict,
+        query_params: dict,
         db: AsyncSession
     ) -> dict:
         try:
+            pagination_data = self.get_pagination_data(query_params)
+
             limit, offset = self.get_limit_offset(pagination_data)
             total_certifications = await self.certification_repository.acount(db)
             total_pages = self.get_total_pages(
@@ -340,7 +342,7 @@ class CertificationService(
                 "/api/cinema/certifications/",
                 page=pagination_data["page"],
                 total_pages=total_pages,
-                query_params=pagination_data
+                query_params=query_params
             )
 
             return {

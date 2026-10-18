@@ -181,7 +181,7 @@ async def get_certification_list(
     certification_service: services.CertificationService = Depends(services.CertificationService),
 ) -> dict:
     return await certification_service.get_certification_list(
-        pagination_data=query_params.model_dump(),
+        query_params=query_params.model_dump(),
         db=db
     )
 
