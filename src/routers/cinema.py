@@ -101,7 +101,7 @@ async def get_genre_list(
 ) -> dict:
     return await genre_service.get_genre_list(
         db=db,
-        pagination_data=query_params.model_dump()
+        query_params=query_params.model_dump()
     )
 
 

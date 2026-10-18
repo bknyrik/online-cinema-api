@@ -493,10 +493,12 @@ class GenreService(
 
     async def get_genre_list(
         self,
-        pagination_data: dict,
+        query_params: dict,
         db: AsyncSession
     ) -> dict:
         try:
+            pagination_data = self.get_pagination_data(query_params)
+
             total_genres = await self.genre_repository.acount(db)
             total_pages = self.get_total_pages(
                 total_items=total_genres,
@@ -522,7 +524,7 @@ class GenreService(
                 "/api/cinema/genres/",
                 page=pagination_data["page"],
                 total_pages=total_pages,
-                query_params=pagination_data
+                query_params=query_params
             )
             return {
                 "genres": genres,
