@@ -254,13 +254,13 @@ async def delete_certification(
 
 @router.get("/directors/", response_model=schemas.DirectorListResponseSchema)
 async def get_director_list(
-    pagination_data: pagination.PaginationQuery,
+    query_params: pagination.PaginationQuery,
     db: AsyncSession = Depends(database.get_db),
     director_service: services.DirectorService = Depends(services.DirectorService)
 ) -> dict:
     return await director_service.get_director_list(
         db=db,
-        pagination_data=pagination_data.model_dump()
+        pagination_data=query_params.model_dump()
     )
 
 
