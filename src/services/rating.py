@@ -1039,6 +1039,12 @@ class FavoriteMovieService(
                 per_page=pagination_data["per_page"]
             )
 
+            self.validate_page_not_found(
+                page=pagination_data["page"],
+                total_pages=total_pages,
+                total_items=total_movies
+            )
+
             movies = await self.movie_repository.aget_all_by_profile_favorites(
                 db=db,
                 profile_id=current_user.profile.id,
