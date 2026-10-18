@@ -340,7 +340,7 @@ async def get_star_list(
     star_service: services.StarService = Depends(services.StarService),
 ) -> dict:
     return await star_service.get_star_list(
-        pagination_data=query_params.model_dump(),
+        query_params=query_params.model_dump(),
         db=db
     )
 
