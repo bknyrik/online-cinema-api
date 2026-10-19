@@ -1,0 +1,281 @@
+from typing import Annotated
+from decimal import Decimal
+
+from fastapi import Query
+from pydantic import (
+    BaseModel,
+    UUID4,
+    ConfigDict,
+    field_validator,
+    field_serializer,
+    Field
+)
+
+from src.schemas.pagination import PaginationParams
+from src.services.mixins import SortingOrderEnum
+
+
+class DirectorDetailResponseSchema(BaseModel):
+    id: int
+    name: str
+
+
+class DirectorListResponseSchema(BaseModel):
+    directors: list[DirectorDetailResponseSchema]
+    total_directors: int
+    total_pages: int
+    prev: str | None
+    next: str | None
+
+
+class DirectorDataRequestSchema(BaseModel):
+    name: str = Field(min_length=5, strict=True)
+
+
+class StarDetailResponseSchema(BaseModel):
+    id: int
+    name: str
+
+
+class StarListResponseSchema(BaseModel):
+    stars: list[StarDetailResponseSchema]
+    total_stars: int
+    total_pages: int
+    prev: str | None
+    next: str | None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class StarDataRequestSchema(BaseModel):
+    name: str = Field(min_length=3, strict=True)
+
+
+
+class GenreDetailResponseSchema(BaseModel):
+    id: int
+    name: str
+
+
+class GenreListItemSchema(GenreDetailResponseSchema):
+    movies: int
+
+
+class GenreListResponseSchema(BaseModel):
+    genres: list[GenreListItemSchema]
+    total_genres: int
+    total_pages: int
+    prev: str | None
+    next: str | None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class GenreDetailMoviesSchema(BaseModel):
+    id: int
+    name: str
+    year: int
+    time: int
+    imdb: float
+    description: str
+
+
+class GenreMoviesDetailResponseSchema(GenreDetailResponseSchema):
+    movies: list[GenreDetailMoviesSchema]
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class GenreDataRequestSchema(BaseModel):
+    name: str = Field(min_length=5, strict=True)
+
+
+class CertificationDetailResponseSchema(BaseModel):
+    id: int
+    name: str
+
+
+class CertificationListResponseSchema(BaseModel):
+    certifications: list[CertificationDetailResponseSchema]
+    total_certifications: int
+    total_pages: int
+    prev: str | None
+    next: str | None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class CertificationDataRequestSchema(BaseModel):
+    name: str = Field(min_length=1, strict=True)
+
+
+class MovieDetailBaseSchema(BaseModel):
+    id: int
+    uuid: UUID4
+    name: str
+    year: int
+    time: int
+    imdb: float
+    votes: int
+    meta_score: float
+    gross: float
+    description: str
+    price: float
+
+
+class MovieDetailItemSchema(MovieDetailBaseSchema):
+    certification: CertificationDetailResponseSchema
+    genres: list[GenreDetailResponseSchema]
+    stars: list[StarDetailResponseSchema]
+    directors: list[DirectorDetailResponseSchema]
+
+    @field_serializer("certification", when_used="json")
+    def serialize_into_str_name(
+        self,
+        item: CertificationDetailResponseSchema
+    ) -> str:
+        return item.name
+
+    @field_serializer(
+        "genres",
+        "stars",
+        "directors",
+        when_used="json"
+    )
+    def serialize_into_str_names(
+        self,
+        items: list[
+            GenreDetailResponseSchema
+            | StarDetailResponseSchema
+            | DirectorDetailResponseSchema
+            ]
+    ) -> list[str]:
+        return [item.name for item in items]
+
+
+class MovieListResponseSchema(BaseModel):
+    movies: list[MovieDetailItemSchema]
+    total_movies: int
+    total_pages: int
+    next: str | None
+    prev: str | None
+
+
+class MovieDetailResponseSchema(MovieDetailBaseSchema):
+    certification: CertificationDetailResponseSchema
+    genres: list[GenreDetailResponseSchema]
+    stars: list[StarDetailResponseSchema]
+    directors: list[DirectorDetailResponseSchema]
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class MovieDataRequestSchema(BaseModel):
+    name: str = Field(min_length=3)
+    year: int = Field(ge=1)
+    time: int = Field(ge=1)
+    imdb: float = Field(ge=1, le=10)
+    votes: int = Field(ge=1)
+    meta_score: float = Field(ge=1, le=100)
+    gross: float = Field(ge=1)
+    description: str = Field(min_length=10)
+    price: Decimal = Field(max_digits=10, decimal_places=2, strict=False)
+    certification: int
+    genres: list[int]
+    stars: list[int]
+    directors: list[int]
+
+    @field_validator("genres", "stars", "directors", mode="before")
+    @classmethod
+    def validate_unique_identifiers(cls, value: list[int]) -> list[int]:
+        if len(value) != len(set(value)):
+            raise ValueError("Identifiers must be unique")
+
+        return value
+
+    model_config = ConfigDict(strict=True)
+
+
+class MovieUpdateRequestSchema(MovieDataRequestSchema):
+    name: str | None = Field(
+        min_length=3,
+        default=None,
+    )
+    year: int | None = Field(
+        ge=1,
+        default=None,
+    )
+    time: int | None = Field(
+        ge=1,
+        default=None,
+    )
+    imdb: float | None = Field(
+        ge=1,
+        le=10,
+        default=None,
+    )
+    votes: int | None = Field(
+        ge=1,
+        default=None,
+    )
+    meta_score: int | None = Field(
+        ge=1,
+        le=100,
+        default=None,
+    )
+    gross: float | None = Field(
+        ge=1,
+        default=None,
+    )
+    description: str | None = Field(
+        min_length=10,
+        default=None,
+    )
+    price: Decimal | None = Field(
+        ge=1,
+        max_digits=10,
+        decimal_places=2,
+        default=None,
+    )
+    certification: int | None = Field(
+        default=None,
+    )
+    genres: list[int] | None = Field(
+        default=None,
+    )
+    stars: list[int] | None = Field(
+        default=None,
+    )
+    directors: list[int] | None = Field(
+        default=None,
+    )
+
+
+class MovieListParams(PaginationParams):
+    sort_by_name: SortingOrderEnum | None = Field(default=None)
+    sort_by_year: SortingOrderEnum | None = Field(default=None)
+    sort_by_time: SortingOrderEnum | None = Field(default=None)
+    sort_by_imdb: SortingOrderEnum | None = Field(default=None)
+    sort_by_votes: SortingOrderEnum | None = Field(default=None)
+    sort_by_meta_score: SortingOrderEnum | None = Field(default=None)
+    sort_by_gross: SortingOrderEnum | None = Field(default=None)
+    sort_by_price: SortingOrderEnum | None = Field(default=None)
+    search_by_name: str | None = Field(default=None)
+    search_by_description: str | None = Field(default=None)
+    search_by_stars_ids: list[int] | None = Field(default=None)
+    search_by_directors_ids: list[int] | None = Field(default=None)
+    filter_by_certification_id: int | None = Field(default=None)
+    filter_by_genres_ids: list[int] | None = Field(default=None)
+    filter_by_min_year: int | None = Field(default=None)
+    filter_by_max_year: int | None = Field(default=None)
+    filter_by_min_time: int | None = Field(default=None)
+    filter_by_max_time: int | None = Field(default=None)
+    filter_by_min_imdb: int | None = Field(default=None)
+    filter_by_max_imdb: int | None = Field(default=None)
+    filter_by_min_price: int | None = Field(default=None)
+    filter_by_max_price: int | None = Field(default=None)
+
+    model_config = ConfigDict(extra="forbid")
+
+
+MovieListQuery = Annotated[MovieListParams, Query()]

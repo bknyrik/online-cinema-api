@@ -1,6 +1,12 @@
 from fastapi import FastAPI
 
-from src.routers import accounts, profiles
+from src.routers import (
+    accounts,
+    profiles,
+    cinema,
+    rating,
+    notifications
+)
 
 
 app = FastAPI(
@@ -20,4 +26,19 @@ app.include_router(
     profiles.router,
     prefix=f"{api_prefix}/profiles",
     tags=["profiles",]
+)
+app.include_router(
+    cinema.router,
+    prefix=f"{api_prefix}/cinema",
+    tags=["cinema"]
+)
+app.include_router(
+    rating.router,
+    prefix=f"{api_prefix}/rating",
+    tags=["rating"]
+)
+app.include_router(
+    notifications.router,
+    prefix=f"{api_prefix}/notifications",
+    tags=["notifications"]
 )
