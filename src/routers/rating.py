@@ -4,12 +4,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.dependencies import (
     database,
     authentication,
-    rating,
 )
 from src.services import rating as services
 from src.schemas import rating as rating_schemas
 from src.schemas import cinema as cinema_schemas
-from src.schemas import pagination
 from src.database.models.accounts import UserModel
 from src.database.models import rating as models
 
