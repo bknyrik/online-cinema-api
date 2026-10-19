@@ -351,7 +351,7 @@ class UserPermissionsMixin:
     @staticmethod
     def belongs_to_profile_or_is_admin_or_moderator(
         current_user: UserModel,
-        child_object: type[Base],
+        child_object: Base,
         child_object_type: str
     ) -> None:
 
