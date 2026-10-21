@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 from boto3.exceptions import Boto3Error
 
-from src.database.models.accounts import UserModel, UserProfileModel
+from src.database.models import accounts as models
 from src.repositories.accounts import UserProfileRepository
 from src.services.s3 import S3Service
 
@@ -11,14 +11,14 @@ from src.services.s3 import S3Service
 class UserProfileService:
 
     def __init__(self, profile_repository: UserProfileRepository) -> None:
-        self.model_type = UserProfileModel
+        self.model_type = models.UserProfileModel
         self.profile_repository = profile_repository
 
     async def get_current_user_profile(
         self,
         db: AsyncSession,
         s3_service: S3Service,
-        current_user: UserModel
+        current_user: models.UserModel
     ) -> dict:
         try:
             profile = await self.profile_repository.aget_by_user_id(
@@ -51,7 +51,7 @@ class UserProfileService:
         self,
         db: AsyncSession,
         s3_service: S3Service,
-        current_user: UserModel,
+        current_user: models.UserModel,
         data: dict
     ) -> dict:
         try:
@@ -99,7 +99,7 @@ class UserProfileService:
         self,
         db: AsyncSession,
         data: dict,
-        current_user: UserModel,
+        current_user: models.UserModel,
         s3_service: S3Service
     ) -> dict:
         try:
@@ -153,7 +153,7 @@ class UserProfileService:
         self,
         db: AsyncSession,
         s3_service: S3Service,
-        current_user: UserModel
+        current_user: models.UserModel
     ) -> None:
         try:
             profile = await self.profile_repository.aget_by_user_id(
