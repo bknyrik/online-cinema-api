@@ -20,27 +20,32 @@ class UserProfileService:
         s3_service: S3Service,
         current_user: UserModel
     ) -> dict:
-
-        profile = await self.profile_repository.aget_by_user_id(
-            db=db,
-            user_id=current_user.id
-        )
-
-        if not profile:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Profile not found"
+        try:
+            profile = await self.profile_repository.aget_by_user_id(
+                db=db,
+                user_id=current_user.id
             )
 
-        return {
-            "id": profile.id,
-            "first_name": profile.first_name,
-            "last_name": profile.last_name,
-            "gender": profile.gender,
-            "date_of_birth": profile.date_of_birth,
-            "avatar": f"{s3_service.root_image_url}{profile.avatar}",
-            "info": profile.info
-        }
+            if not profile:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Profile not found"
+                )
+
+            return {
+                "id": profile.id,
+                "first_name": profile.first_name,
+                "last_name": profile.last_name,
+                "gender": profile.gender,
+                "date_of_birth": profile.date_of_birth,
+                "avatar": f"{s3_service.root_image_url}{profile.avatar}",
+                "info": profile.info
+            }
+        except SQLAlchemyError:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while getting current user profile"
+            )
 
     async def create_user_profile(
         self,
