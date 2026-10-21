@@ -176,19 +176,3 @@ class UserProfileRepository(AsyncBaseRepository[UserProfileModel]):
 
         await self.aupdate(db, instance, data)
         return instance
-
-    async def adelete_by_user_id(
-        self,
-        db: AsyncSession,
-        user_id: int
-    ) -> UserProfileModel | None:
-        instance = await self.aget_by_user_id(
-            db=db,
-            user_id=user_id
-        )
-
-        if not instance:
-            return None
-
-        await db.delete(instance)
-        return instance
