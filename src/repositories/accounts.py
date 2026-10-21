@@ -159,20 +159,3 @@ class UserProfileRepository(AsyncBaseRepository[UserProfileModel]):
             .where(self._model_type.user_id == user_id)
         )
         return result.scalar_one_or_none()
-
-    async def aupdate_by_user_id(
-        self,
-        db: AsyncSession,
-        user_id: int,
-        data: dict
-    ) -> UserProfileModel | None:
-        instance = await self.aget_by_user_id(
-            db=db,
-            user_id=user_id
-        )
-
-        if not instance:
-            return None
-
-        await self.aupdate(db, instance, data)
-        return instance
