@@ -4,7 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from boto3.exceptions import Boto3Error
 
 from src.database.models.accounts import UserModel
-from src.repositories.profiles import UserProfileRepository
+from src.repositories.accounts import UserProfileRepository
 from src.services.s3 import S3Service
 
 

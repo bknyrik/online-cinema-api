@@ -11,7 +11,7 @@ from src.repositories.accounts import (
     TokenRepository,
     UserGroupRepository
 )
-from src.repositories.profiles import UserProfileRepository
+from src.repositories.accounts import UserProfileRepository
 from src.database.models import accounts
 
 
