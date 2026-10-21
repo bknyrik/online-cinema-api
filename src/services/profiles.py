@@ -14,7 +14,7 @@ class UserProfileService:
         self.model_type = UserProfileModel
         self.profile_repository = profile_repository
 
-    async def read_current_user_profile(
+    async def get_current_user_profile(
         self,
         db: AsyncSession,
         s3_service: S3Service,
