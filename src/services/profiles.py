@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 from boto3.exceptions import Boto3Error
 
-from src.database.models.accounts import UserModel
+from src.database.models.accounts import UserModel, UserProfileModel
 from src.repositories.accounts import UserProfileRepository
 from src.services.s3 import S3Service
 
@@ -11,6 +11,7 @@ from src.services.s3 import S3Service
 class UserProfileService:
 
     def __init__(self, profile_repository: UserProfileRepository) -> None:
+        self.model_type = UserProfileModel
         self.profile_repository = profile_repository
 
     async def read_current_user_profile(
