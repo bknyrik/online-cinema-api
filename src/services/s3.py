@@ -41,7 +41,7 @@ class S3Service:
             Key=key
         )
 
-        return key
+        return f"{self.root_image_url}{key}"
 
 
     def delete_image(self, key: str) -> None:
