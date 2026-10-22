@@ -580,22 +580,11 @@ class UserProfileService:
 
     async def get_current_user_profile(
         self,
-        db: AsyncSession,
         current_user: models.UserModel
     ) -> models.UserProfileModel:
         try:
-            profile = await self.profile_repository.aget_by_user_id(
-                db=db,
-                user_id=current_user.id
-            )
-
-            if not profile:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="Profile not found"
-                )
-
-            return profile
+            self.validate_user_profile_not_found(current_user)
+            return current_user.profile
         except SQLAlchemyError:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
