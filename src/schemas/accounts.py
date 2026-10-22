@@ -173,7 +173,7 @@ class ProfileFormSchema(BaseModel):
         )
 
 
-class ProfileUpdateFormSchema(BaseModel):
+class UserProfileFormData(BaseModel):
     first_name: str | None = Form()
     last_name: str | None = Form()
     avatar: UploadFile | None = File(...)
@@ -190,7 +190,7 @@ class ProfileUpdateFormSchema(BaseModel):
         gender: GenderEnum | None = Form(default=None),
         date_of_birth: datetime.date | None = Form(default=None),
         info: str | None = Form(default=None)
-    ) -> "ProfileUpdateFormSchema":
+    ) -> "UserProfileFormData":
         return cls(
             first_name=first_name,
             last_name=last_name,
