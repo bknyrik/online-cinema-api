@@ -59,6 +59,4 @@ def get_user_service() -> UserService:
 
 
 def get_profile_service() -> UserProfileService:
-    return UserProfileService(
-        profile_repository=UserProfileRepository()
-    )
+    return UserProfileService()

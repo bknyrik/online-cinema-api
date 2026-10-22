@@ -10,9 +10,9 @@ from src.services.s3 import S3Service
 
 class UserProfileService:
 
-    def __init__(self, profile_repository: UserProfileRepository) -> None:
+    def __init__(self) -> None:
         self.model_type = models.UserProfileModel
-        self.profile_repository = profile_repository
+        self.profile_repository = UserProfileRepository()
 
     async def get_current_user_profile(
         self,
