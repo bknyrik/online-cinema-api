@@ -568,6 +568,16 @@ class UserProfileService:
         self.model_type = models.UserProfileModel
         self.profile_repository = repositories.UserProfileRepository()
 
+    @staticmethod
+    def validate_user_profile_not_found(
+        current_user: models.UserModel
+    ) -> None:
+        if current_user.profile is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User doesn't have a profile"
+            )
+
     async def get_current_user_profile(
         self,
         db: AsyncSession,
