@@ -603,9 +603,9 @@ class UserProfileService:
         data: dict
     ) -> models.UserProfileModel:
         try:
-            profile = await self.profile_repository.aget_by_user_id(
+            profile = await self.profile_repository.aget_by(
                 db=db,
-                user_id=current_user.id
+                expressions=[self.model_type.user_id == current_user.id]
             )
 
             if profile:
@@ -614,20 +614,24 @@ class UserProfileService:
                     detail="User already has a profile"
                 )
 
-            key = s3_service.upload_image(
-                identifier=current_user.id,
-                image=data["avatar"],
-                key_prefix="Avatars",
-                image_prefix="profile"
-            )
-            data["avatar"] = key
             data["user_id"] = current_user.id
+            avatar = data.pop("avatar")
 
             profile = await self.profile_repository.acreate(
                 db=db,
                 data=data
             )
+
+            profile.avatar = s3_service.upload_image(
+                identifier=profile.id,
+                image=avatar,
+                key_prefix="Avatars",
+                image_prefix="profile"
+            )
+
             await db.commit()
+
+            profile.avatar = s3_service.get_image_url(profile.avatar)
             return profile
         except (SQLAlchemyError, Boto3Error):
             await db.rollback()
