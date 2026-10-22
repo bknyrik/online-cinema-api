@@ -211,7 +211,8 @@ async def get_current_user_profile(
     current_user: UserModel = Depends(authentication.get_current_user)
 ) -> UserProfileModel:
     return await user_profile_service.get_current_user_profile(
-        current_user=current_user
+        current_user=current_user,
+        s3_service=s3_service
     )
 
 

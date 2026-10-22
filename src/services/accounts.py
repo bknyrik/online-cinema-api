@@ -580,11 +580,15 @@ class UserProfileService:
 
     async def get_current_user_profile(
         self,
+        s3_service: S3Service,
         current_user: models.UserModel
     ) -> models.UserProfileModel:
         try:
             self.validate_user_profile_not_found(current_user)
-            return current_user.profile
+
+            profile = current_user.profile
+            profile.avatar = s3_service.get_image_url(profile.avatar)
+            return profile
         except SQLAlchemyError:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
