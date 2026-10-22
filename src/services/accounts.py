@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 from boto3.exceptions import Boto3Error
 
-from src.database.models import accounts
+from src.database.models import accounts as models
 from src.services.security import PasswordSecurityService, JWTAuthService
 from src.services.celery_beat import CeleryBeatService
 from src.services.email_sender import EmailSenderService
@@ -38,7 +38,7 @@ class UserService:
         pss: PasswordSecurityService,
         email_sender_service: EmailSenderService,
         background_tasks: BackgroundTasks
-    ) -> accounts.UserModel:
+    ) -> models.UserModel:
 
         user = await self.user_repository.aget_by_email(db, data["email"])
 
@@ -383,7 +383,7 @@ class UserService:
         self,
         db: AsyncSession,
         data: dict,
-        current_user: accounts.UserModel,
+        current_user: models.UserModel,
         pss: PasswordSecurityService
     ) -> dict:
         password_is_verified = pss.verify_password(
@@ -565,14 +565,14 @@ class UserService:
 class UserProfileService:
 
     def __init__(self) -> None:
-        self.model_type = accounts.UserProfileModel
+        self.model_type = models.UserProfileModel
         self.profile_repository = repositories.UserProfileRepository()
 
     async def get_current_user_profile(
         self,
         db: AsyncSession,
         s3_service: S3Service,
-        current_user: accounts.UserModel
+        current_user: models.UserModel
     ) -> dict:
         try:
             profile = await self.profile_repository.aget_by_user_id(
@@ -605,7 +605,7 @@ class UserProfileService:
         self,
         db: AsyncSession,
         s3_service: S3Service,
-        current_user: accounts.UserModel,
+        current_user: models.UserModel,
         data: dict
     ) -> dict:
         try:
@@ -653,7 +653,7 @@ class UserProfileService:
         self,
         db: AsyncSession,
         data: dict,
-        current_user: accounts.UserModel,
+        current_user: models.UserModel,
         s3_service: S3Service
     ) -> dict:
         try:
@@ -707,7 +707,7 @@ class UserProfileService:
         self,
         db: AsyncSession,
         s3_service: S3Service,
-        current_user: accounts.UserModel
+        current_user: models.UserModel
     ) -> None:
         try:
             profile = await self.profile_repository.aget_by_user_id(
