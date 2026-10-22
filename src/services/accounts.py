@@ -632,7 +632,10 @@ class UserProfileService:
 
             await db.commit()
 
-            profile.avatar = s3_service.get_image_url(profile.avatar)
+            profile.avatar = (
+                s3_service.get_image_url(profile.avatar)
+                if avatar else None
+            )
             return profile
         except (SQLAlchemyError, Boto3Error):
             await db.rollback()
