@@ -252,7 +252,7 @@ async def update_current_user_profile(
 async def delete_current_user_profile(
     db: AsyncSession = Depends(database.get_db),
     s3_service = Depends(services.get_s3_service),
-    user_profile_service: UserProfileService = Depends(schemas.UserProfileFormData.as_form),
+    user_profile_service: UserProfileService = Depends(),
     current_user: models.UserModel = Depends(authentication.get_current_user)
 ) -> None:
     return await user_profile_service.delete_current_user_profile(
