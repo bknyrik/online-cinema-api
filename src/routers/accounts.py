@@ -208,7 +208,7 @@ async def read_current_user(
 async def get_current_user_profile(
     s3_service: services.S3ServiceDep,
     user_profile_service: services.UserProfileServiceDep,
-    current_user: models.UserModel = Depends(authentication.get_current_user)
+    current_user: authentication.CurrentUserDep
 ) -> models.UserProfileModel:
     return await user_profile_service.get_current_user_profile(
         current_user=current_user,
@@ -222,7 +222,7 @@ async def create_user_profile(
     s3_service: services.S3ServiceDep,
     user_profile_service: services.UserProfileServiceDep,
     db: database.AsyncSessionDep,
-    current_user: models.UserModel = Depends(authentication.get_current_user),
+    current_user: authentication.CurrentUserDep,
 ) -> models.UserProfileModel:
     return await user_profile_service.create_user_profile(
         db=db,
@@ -238,7 +238,7 @@ async def update_current_user_profile(
     s3_service: services.S3ServiceDep,
     user_profile_service: services.UserProfileServiceDep,
     db: database.AsyncSessionDep,
-    current_user: models.UserModel = Depends(authentication.get_current_user)
+    current_user: authentication.CurrentUserDep
 ) -> models.UserProfileModel:
     return await user_profile_service.update_current_user_profile(
         db=db,
@@ -253,7 +253,7 @@ async def delete_current_user_profile(
     s3_service: services.S3ServiceDep,
     user_profile_service: services.UserProfileServiceDep,
     db: database.AsyncSessionDep,
-    current_user: models.UserModel = Depends(authentication.get_current_user)
+    current_user: authentication.CurrentUserDep
 ) -> None:
     return await user_profile_service.delete_current_user_profile(
         db=db,
