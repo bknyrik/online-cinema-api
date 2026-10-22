@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status, Depends, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.database.models.accounts import UserModel
+from src.database.models.accounts import UserModel, UserProfileModel
 from src.schemas import accounts as schemas
 from src.services.accounts import UserService, UserProfileService
 from src.services.s3 import S3Service
@@ -206,11 +206,9 @@ async def read_current_user(
 
 @router.get("/profiles/me/", response_model=schemas.ProfileDetailResponseSchema)
 async def get_current_user_profile(
-    db: AsyncSession = Depends(database.get_db),
-    s3_service: S3Service = Depends(services.get_s3_service),
     user_profile_service: UserProfileService = Depends(),
     current_user: UserModel = Depends(authentication.get_current_user)
-) -> dict:
+) -> UserProfileModel:
     return await user_profile_service.get_current_user_profile(
         current_user=current_user
     )
