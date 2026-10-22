@@ -5,7 +5,7 @@ from dependencies.database import get_db
 from src.database.models.accounts import UserModel, UserProfileModel
 from dependencies.authentication import get_current_user
 from dependencies.services import get_s3_service
-from src.schemas.profiles import (
+from src.schemas.accounts import (
     ProfileDetailResponseSchema,
     ProfileFormSchema,
     ProfileUpdateFormSchema
