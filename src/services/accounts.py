@@ -653,16 +653,9 @@ class UserProfileService:
         s3_service: S3Service
     ) -> models.UserProfileModel:
         try:
-            profile = await self.profile_repository.aget_by_user_id(
-                db=db,
-                user_id=current_user.id
-            )
+            self.validate_user_profile_not_found(current_user)
 
-            if not profile:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="Profile not found"
-                )
+            profile = current_user.profile
 
             if data.get("avatar"):
                 s3_service.delete_image(profile.avatar)
