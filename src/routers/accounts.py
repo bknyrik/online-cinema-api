@@ -2,26 +2,7 @@ from fastapi import APIRouter, status, Depends, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.models.accounts import UserModel
-from src.schemas.accounts import (
-    UserRegistrationRequestSchema,
-    UserRegistrationResponseSchema,
-    LoginRequestSchema,
-    LoginResponseSchema,
-    LogoutRequestSchema,
-    UserDetailResponseSchema,
-    ChangeUserGroupRequestSchema,
-    ChangeUserPasswordRequestSchema,
-    ResetUserPasswordRequestSchema,
-    ResetPasswordCompleteRequestSchema,
-    RefreshAccessTokenRequestSchema,
-    RefreshAccessTokenResponseSchema,
-    ActivateUserAccountRequestSchema,
-    MessageResponseSchema,
-    ReactivateUserAccountRequestSchema,
-    ProfileDetailResponseSchema,
-    ProfileFormSchema,
-    ProfileUpdateFormSchema
-)
+from src.schemas import accounts as schemas
 from dependencies.authentication import get_current_user, get_current_admin_user
 from dependencies.database import get_db
 from src.services.accounts import UserService, UserProfileService
@@ -36,10 +17,10 @@ router = APIRouter()
 @router.post(
     "/register/",
     status_code=status.HTTP_201_CREATED,
-    response_model=UserRegistrationResponseSchema
+    response_model=schemas.UserRegistrationResponseSchema
 )
 async def register_user(
-    data: UserRegistrationRequestSchema,
+    data: schemas.UserRegistrationRequestSchema,
     background_tasks: BackgroundTasks,
     user_service: UserService = Depends(services.get_user_service),
     ess: EmailSenderService = Depends(services.get_email_sender_service),
@@ -55,9 +36,9 @@ async def register_user(
     )
 
 
-@router.post("/activate/", response_model=MessageResponseSchema)
+@router.post("/activate/", response_model=schemas.MessageResponseSchema)
 async def activate_user_account(
-    data: ActivateUserAccountRequestSchema,
+    data: schemas.ActivateUserAccountRequestSchema,
     user_service: UserService = Depends(services.get_user_service),
     db: AsyncSession = Depends(get_db),
 ) -> dict:
@@ -67,9 +48,9 @@ async def activate_user_account(
     )
 
 
-@router.post("/activate/new/", response_model=MessageResponseSchema)
+@router.post("/activate/new/", response_model=schemas.MessageResponseSchema)
 async def reactivate_user_account(
-    data: ReactivateUserAccountRequestSchema,
+    data: schemas.ReactivateUserAccountRequestSchema,
     background_tasks: BackgroundTasks,
     user_service: UserService = Depends(services.get_user_service),
     ess: EmailSenderService = Depends(services.get_email_sender_service),
@@ -83,9 +64,9 @@ async def reactivate_user_account(
     )
 
 
-@router.post("/login/", response_model=LoginResponseSchema)
+@router.post("/login/", response_model=schemas.LoginResponseSchema)
 async def login(
-    data: LoginRequestSchema,
+    data: schemas.LoginRequestSchema,
     user_service: UserService = Depends(services.get_user_service),
     pss: PasswordSecurityService = Depends(services.get_password_secure_service),
     jwt_service: JWTAuthService = Depends(services.get_jwt_auth_service),
@@ -101,7 +82,7 @@ async def login(
 
 @router.post("/logout/")
 async def logout(
-    data: LogoutRequestSchema,
+    data: schemas.LogoutRequestSchema,
     user_service: UserService = Depends(services.get_user_service),
     db: AsyncSession = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
@@ -114,11 +95,11 @@ async def logout(
 
 @router.patch(
     "/{user_id}/change_user_group/",
-    response_model=UserDetailResponseSchema
+    response_model=schemas.UserDetailResponseSchema
 )
 async def change_user_group(
     user_id: int,
-    data: ChangeUserGroupRequestSchema,
+    data: schemas.ChangeUserGroupRequestSchema,
     user_service: UserService = Depends(services.get_user_service),
     db: AsyncSession = Depends(get_db),
     current_user: UserModel = Depends(get_current_admin_user)
@@ -130,7 +111,7 @@ async def change_user_group(
     )
 
 
-@router.patch("/{user_id}/activate/", response_model=MessageResponseSchema)
+@router.patch("/{user_id}/activate/", response_model=schemas.MessageResponseSchema)
 async def admin_activate_user_account(
     user_id: int,
     user_service: UserService = Depends(services.get_user_service),
@@ -143,9 +124,9 @@ async def admin_activate_user_account(
     )
 
 
-@router.patch("/me/change_password/", response_model=MessageResponseSchema)
+@router.patch("/me/change_password/", response_model=schemas.MessageResponseSchema)
 async def change_user_password(
-    data: ChangeUserPasswordRequestSchema,
+    data: schemas.ChangeUserPasswordRequestSchema,
     user_service: UserService = Depends(services.get_user_service),
     db: AsyncSession = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
@@ -159,9 +140,9 @@ async def change_user_password(
     )
 
 
-@router.post("/reset_password/", response_model=MessageResponseSchema)
+@router.post("/reset_password/", response_model=schemas.MessageResponseSchema)
 async def reset_password(
-    data: ResetUserPasswordRequestSchema,
+    data: schemas.ResetUserPasswordRequestSchema,
     background_tasks: BackgroundTasks,
     user_service: UserService = Depends(services.get_user_service),
     ess: EmailSenderService = Depends(services.get_email_sender_service),
@@ -177,10 +158,10 @@ async def reset_password(
 
 @router.post(
     "/reset_password/complete/",
-    response_model=MessageResponseSchema
+    response_model=schemas.MessageResponseSchema
 )
 async def reset_password_complete(
-    data: ResetPasswordCompleteRequestSchema,
+    data: schemas.ResetPasswordCompleteRequestSchema,
     user_service: UserService = Depends(services.get_user_service),
     db: AsyncSession = Depends(get_db),
     pss: PasswordSecurityService = Depends(services.get_password_secure_service)
@@ -194,10 +175,10 @@ async def reset_password_complete(
 
 @router.post(
     "/refresh_access_token/",
-    response_model=RefreshAccessTokenResponseSchema
+    response_model=schemas.RefreshAccessTokenResponseSchema
 )
 async def refresh_access_token(
-    data: RefreshAccessTokenRequestSchema,
+    data: schemas.RefreshAccessTokenRequestSchema,
     user_service: UserService = Depends(services.get_user_service),
     jwt_auth_service: JWTAuthService = Depends(services.get_jwt_auth_service),
     db: AsyncSession = Depends(get_db),
@@ -209,18 +190,18 @@ async def refresh_access_token(
     )
 
 
-@router.get("/me/", response_model=UserDetailResponseSchema)
+@router.get("/me/", response_model=schemas.UserDetailResponseSchema)
 async def read_current_user(
     current_user: UserModel = Depends(get_current_user)
-) -> UserDetailResponseSchema:
-    return UserDetailResponseSchema(
+) -> schemas.UserDetailResponseSchema:
+    return schemas.UserDetailResponseSchema(
         id=current_user.id,
         email=current_user.email,
         group=current_user.group.name
     )
 
 
-@router.get("/profiles/me/", response_model=ProfileDetailResponseSchema)
+@router.get("/profiles/me/", response_model=schemas.ProfileDetailResponseSchema)
 async def get_current_user_profile(
     db: AsyncSession = Depends(get_db),
     s3_service: S3Service = Depends(services.get_s3_service),
@@ -234,13 +215,13 @@ async def get_current_user_profile(
     )
 
 
-@router.post("/profiles/", response_model=ProfileDetailResponseSchema)
+@router.post("/profiles/", response_model=schemas.ProfileDetailResponseSchema)
 async def create_user_profile(
     db: AsyncSession = Depends(get_db),
     user_profile_service: UserProfileService = Depends(),
     s3_service: S3Service = Depends(services.get_s3_service),
     current_user: UserModel = Depends(get_current_user),
-    data: ProfileFormSchema = Depends(ProfileFormSchema.as_form)
+    data: schemas.ProfileFormSchema = Depends(schemas.ProfileFormSchema.as_form)
 ) -> dict:
     return await user_profile_service.create_user_profile(
         db=db,
@@ -250,12 +231,12 @@ async def create_user_profile(
     )
 
 
-@router.patch("/profiles/me/", response_model=ProfileDetailResponseSchema)
+@router.patch("/profiles/me/", response_model=schemas.ProfileDetailResponseSchema)
 async def update_current_user_profile(
     db: AsyncSession = Depends(get_db),
     user_profile_service: UserProfileService = Depends(),
     s3_service: S3Service = Depends(services.get_s3_service),
-    data: ProfileUpdateFormSchema = Depends(ProfileUpdateFormSchema.as_form),
+    data: schemas.ProfileUpdateFormSchema = Depends(schemas.ProfileUpdateFormSchema.as_form),
     current_user: UserModel = Depends(get_current_user)
 ) -> dict:
     return await user_profile_service.update_current_user_profile(
