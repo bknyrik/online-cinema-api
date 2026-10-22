@@ -3,13 +3,16 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.models.accounts import UserModel
 from src.schemas import accounts as schemas
-from dependencies.authentication import get_current_user, get_current_admin_user
-from dependencies.database import get_db
 from src.services.accounts import UserService, UserProfileService
 from src.services.s3 import S3Service
 from src.services.security import PasswordSecurityService, JWTAuthService
 from src.services.email_sender import EmailSenderService
-from dependencies import services
+from dependencies import (
+    services,
+    database,
+    authentication
+)
+
 
 router = APIRouter()
 
@@ -25,7 +28,7 @@ async def register_user(
     user_service: UserService = Depends(services.get_user_service),
     ess: EmailSenderService = Depends(services.get_email_sender_service),
     pss: PasswordSecurityService = Depends(services.get_password_secure_service),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(database.get_db)
 ) -> UserModel:
     return await user_service.register_user(
         db=db,
@@ -40,7 +43,7 @@ async def register_user(
 async def activate_user_account(
     data: schemas.ActivateUserAccountRequestSchema,
     user_service: UserService = Depends(services.get_user_service),
-    db: AsyncSession = Depends(get_db),
+    db: AsyncSession = Depends(database.get_db),
 ) -> dict:
     return await user_service.activate_user_account(
         data=data.model_dump(),
@@ -54,7 +57,7 @@ async def reactivate_user_account(
     background_tasks: BackgroundTasks,
     user_service: UserService = Depends(services.get_user_service),
     ess: EmailSenderService = Depends(services.get_email_sender_service),
-    db: AsyncSession = Depends(get_db),
+    db: AsyncSession = Depends(database.get_db),
 ) -> dict:
     return await user_service.reactivate_user_account(
         data=data.model_dump(),
@@ -70,7 +73,7 @@ async def login(
     user_service: UserService = Depends(services.get_user_service),
     pss: PasswordSecurityService = Depends(services.get_password_secure_service),
     jwt_service: JWTAuthService = Depends(services.get_jwt_auth_service),
-    db: AsyncSession = Depends(get_db),
+    db: AsyncSession = Depends(database.get_db),
 ) -> dict:
     return await user_service.login(
         data=data.model_dump(),
@@ -84,8 +87,8 @@ async def login(
 async def logout(
     data: schemas.LogoutRequestSchema,
     user_service: UserService = Depends(services.get_user_service),
-    db: AsyncSession = Depends(get_db),
-    current_user: UserModel = Depends(get_current_user),
+    db: AsyncSession = Depends(database.get_db),
+    current_user: UserModel = Depends(authentication.get_current_user),
 ) -> None:
     return await user_service.logout(
         db=db,
@@ -101,8 +104,8 @@ async def change_user_group(
     user_id: int,
     data: schemas.ChangeUserGroupRequestSchema,
     user_service: UserService = Depends(services.get_user_service),
-    db: AsyncSession = Depends(get_db),
-    current_user: UserModel = Depends(get_current_admin_user)
+    db: AsyncSession = Depends(database.get_db),
+    current_user: UserModel = Depends(authentication.get_current_admin_user)
 ) -> dict:
     return await user_service.change_user_group(
         db=db,
@@ -115,8 +118,8 @@ async def change_user_group(
 async def admin_activate_user_account(
     user_id: int,
     user_service: UserService = Depends(services.get_user_service),
-    db: AsyncSession = Depends(get_db),
-    current_user = Depends(get_current_admin_user)
+    db: AsyncSession = Depends(database.get_db),
+    current_user = Depends(authentication.get_current_admin_user)
 ) -> dict:
     return await user_service.admin_activate_user_account(
         user_id=user_id,
@@ -128,8 +131,8 @@ async def admin_activate_user_account(
 async def change_user_password(
     data: schemas.ChangeUserPasswordRequestSchema,
     user_service: UserService = Depends(services.get_user_service),
-    db: AsyncSession = Depends(get_db),
-    current_user: UserModel = Depends(get_current_user),
+    db: AsyncSession = Depends(database.get_db),
+    current_user: UserModel = Depends(authentication.get_current_user),
     pss: PasswordSecurityService = Depends(services.get_password_secure_service)
 ) -> dict:
     return await user_service.change_user_password(
@@ -146,7 +149,7 @@ async def reset_password(
     background_tasks: BackgroundTasks,
     user_service: UserService = Depends(services.get_user_service),
     ess: EmailSenderService = Depends(services.get_email_sender_service),
-    db: AsyncSession = Depends(get_db),
+    db: AsyncSession = Depends(database.get_db),
 ) -> dict:
     return await user_service.reset_password(
         db=db,
@@ -163,7 +166,7 @@ async def reset_password(
 async def reset_password_complete(
     data: schemas.ResetPasswordCompleteRequestSchema,
     user_service: UserService = Depends(services.get_user_service),
-    db: AsyncSession = Depends(get_db),
+    db: AsyncSession = Depends(database.get_db),
     pss: PasswordSecurityService = Depends(services.get_password_secure_service)
 ) -> dict:
     return await user_service.reset_password_complete(
@@ -181,7 +184,7 @@ async def refresh_access_token(
     data: schemas.RefreshAccessTokenRequestSchema,
     user_service: UserService = Depends(services.get_user_service),
     jwt_auth_service: JWTAuthService = Depends(services.get_jwt_auth_service),
-    db: AsyncSession = Depends(get_db),
+    db: AsyncSession = Depends(database.get_db),
 ) -> dict:
     return await user_service.refresh_access_token(
         db=db,
@@ -192,7 +195,7 @@ async def refresh_access_token(
 
 @router.get("/me/", response_model=schemas.UserDetailResponseSchema)
 async def read_current_user(
-    current_user: UserModel = Depends(get_current_user)
+    current_user: UserModel = Depends(authentication.get_current_user)
 ) -> schemas.UserDetailResponseSchema:
     return schemas.UserDetailResponseSchema(
         id=current_user.id,
@@ -203,10 +206,10 @@ async def read_current_user(
 
 @router.get("/profiles/me/", response_model=schemas.ProfileDetailResponseSchema)
 async def get_current_user_profile(
-    db: AsyncSession = Depends(get_db),
+    db: AsyncSession = Depends(database.get_db),
     s3_service: S3Service = Depends(services.get_s3_service),
     user_profile_service: UserProfileService = Depends(),
-    current_user: UserModel = Depends(get_current_user)
+    current_user: UserModel = Depends(authentication.get_current_user)
 ) -> dict:
     return await user_profile_service.get_current_user_profile(
         db=db,
@@ -217,10 +220,10 @@ async def get_current_user_profile(
 
 @router.post("/profiles/", response_model=schemas.ProfileDetailResponseSchema)
 async def create_user_profile(
-    db: AsyncSession = Depends(get_db),
+    db: AsyncSession = Depends(database.get_db),
     user_profile_service: UserProfileService = Depends(),
     s3_service: S3Service = Depends(services.get_s3_service),
-    current_user: UserModel = Depends(get_current_user),
+    current_user: UserModel = Depends(authentication.get_current_user),
     data: schemas.ProfileFormSchema = Depends(schemas.ProfileFormSchema.as_form)
 ) -> dict:
     return await user_profile_service.create_user_profile(
@@ -233,11 +236,11 @@ async def create_user_profile(
 
 @router.patch("/profiles/me/", response_model=schemas.ProfileDetailResponseSchema)
 async def update_current_user_profile(
-    db: AsyncSession = Depends(get_db),
+    db: AsyncSession = Depends(database.get_db),
     user_profile_service: UserProfileService = Depends(),
     s3_service: S3Service = Depends(services.get_s3_service),
     data: schemas.ProfileUpdateFormSchema = Depends(schemas.ProfileUpdateFormSchema.as_form),
-    current_user: UserModel = Depends(get_current_user)
+    current_user: UserModel = Depends(authentication.get_current_user)
 ) -> dict:
     return await user_profile_service.update_current_user_profile(
         db=db,
@@ -249,10 +252,10 @@ async def update_current_user_profile(
 
 @router.delete("/profiles/me/")
 async def delete_current_user_profile(
-    db: AsyncSession = Depends(get_db),
+    db: AsyncSession = Depends(database.get_db),
     s3_service = Depends(services.get_s3_service),
     user_profile_service: UserProfileService = Depends(),
-    current_user: UserModel = Depends(get_current_user)
+    current_user: UserModel = Depends(authentication.get_current_user)
 ) -> None:
     return await user_profile_service.delete_current_user_profile(
         db=db,
