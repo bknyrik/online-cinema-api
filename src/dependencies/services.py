@@ -56,7 +56,3 @@ def get_user_service() -> UserService:
         rt_repository=TokenRepository(accounts.RefreshTokenModel),
         prt_repository=TokenRepository(accounts.PasswordResetTokenModel)
     )
-
-
-def get_profile_service() -> UserProfileService:
-    return UserProfileService()

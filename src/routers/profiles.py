@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from dependencies.database import get_db
 from src.database.models.accounts import UserModel, UserProfileModel
 from dependencies.authentication import get_current_user
-from dependencies.services import get_s3_service, get_profile_service
+from dependencies.services import get_s3_service
 from src.schemas.profiles import (
     ProfileDetailResponseSchema,
     ProfileFormSchema,
@@ -21,7 +21,7 @@ router = APIRouter()
 async def get_current_user_profile(
     db: AsyncSession = Depends(get_db),
     s3_service: S3Service = Depends(get_s3_service),
-    user_profile_service: UserProfileService = Depends(get_profile_service),
+    user_profile_service: UserProfileService = Depends(),
     current_user: UserModel = Depends(get_current_user)
 ) -> dict:
     return await user_profile_service.get_current_user_profile(
@@ -34,7 +34,7 @@ async def get_current_user_profile(
 @router.post("/", response_model=ProfileDetailResponseSchema)
 async def create_user_profile(
     db: AsyncSession = Depends(get_db),
-    user_profile_service: UserProfileService = Depends(get_profile_service),
+    user_profile_service: UserProfileService = Depends(),
     s3_service: S3Service = Depends(get_s3_service),
     current_user: UserModel = Depends(get_current_user),
     data: ProfileFormSchema = Depends(ProfileFormSchema.as_form)
@@ -50,7 +50,7 @@ async def create_user_profile(
 @router.patch("/me/", response_model=ProfileDetailResponseSchema)
 async def update_current_user_profile(
     db: AsyncSession = Depends(get_db),
-    user_profile_service: UserProfileService = Depends(get_profile_service),
+    user_profile_service: UserProfileService = Depends(),
     s3_service: S3Service = Depends(get_s3_service),
     data: ProfileUpdateFormSchema = Depends(ProfileUpdateFormSchema.as_form),
     current_user: UserModel = Depends(get_current_user)
@@ -67,7 +67,7 @@ async def update_current_user_profile(
 async def delete_current_user_profile(
     db: AsyncSession = Depends(get_db),
     s3_service = Depends(get_s3_service),
-    user_profile_service: UserProfileService = Depends(get_profile_service),
+    user_profile_service: UserProfileService = Depends(),
     current_user: UserModel = Depends(get_current_user)
 ) -> None:
     return await user_profile_service.delete_current_user_profile(
