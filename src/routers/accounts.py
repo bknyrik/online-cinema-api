@@ -206,8 +206,8 @@ async def read_current_user(
 
 @router.get("/profiles/me/", response_model=schemas.UserProfileDetailResponseSchema)
 async def get_current_user_profile(
+    s3_service: services.S3ServiceDep,
     user_profile_service: UserProfileService = Depends(),
-    s3_service: S3Service = Depends(services.get_s3_service),
     current_user: models.UserModel = Depends(authentication.get_current_user)
 ) -> models.UserProfileModel:
     return await user_profile_service.get_current_user_profile(
@@ -219,9 +219,9 @@ async def get_current_user_profile(
 @router.post("/profiles/", response_model=schemas.UserProfileDetailResponseSchema)
 async def create_user_profile(
     data: schemas.UserProfileForm,
+    s3_service: services.S3ServiceDep,
     db: AsyncSession = Depends(database.get_db),
     user_profile_service: UserProfileService = Depends(),
-    s3_service: S3Service = Depends(services.get_s3_service),
     current_user: models.UserModel = Depends(authentication.get_current_user),
 ) -> models.UserProfileModel:
     return await user_profile_service.create_user_profile(
@@ -235,9 +235,9 @@ async def create_user_profile(
 @router.patch("/profiles/me/", response_model=schemas.UserProfileDetailResponseSchema)
 async def update_current_user_profile(
     data: schemas.UserProfileForm,
+    s3_service: services.S3ServiceDep,
     db: AsyncSession = Depends(database.get_db),
     user_profile_service: UserProfileService = Depends(),
-    s3_service: S3Service = Depends(services.get_s3_service),
     current_user: models.UserModel = Depends(authentication.get_current_user)
 ) -> models.UserProfileModel:
     return await user_profile_service.update_current_user_profile(
@@ -250,8 +250,8 @@ async def update_current_user_profile(
 
 @router.delete("/profiles/me/")
 async def delete_current_user_profile(
+    s3_service: services.S3ServiceDep,
     db: AsyncSession = Depends(database.get_db),
-    s3_service = Depends(services.get_s3_service),
     user_profile_service: UserProfileService = Depends(),
     current_user: models.UserModel = Depends(authentication.get_current_user)
 ) -> None:
