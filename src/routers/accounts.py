@@ -221,7 +221,7 @@ async def create_user_profile(
     data: schemas.UserProfileForm,
     s3_service: services.S3ServiceDep,
     user_profile_service: services.UserProfileServiceDep,
-    db: AsyncSession = Depends(database.get_db),
+    db: database.AsyncSessionDep,
     current_user: models.UserModel = Depends(authentication.get_current_user),
 ) -> models.UserProfileModel:
     return await user_profile_service.create_user_profile(
