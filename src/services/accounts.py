@@ -11,12 +11,7 @@ from src.services.security import PasswordSecurityService, JWTAuthService
 from src.services.celery_beat import CeleryBeatService
 from src.services.email_sender import EmailSenderService
 from src.services.s3 import S3Service
-from src.repositories.accounts import (
-    UserRepository,
-    UserProfileRepository,
-    UserGroupRepository,
-    TokenRepository
-)
+from src.repositories import accounts as repositories
 from src.settings import settings
 
 
@@ -24,11 +19,11 @@ class UserService:
 
     def __init__(
         self,
-        user_repository: UserRepository,
-        user_group_repository: UserGroupRepository,
-        at_repository: TokenRepository,
-        rt_repository: TokenRepository,
-        prt_repository: TokenRepository,
+        user_repository: repositories.UserRepository,
+        user_group_repository: repositories.UserGroupRepository,
+        at_repository: repositories.TokenRepository,
+        rt_repository: repositories.TokenRepository,
+        prt_repository: repositories.TokenRepository,
     ):
         self.user_repository = user_repository
         self.user_group_repository = user_group_repository
@@ -571,7 +566,7 @@ class UserProfileService:
 
     def __init__(self) -> None:
         self.model_type = accounts.UserProfileModel
-        self.profile_repository = UserProfileRepository()
+        self.profile_repository = repositories.UserProfileRepository()
 
     async def get_current_user_profile(
         self,
