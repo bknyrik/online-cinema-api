@@ -573,7 +573,7 @@ class UserProfileService:
         db: AsyncSession,
         s3_service: S3Service,
         current_user: models.UserModel
-    ) -> dict:
+    ) -> models.UserProfileModel:
         try:
             profile = await self.profile_repository.aget_by_user_id(
                 db=db,
@@ -586,15 +586,7 @@ class UserProfileService:
                     detail="Profile not found"
                 )
 
-            return {
-                "id": profile.id,
-                "first_name": profile.first_name,
-                "last_name": profile.last_name,
-                "gender": profile.gender,
-                "date_of_birth": profile.date_of_birth,
-                "avatar": f"{s3_service.root_image_url}{profile.avatar}",
-                "info": profile.info
-            }
+            return profile
         except SQLAlchemyError:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
