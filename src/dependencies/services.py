@@ -1,4 +1,7 @@
 from datetime import timedelta
+from typing import Annotated
+
+from fastapi import Depends
 
 from src.settings import settings
 from src.services.accounts import UserService
@@ -54,3 +57,6 @@ def get_user_service() -> UserService:
         rt_repository=TokenRepository(accounts.RefreshTokenModel),
         prt_repository=TokenRepository(accounts.PasswordResetTokenModel)
     )
+
+
+S3ServiceDep = Annotated[S3Service, Depends(get_s3_service)]
