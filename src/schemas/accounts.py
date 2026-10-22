@@ -201,7 +201,7 @@ class ProfileUpdateFormSchema(BaseModel):
         )
 
 
-class ProfileDetailResponseSchema(BaseModel):
+class UserProfileDetailResponseSchema(BaseModel):
     id: int
     first_name: str
     last_name: str
