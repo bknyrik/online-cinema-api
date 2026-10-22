@@ -1,7 +1,7 @@
 import os
 
 import boto3
-from fastapi import UploadFile
+from fastapi import UploadFile, HTTPException, status
 
 
 class S3Service:
@@ -38,6 +38,12 @@ class S3Service:
         key_prefix: str,
         image_prefix: str
     ) -> str:
+        if not image.content_type.startswith("image/"):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="The provided file is not an image"
+            )
+
         _, ext = os.path.splitext(image.filename)
         key = f"{key_prefix}/{image_prefix}_{identifier}{ext}"
 
