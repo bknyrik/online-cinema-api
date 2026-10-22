@@ -175,13 +175,13 @@ class UserProfileFormData(BaseModel):
 
 
 class UserProfileDetailResponseSchema(BaseModel):
-    id: int
-    first_name: str
-    last_name: str
-    avatar: HttpUrl
-    gender: GenderEnum
-    date_of_birth: datetime.date
-    info: str
+    id: int | None
+    first_name: str | None
+    last_name: str | None
+    avatar: HttpUrl | None
+    gender: GenderEnum | None
+    date_of_birth: datetime.date | None
+    info: str | None
 
 
 UserProfileForm = Annotated[
