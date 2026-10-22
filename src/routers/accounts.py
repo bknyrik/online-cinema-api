@@ -239,7 +239,7 @@ async def update_current_user_profile(
     s3_service: S3Service = Depends(services.get_s3_service),
     data: schemas.ProfileUpdateFormSchema = Depends(schemas.ProfileUpdateFormSchema.as_form),
     current_user: UserModel = Depends(authentication.get_current_user)
-) -> dict:
+) -> UserProfileModel:
     return await user_profile_service.update_current_user_profile(
         db=db,
         data=data.model_dump(),
