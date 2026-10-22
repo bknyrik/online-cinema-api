@@ -234,10 +234,10 @@ async def create_user_profile(
 
 @router.patch("/profiles/me/", response_model=schemas.UserProfileDetailResponseSchema)
 async def update_current_user_profile(
+    data: schemas.UserProfileForm,
     db: AsyncSession = Depends(database.get_db),
     user_profile_service: UserProfileService = Depends(),
     s3_service: S3Service = Depends(services.get_s3_service),
-    data: schemas.UserProfileFormData = Depends(schemas.UserProfileFormData.as_form),
     current_user: UserModel = Depends(authentication.get_current_user)
 ) -> UserProfileModel:
     return await user_profile_service.update_current_user_profile(
