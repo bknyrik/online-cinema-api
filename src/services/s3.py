@@ -36,9 +36,10 @@ class S3Service:
         user_id: int,
         image: UploadFile,
         key_prefix: str,
+        image_prefix: str
     ) -> str:
         _, ext = os.path.splitext(image.filename)
-        key = f"{key_prefix}/user_{user_id}{ext}"
+        key = f"{key_prefix}/{image_prefix}_{user_id}{ext}"
 
         self.client.upload_fileobj(
             Fileobj=image.file,

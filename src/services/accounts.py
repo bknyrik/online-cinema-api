@@ -613,7 +613,8 @@ class UserProfileService:
             key = s3_service.upload_image(
                 user_id=current_user.id,
                 image=data["avatar"],
-                key_prefix="Avatars"
+                key_prefix="Avatars",
+                image_prefix="profile"
             )
             data["avatar"] = key
             data["user_id"] = current_user.id
@@ -668,7 +669,8 @@ class UserProfileService:
                 key = filtered_data["avatar"] = s3_service.upload_image(
                     user_id=current_user.id,
                     image=filtered_data["avatar"],
-                    key_prefix="Avatars"
+                    key_prefix="Avatars",
+                    image_prefix="profile"
                 )
                 filtered_data["avatar"] = key
 
