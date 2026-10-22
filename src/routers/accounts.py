@@ -218,11 +218,11 @@ async def get_current_user_profile(
 
 @router.post("/profiles/", response_model=schemas.UserProfileDetailResponseSchema)
 async def create_user_profile(
+    data: schemas.UserProfileForm,
     db: AsyncSession = Depends(database.get_db),
     user_profile_service: UserProfileService = Depends(),
     s3_service: S3Service = Depends(services.get_s3_service),
     current_user: UserModel = Depends(authentication.get_current_user),
-    data: schemas.ProfileFormSchema = Depends(schemas.ProfileFormSchema.as_form)
 ) -> UserProfileModel:
     return await user_profile_service.create_user_profile(
         db=db,
