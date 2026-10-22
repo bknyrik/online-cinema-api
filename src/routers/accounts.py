@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status, Depends, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.database.models.accounts import UserModel, UserProfileModel
+from src.database.models import accounts as models
 from src.schemas import accounts as schemas
 from src.services.accounts import UserService, UserProfileService
 from src.services.s3 import S3Service
@@ -29,7 +29,7 @@ async def register_user(
     ess: EmailSenderService = Depends(services.get_email_sender_service),
     pss: PasswordSecurityService = Depends(services.get_password_secure_service),
     db: AsyncSession = Depends(database.get_db)
-) -> UserModel:
+) -> models.UserModel:
     return await user_service.register_user(
         db=db,
         data=data.model_dump(),
@@ -88,7 +88,7 @@ async def logout(
     data: schemas.LogoutRequestSchema,
     user_service: UserService = Depends(services.get_user_service),
     db: AsyncSession = Depends(database.get_db),
-    current_user: UserModel = Depends(authentication.get_current_user),
+    current_user: models.UserModel = Depends(authentication.get_current_user),
 ) -> None:
     return await user_service.logout(
         db=db,
@@ -105,7 +105,7 @@ async def change_user_group(
     data: schemas.ChangeUserGroupRequestSchema,
     user_service: UserService = Depends(services.get_user_service),
     db: AsyncSession = Depends(database.get_db),
-    current_user: UserModel = Depends(authentication.get_current_admin_user)
+    current_user: models.UserModel = Depends(authentication.get_current_admin_user)
 ) -> dict:
     return await user_service.change_user_group(
         db=db,
@@ -132,7 +132,7 @@ async def change_user_password(
     data: schemas.ChangeUserPasswordRequestSchema,
     user_service: UserService = Depends(services.get_user_service),
     db: AsyncSession = Depends(database.get_db),
-    current_user: UserModel = Depends(authentication.get_current_user),
+    current_user: models.UserModel = Depends(authentication.get_current_user),
     pss: PasswordSecurityService = Depends(services.get_password_secure_service)
 ) -> dict:
     return await user_service.change_user_password(
@@ -195,7 +195,7 @@ async def refresh_access_token(
 
 @router.get("/me/", response_model=schemas.UserDetailResponseSchema)
 async def read_current_user(
-    current_user: UserModel = Depends(authentication.get_current_user)
+    current_user: models.UserModel = Depends(authentication.get_current_user)
 ) -> schemas.UserDetailResponseSchema:
     return schemas.UserDetailResponseSchema(
         id=current_user.id,
@@ -208,8 +208,8 @@ async def read_current_user(
 async def get_current_user_profile(
     user_profile_service: UserProfileService = Depends(),
     s3_service: S3Service = Depends(services.get_s3_service),
-    current_user: UserModel = Depends(authentication.get_current_user)
-) -> UserProfileModel:
+    current_user: models.UserModel = Depends(authentication.get_current_user)
+) -> models.UserProfileModel:
     return await user_profile_service.get_current_user_profile(
         current_user=current_user,
         s3_service=s3_service
@@ -222,8 +222,8 @@ async def create_user_profile(
     db: AsyncSession = Depends(database.get_db),
     user_profile_service: UserProfileService = Depends(),
     s3_service: S3Service = Depends(services.get_s3_service),
-    current_user: UserModel = Depends(authentication.get_current_user),
-) -> UserProfileModel:
+    current_user: models.UserModel = Depends(authentication.get_current_user),
+) -> models.UserProfileModel:
     return await user_profile_service.create_user_profile(
         db=db,
         data=data.model_dump(),
@@ -238,8 +238,8 @@ async def update_current_user_profile(
     db: AsyncSession = Depends(database.get_db),
     user_profile_service: UserProfileService = Depends(),
     s3_service: S3Service = Depends(services.get_s3_service),
-    current_user: UserModel = Depends(authentication.get_current_user)
-) -> UserProfileModel:
+    current_user: models.UserModel = Depends(authentication.get_current_user)
+) -> models.UserProfileModel:
     return await user_profile_service.update_current_user_profile(
         db=db,
         data=data.model_dump(exclude_none=True),
@@ -253,7 +253,7 @@ async def delete_current_user_profile(
     db: AsyncSession = Depends(database.get_db),
     s3_service = Depends(services.get_s3_service),
     user_profile_service: UserProfileService = Depends(schemas.UserProfileFormData.as_form),
-    current_user: UserModel = Depends(authentication.get_current_user)
+    current_user: models.UserModel = Depends(authentication.get_current_user)
 ) -> None:
     return await user_profile_service.delete_current_user_profile(
         db=db,
