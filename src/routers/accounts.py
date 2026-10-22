@@ -247,7 +247,10 @@ async def update_current_user_profile(
     )
 
 
-@router.delete("/profiles/me/")
+@router.delete(
+    "/profiles/me/",
+    status_code=status.HTTP_204_NO_CONTENT
+)
 async def delete_current_user_profile(
     s3_service: services.S3ServiceDep,
     user_profile_service: services.UserProfileServiceDep,
