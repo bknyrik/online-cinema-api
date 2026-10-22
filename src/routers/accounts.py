@@ -242,7 +242,7 @@ async def update_current_user_profile(
 ) -> UserProfileModel:
     return await user_profile_service.update_current_user_profile(
         db=db,
-        data=data.model_dump(),
+        data=data.model_dump(exclude_none=True),
         current_user=current_user,
         s3_service=s3_service
     )
