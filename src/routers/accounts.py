@@ -215,7 +215,11 @@ async def get_current_user_profile(
     )
 
 
-@router.post("/profiles/", response_model=schemas.UserProfileDetailResponseSchema)
+@router.post(
+    "/profiles/",
+    response_model=schemas.UserProfileDetailResponseSchema,
+    status_code=status.HTTP_201_CREATED
+)
 async def create_user_profile(
     data: schemas.UserProfileForm,
     s3_service: services.S3ServiceDep,
