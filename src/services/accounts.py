@@ -656,16 +656,7 @@ class UserProfileService:
             self.validate_user_profile_not_found(current_user)
 
             profile = current_user.profile
-
-            if data.get("avatar"):
-                s3_service.delete_image(profile.avatar)
-                key = data["avatar"] = s3_service.upload_image(
-                    identifier=current_user.id,
-                    image=data["avatar"],
-                    key_prefix="Avatars",
-                    image_prefix="profile"
-                )
-                data["avatar"] = key
+            avatar = data.pop("avatar", None)
 
             await self.profile_repository.aupdate(
                 db=db,
@@ -673,6 +664,15 @@ class UserProfileService:
                 data=data
             )
             await db.commit()
+
+            if avatar:
+                s3_service.delete_image(profile.avatar)
+                s3_service.upload_image(
+                    identifier=profile.id,
+                    image=data["avatar"],
+                    key_prefix="Avatars",
+                    image_prefix="profile"
+                )
 
             profile.avatar = s3_service.get_image_url(profile.avatar)
             return profile
