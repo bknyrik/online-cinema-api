@@ -10,7 +10,7 @@ from src.schemas.profiles import (
     ProfileFormSchema,
     ProfileUpdateFormSchema
 )
-from src.services.profiles import UserProfileService
+from src.services.accounts import UserProfileService
 from src.services.s3 import S3Service
 
 
