@@ -207,6 +207,7 @@ async def read_current_user(
 @router.get("/profiles/me/", response_model=schemas.ProfileDetailResponseSchema)
 async def get_current_user_profile(
     user_profile_service: UserProfileService = Depends(),
+    s3_service: S3Service = Depends(services.get_s3_service),
     current_user: UserModel = Depends(authentication.get_current_user)
 ) -> UserProfileModel:
     return await user_profile_service.get_current_user_profile(
