@@ -1,6 +1,7 @@
 import datetime
+from typing import Annotated
 
-from fastapi import HTTPException, status, Form, UploadFile, File
+from fastapi import Depends, HTTPException, status, Form, UploadFile, File
 from pydantic import BaseModel, EmailStr, HttpUrl, field_validator
 
 from src.database.models.accounts import UserGroupEnum, GenderEnum
@@ -209,3 +210,9 @@ class UserProfileDetailResponseSchema(BaseModel):
     gender: GenderEnum
     date_of_birth: datetime.date
     info: str
+
+
+UserProfileForm = Annotated[
+    UserProfileFormData,
+    Depends(UserProfileFormData.as_form)
+]
