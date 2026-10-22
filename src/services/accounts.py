@@ -664,24 +664,20 @@ class UserProfileService:
                     detail="Profile not found"
                 )
 
-            filtered_data = dict(
-                filter(lambda item: item[1] is not None, data.items())
-            )
-
-            if filtered_data.get("avatar"):
+            if data.get("avatar"):
                 s3_service.delete_image(profile.avatar)
-                key = filtered_data["avatar"] = s3_service.upload_image(
+                key = data["avatar"] = s3_service.upload_image(
                     identifier=current_user.id,
-                    image=filtered_data["avatar"],
+                    image=data["avatar"],
                     key_prefix="Avatars",
                     image_prefix="profile"
                 )
-                filtered_data["avatar"] = key
+                data["avatar"] = key
 
             await self.profile_repository.aupdate(
                 db=db,
                 instance=profile,
-                data=filtered_data
+                data=data
             )
             await db.commit()
 
