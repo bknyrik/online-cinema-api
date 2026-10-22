@@ -4,7 +4,7 @@ from typing import Annotated
 from fastapi import Depends
 
 from src.settings import settings
-from src.services.accounts import UserService
+from src.services.accounts import UserService, UserProfileService
 from src.services.security import PasswordSecurityService, JWTAuthService
 from src.services.email_sender import EmailSenderService
 from src.services.s3 import S3Service
@@ -60,3 +60,4 @@ def get_user_service() -> UserService:
 
 
 S3ServiceDep = Annotated[S3Service, Depends(get_s3_service)]
+UserProfileServiceDep = Annotated[UserProfileService, Depends()]
