@@ -149,10 +149,10 @@ class UserProfileModel(Base):
     )
     first_name = Column(String(255), nullable=True)
     last_name = Column(String(255), nullable=True)
-    avatar = Column(String(255), nullable=False)
+    avatar = Column(String(255), nullable=True)
     gender = Column(Enum(GenderEnum), nullable=True)
     date_of_birth = Column(Date, nullable=True)
-    info = Column(Text, nullable=False)
+    info = Column(Text, nullable=True)
     user = relationship(
         UserModel,
         back_populates="profile",
