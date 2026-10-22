@@ -615,19 +615,20 @@ class UserProfileService:
                 )
 
             data["user_id"] = current_user.id
-            avatar = data.pop("avatar")
+            avatar = data.pop("avatar", None)
 
             profile = await self.profile_repository.acreate(
                 db=db,
                 data=data
             )
 
-            profile.avatar = s3_service.upload_image(
-                identifier=profile.id,
-                image=avatar,
-                key_prefix="Avatars",
-                image_prefix="profile"
-            )
+            if avatar:
+                profile.avatar = s3_service.upload_image(
+                    identifier=profile.id,
+                    image=avatar,
+                    key_prefix="Avatars",
+                    image_prefix="profile"
+                )
 
             await db.commit()
 
