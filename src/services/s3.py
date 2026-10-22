@@ -33,13 +33,13 @@ class S3Service:
 
     def upload_image(
         self,
-        user_id: int,
+        identifier: int,
         image: UploadFile,
         key_prefix: str,
         image_prefix: str
     ) -> str:
         _, ext = os.path.splitext(image.filename)
-        key = f"{key_prefix}/{image_prefix}_{user_id}{ext}"
+        key = f"{key_prefix}/{image_prefix}_{identifier}{ext}"
 
         self.client.upload_fileobj(
             Fileobj=image.file,
