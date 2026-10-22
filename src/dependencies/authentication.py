@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from fastapi import Depends, HTTPException, status
 from fastapi.security.oauth2 import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -57,3 +59,6 @@ async def get_current_moderator_or_admin(
         )
 
     return current_user
+
+
+CurrentUserDep = Annotated[UserModel, Depends(get_current_user)]
