@@ -704,24 +704,15 @@ class UserProfileService:
         current_user: models.UserModel
     ) -> None:
         try:
-            profile = await self.profile_repository.aget_by_user_id(
-                db=db,
-                user_id=current_user.id
-            )
-
-            if not profile:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="Profile not found"
-                )
-
-            s3_service.delete_image(profile.avatar)
+            self.validate_user_profile_not_found(current_user)
 
             await self.profile_repository.adelete(
                 db=db,
-                instance=profile
+                instance=current_user.profile
             )
             await db.commit()
+
+            s3_service.delete_image(current_user.profile.avatar)
         except (SQLAlchemyError, Boto3Error):
             await db.rollback()
             raise HTTPException(
