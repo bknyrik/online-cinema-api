@@ -17,11 +17,15 @@ from src.schemas.accounts import (
     RefreshAccessTokenResponseSchema,
     ActivateUserAccountRequestSchema,
     MessageResponseSchema,
-    ReactivateUserAccountRequestSchema
+    ReactivateUserAccountRequestSchema,
+    ProfileDetailResponseSchema,
+    ProfileFormSchema,
+    ProfileUpdateFormSchema
 )
 from dependencies.authentication import get_current_user, get_current_admin_user
 from dependencies.database import get_db
-from src.services.accounts import UserService
+from src.services.accounts import UserService, UserProfileService
+from src.services.s3 import S3Service
 from src.services.security import PasswordSecurityService, JWTAuthService
 from src.services.email_sender import EmailSenderService
 from dependencies import services
@@ -213,4 +217,64 @@ async def read_current_user(
         id=current_user.id,
         email=current_user.email,
         group=current_user.group.name
+    )
+
+
+@router.get("/profiles/me/", response_model=ProfileDetailResponseSchema)
+async def get_current_user_profile(
+    db: AsyncSession = Depends(get_db),
+    s3_service: S3Service = Depends(services.get_s3_service),
+    user_profile_service: UserProfileService = Depends(),
+    current_user: UserModel = Depends(get_current_user)
+) -> dict:
+    return await user_profile_service.get_current_user_profile(
+        db=db,
+        s3_service=s3_service,
+        current_user=current_user
+    )
+
+
+@router.post("/profiles/", response_model=ProfileDetailResponseSchema)
+async def create_user_profile(
+    db: AsyncSession = Depends(get_db),
+    user_profile_service: UserProfileService = Depends(),
+    s3_service: S3Service = Depends(services.get_s3_service),
+    current_user: UserModel = Depends(get_current_user),
+    data: ProfileFormSchema = Depends(ProfileFormSchema.as_form)
+) -> dict:
+    return await user_profile_service.create_user_profile(
+        db=db,
+        data=data.model_dump(),
+        s3_service=s3_service,
+        current_user=current_user
+    )
+
+
+@router.patch("/profiles/me/", response_model=ProfileDetailResponseSchema)
+async def update_current_user_profile(
+    db: AsyncSession = Depends(get_db),
+    user_profile_service: UserProfileService = Depends(),
+    s3_service: S3Service = Depends(services.get_s3_service),
+    data: ProfileUpdateFormSchema = Depends(ProfileUpdateFormSchema.as_form),
+    current_user: UserModel = Depends(get_current_user)
+) -> dict:
+    return await user_profile_service.update_current_user_profile(
+        db=db,
+        data=data.model_dump(),
+        current_user=current_user,
+        s3_service=s3_service
+    )
+
+
+@router.delete("/profiles/me/")
+async def delete_current_user_profile(
+    db: AsyncSession = Depends(get_db),
+    s3_service = Depends(services.get_s3_service),
+    user_profile_service: UserProfileService = Depends(),
+    current_user: UserModel = Depends(get_current_user)
+) -> None:
+    return await user_profile_service.delete_current_user_profile(
+        db=db,
+        s3_service=s3_service,
+        current_user=current_user
     )
