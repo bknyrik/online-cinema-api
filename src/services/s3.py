@@ -31,6 +31,12 @@ class S3Service:
             f"{self.region_name}.amazonaws.com/"
         )
 
+    def get_image_url(self, image_key: str) -> str:
+        return (
+            f"https://{self.bucket_name}.s3."
+            f"{self.region_name}.amazonaws.com/{image_key}"
+        )
+
     def upload_image(
         self,
         identifier: int,
