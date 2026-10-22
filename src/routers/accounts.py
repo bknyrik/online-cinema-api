@@ -3,8 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.models import accounts as models
 from src.schemas import accounts as schemas
-from src.services.accounts import UserService, UserProfileService
-from src.services.s3 import S3Service
+from src.services.accounts import UserService
 from src.services.security import PasswordSecurityService, JWTAuthService
 from src.services.email_sender import EmailSenderService
 from dependencies import (
