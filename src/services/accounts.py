@@ -210,7 +210,7 @@ class UserService:
         self,
         data: dict,
         pss: PasswordSecurityService,
-        jwt_service: JWTAuthService,
+        jwt_auth_service: JWTAuthService,
         db: AsyncSession,
     ) -> dict:
         user = await self.user_repository.aget_by_email(db, data["email"])
@@ -231,11 +231,11 @@ class UserService:
             )
 
         try:
-            access_token = jwt_service.encode_token(
+            access_token = jwt_auth_service.encode_token(
                 user_id=user.id,
                 token_type="access"
             )
-            refresh_token = jwt_service.encode_token(
+            refresh_token = jwt_auth_service.encode_token(
                 user_id=user.id,
                 token_type="refresh"
             )

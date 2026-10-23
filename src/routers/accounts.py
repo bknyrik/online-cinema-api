@@ -79,7 +79,7 @@ async def login(
     return await user_service.login(
         data=data.model_dump(),
         db=db,
-        jwt_service=jwt_auth_service,
+        jwt_auth_service=jwt_auth_service,
         pss=pss
     )
 
