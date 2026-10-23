@@ -17,19 +17,18 @@ from src.settings import settings
 
 class UserService:
 
-    def __init__(
-        self,
-        user_repository: repositories.UserRepository,
-        user_group_repository: repositories.UserGroupRepository,
-        at_repository: repositories.TokenRepository,
-        rt_repository: repositories.TokenRepository,
-        prt_repository: repositories.TokenRepository,
-    ):
-        self.user_repository = user_repository
-        self.user_group_repository = user_group_repository
-        self.at_repository = at_repository
-        self.rt_repository = rt_repository
-        self.prt_repository = prt_repository
+    def __init__(self) -> None:
+        self.user_repository = repositories.UserRepository()
+        self.user_group_repository = repositories.UserGroupRepository()
+        self.at_repository = repositories.TokenRepository(
+            models.ActivationTokenModel
+        )
+        self.rt_repository = repositories.TokenRepository(
+            models.RefreshTokenModel
+        )
+        self.prt_repository = repositories.TokenRepository(
+            models.PasswordResetTokenModel
+        )
 
     async def register_user(
         self,

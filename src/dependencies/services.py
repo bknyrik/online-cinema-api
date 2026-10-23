@@ -50,13 +50,7 @@ def get_s3_service() -> S3Service:
 
 
 def get_user_service() -> UserService:
-    return UserService(
-        user_repository=UserRepository(),
-        user_group_repository=UserGroupRepository(),
-        at_repository=TokenRepository(accounts.ActivationTokenModel),
-        rt_repository=TokenRepository(accounts.RefreshTokenModel),
-        prt_repository=TokenRepository(accounts.PasswordResetTokenModel)
-    )
+    return UserService()
 
 
 JWTAuthServiceDep = Annotated[JWTAuthService, Depends(get_jwt_auth_service)]
