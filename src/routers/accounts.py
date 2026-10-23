@@ -195,12 +195,8 @@ async def refresh_access_token(
 @router.get("/me/", response_model=schemas.UserDetailResponseSchema)
 async def get_current_user(
     current_user: authentication.CurrentUserDep
-) -> schemas.UserDetailResponseSchema:
-    return schemas.UserDetailResponseSchema(
-        id=current_user.id,
-        email=current_user.email,
-        group=current_user.group.name
-    )
+) -> models.UserModel:
+    return current_user
 
 
 @router.get("/profiles/me/", response_model=schemas.UserProfileDetailResponseSchema)
