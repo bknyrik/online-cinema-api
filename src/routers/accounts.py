@@ -80,7 +80,10 @@ async def login(
     )
 
 
-@router.post("/logout/")
+@router.post(
+    "/logout/",
+    status_code=status.HTTP_204_NO_CONTENT
+)
 async def logout(
     data: schemas.LogoutRequestSchema,
     user_service: services.UserServiceDep,
