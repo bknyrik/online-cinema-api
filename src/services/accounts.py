@@ -261,15 +261,13 @@ class UserService:
             "refresh_token": token_instance.token
         }
 
-    async def logout(
-        self,
-        db: AsyncSession,
-        data: dict,
-    ) -> None:
+    async def logout(self, db: AsyncSession, data: dict) -> None:
         try:
-            token_instance = await self.rt_repository.aget_by_token(
+            token_instance = await self.rt_repository.aget_by(
                 db=db,
-                token=data["refresh_token"]
+                expressions=[
+                    models.RefreshTokenModel.token == data["refresh_token"]
+                ]
             )
 
             if not token_instance:
