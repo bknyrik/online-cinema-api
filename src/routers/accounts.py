@@ -86,7 +86,7 @@ async def logout(
     data: schemas.LogoutRequestSchema,
     user_service: services.UserServiceDep,
     db: database.AsyncSessionDep,
-    current_user: models.UserModel = Depends(authentication.get_current_user),
+    current_user: authentication.CurrentUserDep,
 ) -> None:
     return await user_service.logout(
         db=db,
@@ -131,7 +131,7 @@ async def change_user_password(
     user_service: services.UserServiceDep,
     pss: services.PasswordSecurityServiceDep,
     db: database.AsyncSessionDep,
-    current_user: models.UserModel = Depends(authentication.get_current_user),
+    current_user: authentication.CurrentUserDep,
 ) -> dict:
     return await user_service.change_user_password(
         db=db,
