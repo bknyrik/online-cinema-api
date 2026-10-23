@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.models import accounts as models
 from src.schemas import accounts as schemas
-from src.services.security import PasswordSecurityService, JWTAuthService
+from src.services.security import JWTAuthService
 from dependencies import (
     services,
     database,
@@ -128,9 +128,9 @@ async def admin_activate_user_account(
 async def change_user_password(
     data: schemas.ChangeUserPasswordRequestSchema,
     user_service: services.UserServiceDep,
+    pss: services.PasswordSecurityServiceDep,
     db: AsyncSession = Depends(database.get_db),
     current_user: models.UserModel = Depends(authentication.get_current_user),
-    pss: PasswordSecurityService = Depends(services.get_password_secure_service)
 ) -> dict:
     return await user_service.change_user_password(
         db=db,
@@ -163,8 +163,8 @@ async def reset_password(
 async def reset_password_complete(
     data: schemas.ResetPasswordCompleteRequestSchema,
     user_service: services.UserServiceDep,
+    pss: services.PasswordSecurityServiceDep,
     db: AsyncSession = Depends(database.get_db),
-    pss: PasswordSecurityService = Depends(services.get_password_secure_service)
 ) -> dict:
     return await user_service.reset_password_complete(
         db=db,
