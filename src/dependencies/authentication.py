@@ -4,8 +4,8 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security.oauth2 import OAuth2PasswordBearer
 
 from dependencies import database, services
-from src.database.models.accounts import UserModel
-from src.repositories.accounts import UserRepository
+from src.database.models import accounts as models
+from src.repositories import accounts as repositories
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
@@ -15,8 +15,8 @@ async def get_current_user(
     db: database.AsyncSessionDep,
     jwt_auth_service: services.JWTAuthServiceDep,
     token: str = Depends(oauth2_scheme)
-) -> UserModel:
-    user_repository = UserRepository()
+) -> models.UserModel:
+    user_repository = repositories.UserRepository()
     payload = jwt_auth_service.decode_token(token)
 
     user = await user_repository.aget_by_id(
@@ -36,7 +36,7 @@ async def get_current_user(
 
 async def get_current_admin_user(
     current_user: UserModel = Depends(get_current_user)
-) -> UserModel:
+) -> models.UserModel:
     if current_user.group.name.value != "admin":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -47,8 +47,8 @@ async def get_current_admin_user(
 
 
 async def get_current_moderator_or_admin(
-    current_user: UserModel = Depends(get_current_user)
-) -> UserModel:
+    current_user: models.UserModel = Depends(get_current_user)
+) -> models.UserModel:
     if current_user.group.name not in ("moderator", "admin"):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -58,4 +58,4 @@ async def get_current_moderator_or_admin(
     return current_user
 
 
-CurrentUserDep = Annotated[UserModel, Depends(get_current_user)]
+CurrentUserDep = Annotated[models.UserModel, Depends(get_current_user)]
