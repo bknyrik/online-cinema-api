@@ -49,7 +49,10 @@ async def activate_user_account(
     )
 
 
-@router.post("/activate/new/", response_model=schemas.MessageResponseSchema)
+@router.post(
+    "/users/activate/new/",
+    response_model=schemas.MessageResponseSchema
+)
 async def reactivate_user_account(
     data: schemas.ReactivateUserAccountRequestSchema,
     background_tasks: BackgroundTasks,
