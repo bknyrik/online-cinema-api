@@ -2,7 +2,13 @@ import datetime
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, status, Form, UploadFile, File
-from pydantic import BaseModel, EmailStr, HttpUrl, field_validator
+from pydantic import (
+    BaseModel,
+    EmailStr,
+    HttpUrl,
+    field_validator,
+    field_serializer
+)
 
 from src.database.models.accounts import UserGroupEnum, GenderEnum
 from src.database.validators import accounts
@@ -72,6 +78,10 @@ class UserDetailResponseSchema(BaseModel):
     id: int
     email: EmailStr
     group: UserGroupDetailSchema
+
+    @field_serializer("group")
+    def serialize_into_str(self, group: UserGroupDetailSchema) -> str:
+        return group.name
 
 
 class ChangeUserGroupRequestSchema(BaseModel):
