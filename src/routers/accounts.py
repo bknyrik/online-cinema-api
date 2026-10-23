@@ -193,7 +193,7 @@ async def refresh_access_token(
 
 
 @router.get("/me/", response_model=schemas.UserDetailResponseSchema)
-async def read_current_user(
+async def get_current_user(
     current_user: models.UserModel = Depends(authentication.get_current_user)
 ) -> schemas.UserDetailResponseSchema:
     return schemas.UserDetailResponseSchema(
