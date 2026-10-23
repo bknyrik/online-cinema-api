@@ -43,10 +43,6 @@ def get_s3_service() -> S3Service:
     )
 
 
-def get_user_service() -> UserService:
-    return UserService()
-
-
 PasswordSecurityService = Annotated[
     PasswordSecurityService,
     Depends(get_password_secure_service)
