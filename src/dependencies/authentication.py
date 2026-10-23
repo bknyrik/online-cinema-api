@@ -34,8 +34,11 @@ async def get_current_user(
     return user
 
 
+CurrentUserDep = Annotated[models.UserModel, Depends(get_current_user)]
+
+
 async def get_current_admin_user(
-    current_user: UserModel = Depends(get_current_user)
+    current_user: CurrentUserDep
 ) -> models.UserModel:
     if current_user.group.name.value != "admin":
         raise HTTPException(
@@ -47,7 +50,7 @@ async def get_current_admin_user(
 
 
 async def get_current_moderator_or_admin(
-    current_user: models.UserModel = Depends(get_current_user)
+    current_user: CurrentUserDep
 ) -> models.UserModel:
     if current_user.group.name not in ("moderator", "admin"):
         raise HTTPException(
@@ -58,4 +61,3 @@ async def get_current_moderator_or_admin(
     return current_user
 
 
-CurrentUserDep = Annotated[models.UserModel, Depends(get_current_user)]
