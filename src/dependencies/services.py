@@ -8,12 +8,6 @@ from src.services.accounts import UserService, UserProfileService
 from src.services.security import PasswordSecurityService, JWTAuthService
 from src.services.email_sender import EmailSenderService
 from src.services.s3 import S3Service
-from src.repositories.accounts import (
-    UserRepository,
-    TokenRepository,
-    UserGroupRepository
-)
-from src.database.models import accounts
 
 
 ACCESS_TOKEN_LIFETIME = timedelta(minutes=30)
