@@ -229,7 +229,7 @@ async def create_user_profile(
 ) -> models.UserProfileModel:
     return await user_profile_service.create_user_profile(
         db=db,
-        data=data.model_dump(exclude_none=True),
+        data=data.model_dump(),
         s3_service=s3_service,
         current_user=current_user
     )
