@@ -53,6 +53,10 @@ def get_user_service() -> UserService:
     return UserService()
 
 
+PasswordSecurityService = Annotated[
+    PasswordSecurityService,
+    Depends(get_password_secure_service)
+]
 JWTAuthServiceDep = Annotated[JWTAuthService, Depends(get_jwt_auth_service)]
 S3ServiceDep = Annotated[S3Service, Depends(get_s3_service)]
 UserServiceDep = Annotated[UserService, Depends()]
