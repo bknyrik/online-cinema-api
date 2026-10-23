@@ -43,7 +43,7 @@ def get_s3_service() -> S3Service:
     )
 
 
-PasswordSecurityService = Annotated[
+PasswordSecurityServiceDep = Annotated[
     PasswordSecurityService,
     Depends(get_password_secure_service)
 ]
