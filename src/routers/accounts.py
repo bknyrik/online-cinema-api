@@ -69,13 +69,13 @@ async def login(
     data: schemas.LoginRequestSchema,
     user_service: services.UserServiceDep,
     pss: services.PasswordSecurityServiceDep,
-    jwt_service: JWTAuthService = Depends(services.get_jwt_auth_service),
+    jwt_auth_service: services.JWTAuthServiceDep,
     db: AsyncSession = Depends(database.get_db),
 ) -> dict:
     return await user_service.login(
         data=data.model_dump(),
         db=db,
-        jwt_service=jwt_service,
+        jwt_service=jwt_auth_service,
         pss=pss
     )
 
@@ -180,7 +180,7 @@ async def reset_password_complete(
 async def refresh_access_token(
     data: schemas.RefreshAccessTokenRequestSchema,
     user_service: services.UserServiceDep,
-    jwt_auth_service: JWTAuthService = Depends(services.get_jwt_auth_service),
+    jwt_auth_service: services.JWTAuthServiceDep,
     db: AsyncSession = Depends(database.get_db),
 ) -> dict:
     return await user_service.refresh_access_token(
