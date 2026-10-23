@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, status
@@ -34,9 +35,6 @@ async def get_current_user(
     return user
 
 
-CurrentUserDep = Annotated[models.UserModel, Depends(get_current_user)]
-
-
 async def get_current_admin(current_user: CurrentUserDep) -> models.UserModel:
     if current_user.group.name.value != "admin":
         raise HTTPException(
@@ -59,3 +57,8 @@ async def get_current_moderator_or_admin(
     return current_user
 
 
+CurrentUserDep = Annotated[models.UserModel, Depends(get_current_user)]
+CurrentAdminDep = Annotated[models.UserModel, Depends(get_current_admin)]
+CurrentModeratorOrAdminDep = Annotated[
+    models.UserModel, Depends(get_current_moderator_or_admin)
+]
