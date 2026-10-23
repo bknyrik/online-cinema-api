@@ -71,7 +71,7 @@ class UserGroupDetailSchema(BaseModel):
 class UserDetailResponseSchema(BaseModel):
     id: int
     email: EmailStr
-    group: UserGroupEnum
+    group: UserGroupDetailSchema
 
 
 class ChangeUserGroupRequestSchema(BaseModel):
