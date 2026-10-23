@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, Depends, BackgroundTasks
+from fastapi import APIRouter, status, BackgroundTasks
 
 from src.database.models import accounts as models
 from src.schemas import accounts as schemas
@@ -103,7 +103,7 @@ async def change_user_group(
     data: schemas.ChangeUserGroupRequestSchema,
     user_service: services.UserServiceDep,
     db: database.AsyncSessionDep,
-    current_user: models.UserModel = Depends(authentication.get_current_admin)
+    current_user: authentication.CurrentAdminDep
 ) -> dict:
     return await user_service.change_user_group(
         db=db,
@@ -117,7 +117,7 @@ async def admin_activate_user_account(
     user_id: int,
     user_service: services.UserServiceDep,
     db: database.AsyncSessionDep,
-    current_user = Depends(authentication.get_current_admin)
+    current_user: authentication.CurrentAdminDep
 ) -> dict:
     return await user_service.admin_activate_user_account(
         user_id=user_id,
