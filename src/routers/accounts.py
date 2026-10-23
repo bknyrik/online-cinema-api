@@ -24,7 +24,7 @@ async def register_user(
     data: schemas.UserRegistrationRequestSchema,
     background_tasks: BackgroundTasks,
     user_service: services.UserServiceDep,
-    ess: EmailSenderService = Depends(services.get_email_sender_service),
+    ess: services.EmailSenderServiceDep,
     pss: PasswordSecurityService = Depends(services.get_password_secure_service),
     db: AsyncSession = Depends(database.get_db)
 ) -> models.UserModel:
@@ -54,7 +54,7 @@ async def reactivate_user_account(
     data: schemas.ReactivateUserAccountRequestSchema,
     background_tasks: BackgroundTasks,
     user_service: services.UserServiceDep,
-    ess: EmailSenderService = Depends(services.get_email_sender_service),
+    ess: services.EmailSenderServiceDep,
     db: AsyncSession = Depends(database.get_db),
 ) -> dict:
     return await user_service.reactivate_user_account(
@@ -146,7 +146,7 @@ async def reset_password(
     data: schemas.ResetUserPasswordRequestSchema,
     background_tasks: BackgroundTasks,
     user_service: services.UserServiceDep,
-    ess: EmailSenderService = Depends(services.get_email_sender_service),
+    ess: services.EmailSenderServiceDep,
     db: AsyncSession = Depends(database.get_db),
 ) -> dict:
     return await user_service.reset_password(
