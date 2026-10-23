@@ -1,9 +1,7 @@
 from fastapi import APIRouter, status, Depends, BackgroundTasks
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.models import accounts as models
 from src.schemas import accounts as schemas
-from src.services.security import JWTAuthService
 from dependencies import (
     services,
     database,
@@ -25,7 +23,7 @@ async def register_user(
     user_service: services.UserServiceDep,
     ess: services.EmailSenderServiceDep,
     pss: services.PasswordSecurityServiceDep,
-    db: AsyncSession = Depends(database.get_db)
+    db: database.AsyncSessionDep
 ) -> models.UserModel:
     return await user_service.register_user(
         db=db,
@@ -40,7 +38,7 @@ async def register_user(
 async def activate_user_account(
     data: schemas.ActivateUserAccountRequestSchema,
     user_service: services.UserServiceDep,
-    db: AsyncSession = Depends(database.get_db),
+    db: database.AsyncSessionDep,
 ) -> dict:
     return await user_service.activate_user_account(
         data=data.model_dump(),
@@ -54,7 +52,7 @@ async def reactivate_user_account(
     background_tasks: BackgroundTasks,
     user_service: services.UserServiceDep,
     ess: services.EmailSenderServiceDep,
-    db: AsyncSession = Depends(database.get_db),
+    db: database.AsyncSessionDep,
 ) -> dict:
     return await user_service.reactivate_user_account(
         data=data.model_dump(),
@@ -70,7 +68,7 @@ async def login(
     user_service: services.UserServiceDep,
     pss: services.PasswordSecurityServiceDep,
     jwt_auth_service: services.JWTAuthServiceDep,
-    db: AsyncSession = Depends(database.get_db),
+    db: database.AsyncSessionDep,
 ) -> dict:
     return await user_service.login(
         data=data.model_dump(),
@@ -87,7 +85,7 @@ async def login(
 async def logout(
     data: schemas.LogoutRequestSchema,
     user_service: services.UserServiceDep,
-    db: AsyncSession = Depends(database.get_db),
+    db: database.AsyncSessionDep,
     current_user: models.UserModel = Depends(authentication.get_current_user),
 ) -> None:
     return await user_service.logout(
@@ -104,7 +102,7 @@ async def change_user_group(
     user_id: int,
     data: schemas.ChangeUserGroupRequestSchema,
     user_service: services.UserServiceDep,
-    db: AsyncSession = Depends(database.get_db),
+    db: database.AsyncSessionDep,
     current_user: models.UserModel = Depends(authentication.get_current_admin)
 ) -> dict:
     return await user_service.change_user_group(
@@ -118,7 +116,7 @@ async def change_user_group(
 async def admin_activate_user_account(
     user_id: int,
     user_service: services.UserServiceDep,
-    db: AsyncSession = Depends(database.get_db),
+    db: database.AsyncSessionDep,
     current_user = Depends(authentication.get_current_admin)
 ) -> dict:
     return await user_service.admin_activate_user_account(
@@ -132,7 +130,7 @@ async def change_user_password(
     data: schemas.ChangeUserPasswordRequestSchema,
     user_service: services.UserServiceDep,
     pss: services.PasswordSecurityServiceDep,
-    db: AsyncSession = Depends(database.get_db),
+    db: database.AsyncSessionDep,
     current_user: models.UserModel = Depends(authentication.get_current_user),
 ) -> dict:
     return await user_service.change_user_password(
@@ -149,7 +147,7 @@ async def reset_password(
     background_tasks: BackgroundTasks,
     user_service: services.UserServiceDep,
     ess: services.EmailSenderServiceDep,
-    db: AsyncSession = Depends(database.get_db),
+    db: database.AsyncSessionDep,
 ) -> dict:
     return await user_service.reset_password(
         db=db,
@@ -167,7 +165,7 @@ async def reset_password_complete(
     data: schemas.ResetPasswordCompleteRequestSchema,
     user_service: services.UserServiceDep,
     pss: services.PasswordSecurityServiceDep,
-    db: AsyncSession = Depends(database.get_db),
+    db: database.AsyncSessionDep,
 ) -> dict:
     return await user_service.reset_password_complete(
         db=db,
@@ -184,7 +182,7 @@ async def refresh_access_token(
     data: schemas.RefreshAccessTokenRequestSchema,
     user_service: services.UserServiceDep,
     jwt_auth_service: services.JWTAuthServiceDep,
-    db: AsyncSession = Depends(database.get_db),
+    db: database.AsyncSessionDep,
 ) -> dict:
     return await user_service.refresh_access_token(
         db=db,
