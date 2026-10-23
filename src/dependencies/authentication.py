@@ -37,9 +37,7 @@ async def get_current_user(
 CurrentUserDep = Annotated[models.UserModel, Depends(get_current_user)]
 
 
-async def get_current_admin_user(
-    current_user: CurrentUserDep
-) -> models.UserModel:
+async def get_current_admin(current_user: CurrentUserDep) -> models.UserModel:
     if current_user.group.name.value != "admin":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

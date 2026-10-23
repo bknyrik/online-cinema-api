@@ -104,7 +104,7 @@ async def change_user_group(
     data: schemas.ChangeUserGroupRequestSchema,
     user_service: UserService = Depends(services.get_user_service),
     db: AsyncSession = Depends(database.get_db),
-    current_user: models.UserModel = Depends(authentication.get_current_admin_user)
+    current_user: models.UserModel = Depends(authentication.get_current_admin)
 ) -> dict:
     return await user_service.change_user_group(
         db=db,
@@ -118,7 +118,7 @@ async def admin_activate_user_account(
     user_id: int,
     user_service: UserService = Depends(services.get_user_service),
     db: AsyncSession = Depends(database.get_db),
-    current_user = Depends(authentication.get_current_admin_user)
+    current_user = Depends(authentication.get_current_admin)
 ) -> dict:
     return await user_service.admin_activate_user_account(
         user_id=user_id,
