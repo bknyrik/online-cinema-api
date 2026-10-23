@@ -27,7 +27,7 @@ def get_password_secure_service() -> PasswordSecurityService:
 def get_jwt_auth_service() -> JWTAuthService:
     return JWTAuthService(
         secret_key=settings.JWT_SECRET_KEY,
-        algorithm="HS256",
+        algorithm=settings.JWT_ALGORITHM,
         access_token_lifetime=ACCESS_TOKEN_LIFETIME,
         refresh_token_lifetime=REFRESH_TOKEN_LIFETIME
     )
