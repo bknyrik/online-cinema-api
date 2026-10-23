@@ -101,7 +101,7 @@ async def logout(
 
 
 @router.patch(
-    "/{user_id}/change_user_group/",
+    "/users/{user_id}/change_user_group/",
     response_model=schemas.UserDetailResponseSchema
 )
 async def change_user_group(
@@ -118,7 +118,10 @@ async def change_user_group(
     )
 
 
-@router.patch("/{user_id}/activate/", response_model=schemas.MessageResponseSchema)
+@router.patch(
+    "/users/{user_id}/activate/",
+    response_model=schemas.MessageResponseSchema
+)
 async def admin_activate_user_account(
     user_id: int,
     user_service: services.UserServiceDep,
