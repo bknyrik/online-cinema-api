@@ -2,9 +2,8 @@ from typing import Annotated
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security.oauth2 import OAuth2PasswordBearer
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from dependencies.database import get_db
+from dependencies import database
 from src.database.models.accounts import UserModel
 from src.repositories.accounts import UserRepository
 from src.services.security import JWTAuthService
@@ -15,7 +14,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 
 async def get_current_user(
-    db: AsyncSession = Depends(get_db),
+    db: database.AsyncSessionDep,
     token: str = Depends(oauth2_scheme),
     jwt_auth_service: JWTAuthService = Depends(get_jwt_auth_service)
 ) -> UserModel:
