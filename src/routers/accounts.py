@@ -172,7 +172,7 @@ async def reset_password(
 
 
 @router.post(
-    "/reset_password/complete/",
+    "/users/reset_password/complete/",
     response_model=schemas.MessageResponseSchema
 )
 async def reset_password_complete(
