@@ -3,7 +3,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.models import accounts as models
 from src.schemas import accounts as schemas
-from src.services.accounts import UserService
 from src.services.security import PasswordSecurityService, JWTAuthService
 from src.services.email_sender import EmailSenderService
 from dependencies import (
@@ -24,7 +23,7 @@ router = APIRouter()
 async def register_user(
     data: schemas.UserRegistrationRequestSchema,
     background_tasks: BackgroundTasks,
-    user_service: UserService = Depends(services.get_user_service),
+    user_service: services.UserServiceDep,
     ess: EmailSenderService = Depends(services.get_email_sender_service),
     pss: PasswordSecurityService = Depends(services.get_password_secure_service),
     db: AsyncSession = Depends(database.get_db)
@@ -41,7 +40,7 @@ async def register_user(
 @router.post("/activate/", response_model=schemas.MessageResponseSchema)
 async def activate_user_account(
     data: schemas.ActivateUserAccountRequestSchema,
-    user_service: UserService = Depends(services.get_user_service),
+    user_service: services.UserServiceDep,
     db: AsyncSession = Depends(database.get_db),
 ) -> dict:
     return await user_service.activate_user_account(
@@ -54,7 +53,7 @@ async def activate_user_account(
 async def reactivate_user_account(
     data: schemas.ReactivateUserAccountRequestSchema,
     background_tasks: BackgroundTasks,
-    user_service: UserService = Depends(services.get_user_service),
+    user_service: services.UserServiceDep,
     ess: EmailSenderService = Depends(services.get_email_sender_service),
     db: AsyncSession = Depends(database.get_db),
 ) -> dict:
@@ -69,7 +68,7 @@ async def reactivate_user_account(
 @router.post("/login/", response_model=schemas.LoginResponseSchema)
 async def login(
     data: schemas.LoginRequestSchema,
-    user_service: UserService = Depends(services.get_user_service),
+    user_service: services.UserServiceDep,
     pss: PasswordSecurityService = Depends(services.get_password_secure_service),
     jwt_service: JWTAuthService = Depends(services.get_jwt_auth_service),
     db: AsyncSession = Depends(database.get_db),
@@ -85,7 +84,7 @@ async def login(
 @router.post("/logout/")
 async def logout(
     data: schemas.LogoutRequestSchema,
-    user_service: UserService = Depends(services.get_user_service),
+    user_service: services.UserServiceDep,
     db: AsyncSession = Depends(database.get_db),
     current_user: models.UserModel = Depends(authentication.get_current_user),
 ) -> None:
@@ -102,7 +101,7 @@ async def logout(
 async def change_user_group(
     user_id: int,
     data: schemas.ChangeUserGroupRequestSchema,
-    user_service: UserService = Depends(services.get_user_service),
+    user_service: services.UserServiceDep,
     db: AsyncSession = Depends(database.get_db),
     current_user: models.UserModel = Depends(authentication.get_current_admin)
 ) -> dict:
@@ -116,7 +115,7 @@ async def change_user_group(
 @router.patch("/{user_id}/activate/", response_model=schemas.MessageResponseSchema)
 async def admin_activate_user_account(
     user_id: int,
-    user_service: UserService = Depends(services.get_user_service),
+    user_service: services.UserServiceDep,
     db: AsyncSession = Depends(database.get_db),
     current_user = Depends(authentication.get_current_admin)
 ) -> dict:
@@ -129,7 +128,7 @@ async def admin_activate_user_account(
 @router.patch("/me/change_password/", response_model=schemas.MessageResponseSchema)
 async def change_user_password(
     data: schemas.ChangeUserPasswordRequestSchema,
-    user_service: UserService = Depends(services.get_user_service),
+    user_service: services.UserServiceDep,
     db: AsyncSession = Depends(database.get_db),
     current_user: models.UserModel = Depends(authentication.get_current_user),
     pss: PasswordSecurityService = Depends(services.get_password_secure_service)
@@ -146,7 +145,7 @@ async def change_user_password(
 async def reset_password(
     data: schemas.ResetUserPasswordRequestSchema,
     background_tasks: BackgroundTasks,
-    user_service: UserService = Depends(services.get_user_service),
+    user_service: services.UserServiceDep,
     ess: EmailSenderService = Depends(services.get_email_sender_service),
     db: AsyncSession = Depends(database.get_db),
 ) -> dict:
@@ -164,7 +163,7 @@ async def reset_password(
 )
 async def reset_password_complete(
     data: schemas.ResetPasswordCompleteRequestSchema,
-    user_service: UserService = Depends(services.get_user_service),
+    user_service: services.UserServiceDep,
     db: AsyncSession = Depends(database.get_db),
     pss: PasswordSecurityService = Depends(services.get_password_secure_service)
 ) -> dict:
@@ -181,7 +180,7 @@ async def reset_password_complete(
 )
 async def refresh_access_token(
     data: schemas.RefreshAccessTokenRequestSchema,
-    user_service: UserService = Depends(services.get_user_service),
+    user_service: services.UserServiceDep,
     jwt_auth_service: JWTAuthService = Depends(services.get_jwt_auth_service),
     db: AsyncSession = Depends(database.get_db),
 ) -> dict:
