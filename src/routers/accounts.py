@@ -4,7 +4,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.database.models import accounts as models
 from src.schemas import accounts as schemas
 from src.services.security import PasswordSecurityService, JWTAuthService
-from src.services.email_sender import EmailSenderService
 from dependencies import (
     services,
     database,
@@ -25,7 +24,7 @@ async def register_user(
     background_tasks: BackgroundTasks,
     user_service: services.UserServiceDep,
     ess: services.EmailSenderServiceDep,
-    pss: PasswordSecurityService = Depends(services.get_password_secure_service),
+    pss: services.PasswordSecurityServiceDep,
     db: AsyncSession = Depends(database.get_db)
 ) -> models.UserModel:
     return await user_service.register_user(
@@ -69,7 +68,7 @@ async def reactivate_user_account(
 async def login(
     data: schemas.LoginRequestSchema,
     user_service: services.UserServiceDep,
-    pss: PasswordSecurityService = Depends(services.get_password_secure_service),
+    pss: services.PasswordSecurityServiceDep,
     jwt_service: JWTAuthService = Depends(services.get_jwt_auth_service),
     db: AsyncSession = Depends(database.get_db),
 ) -> dict:
