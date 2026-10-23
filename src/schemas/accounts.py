@@ -64,6 +64,10 @@ class LogoutRequestSchema(BaseModel):
     refresh_token: str
 
 
+class UserGroupDetailSchema(BaseModel):
+    name: str
+
+
 class UserDetailResponseSchema(BaseModel):
     id: int
     email: EmailStr
