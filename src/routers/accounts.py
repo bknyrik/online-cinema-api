@@ -68,7 +68,7 @@ async def reactivate_user_account(
     )
 
 
-@router.post("/login/", response_model=schemas.LoginResponseSchema)
+@router.post("/auth/login/", response_model=schemas.LoginResponseSchema)
 async def login(
     data: schemas.LoginRequestSchema,
     user_service: services.UserServiceDep,
@@ -85,7 +85,7 @@ async def login(
 
 
 @router.post(
-    "/logout/",
+    "/auth/logout/",
     status_code=status.HTTP_204_NO_CONTENT
 )
 async def logout(
