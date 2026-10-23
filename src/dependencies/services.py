@@ -14,7 +14,7 @@ ACCESS_TOKEN_LIFETIME = timedelta(minutes=30)
 REFRESH_TOKEN_LIFETIME = timedelta(days=1)
 
 
-def get_password_secure_service() -> PasswordSecurityService:
+def get_password_security_service() -> PasswordSecurityService:
     return PasswordSecurityService(schemes=["bcrypt"])
 
 
@@ -45,7 +45,7 @@ def get_s3_service() -> S3Service:
 
 PasswordSecurityServiceDep = Annotated[
     PasswordSecurityService,
-    Depends(get_password_secure_service)
+    Depends(get_password_security_service)
 ]
 EmailSenderServiceDep = Annotated[
     EmailSenderService,
