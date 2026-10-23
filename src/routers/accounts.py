@@ -189,7 +189,7 @@ async def reset_password_complete(
 
 
 @router.post(
-    "/refresh_access_token/",
+    "/auth/refresh_access_token/",
     response_model=schemas.RefreshAccessTokenResponseSchema
 )
 async def refresh_access_token(
