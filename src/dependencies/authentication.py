@@ -3,11 +3,9 @@ from typing import Annotated
 from fastapi import Depends, HTTPException, status
 from fastapi.security.oauth2 import OAuth2PasswordBearer
 
-from dependencies import database
+from dependencies import database, services
 from src.database.models.accounts import UserModel
 from src.repositories.accounts import UserRepository
-from src.services.security import JWTAuthService
-from src.dependencies.services import get_jwt_auth_service
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
@@ -15,8 +13,8 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 async def get_current_user(
     db: database.AsyncSessionDep,
-    token: str = Depends(oauth2_scheme),
-    jwt_auth_service: JWTAuthService = Depends(get_jwt_auth_service)
+    jwt_auth_service: services.JWTAuthServiceDep,
+    token: str = Depends(oauth2_scheme)
 ) -> UserModel:
     user_repository = UserRepository()
     payload = jwt_auth_service.decode_token(token)
