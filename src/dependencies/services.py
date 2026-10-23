@@ -59,5 +59,6 @@ def get_user_service() -> UserService:
     )
 
 
+JWTAuthServiceDep = Annotated[JWTAuthService, Depends(get_jwt_auth_service)]
 S3ServiceDep = Annotated[S3Service, Depends(get_s3_service)]
 UserProfileServiceDep = Annotated[UserProfileService, Depends()]
