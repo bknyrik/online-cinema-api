@@ -90,6 +90,7 @@ async def login(
 )
 async def logout(
     data: schemas.LogoutRequestSchema,
+    jwt_auth_service: services.JWTAuthServiceDep,
     user_service: services.UserServiceDep,
     db: database.AsyncSessionDep,
     current_user: authentication.CurrentUserDep,
