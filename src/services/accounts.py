@@ -281,11 +281,7 @@ class UserService:
                 ]
             )
 
-            if not token_instance:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Token is invalid"
-                )
+            self.validate_token_is_invalid(token_instance, "Refresh")
 
             await self.rt_repository.adelete(
                 db=db,
