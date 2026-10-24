@@ -55,6 +55,14 @@ class UserService:
                 detail=f"Refresh token must be '{valid_token_type}' type"
             )
 
+    @staticmethod
+    def user_account_is_active(user: models.UserModel) -> None:
+        if not user.is_active:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="User accounts is not activated"
+            )
+
     async def register_user(
         self,
         db: AsyncSession,
