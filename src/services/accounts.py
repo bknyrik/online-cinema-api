@@ -41,6 +41,20 @@ class UserService:
                 detail=f"{token_type} token is invalid"
             )
 
+    @staticmethod
+    def validate_refresh_token_has_valid_type(
+        token_instance: models.RefreshTokenModel,
+        valid_token_type: str,
+        jwt_auth_service: JWTAuthService,
+    ) -> None:
+        payload = jwt_auth_service.decode_token(token_instance.token)
+
+        if payload["token_type"] != valid_token_type:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Refresh token must be '{valid_token_type}' type"
+            )
+
     async def register_user(
         self,
         db: AsyncSession,
