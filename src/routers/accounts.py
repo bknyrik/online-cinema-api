@@ -97,6 +97,7 @@ async def logout(
 ) -> None:
     return await user_service.logout(
         db=db,
+        jwt_auth_service=jwt_auth_service,
         data=data.model_dump()
     )
 

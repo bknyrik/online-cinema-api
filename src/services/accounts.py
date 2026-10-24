@@ -286,7 +286,12 @@ class UserService:
             "refresh_token": token_instance.token
         }
 
-    async def logout(self, db: AsyncSession, data: dict) -> None:
+    async def logout(
+        self,
+        db: AsyncSession,
+        jwt_auth_service: JWTAuthService,
+        data: dict
+    ) -> None:
         try:
             token_instance = await self.rt_repository.aget_by(
                 db=db,
@@ -296,6 +301,11 @@ class UserService:
             )
 
             self.validate_token_is_invalid(token_instance, "Refresh")
+            self.validate_refresh_token_has_valid_type(
+                token_instance=token_instance,
+                valid_token_type="refresh",
+                jwt_auth_service=jwt_auth_service
+            )
 
             await self.rt_repository.adelete(
                 db=db,
