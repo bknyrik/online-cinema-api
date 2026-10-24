@@ -30,6 +30,17 @@ class UserService:
             models.PasswordResetTokenModel
         )
 
+    @staticmethod
+    def validate_token_is_invalid(
+        token_instance: models.AbstractTokenModel | None,
+        token_type: str
+    ) -> None:
+        if not token_instance:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"{token_type} token is invalid"
+            )
+
     async def register_user(
         self,
         db: AsyncSession,
