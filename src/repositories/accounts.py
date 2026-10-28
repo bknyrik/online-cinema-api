@@ -1,9 +1,6 @@
 import secrets
 from datetime import datetime, timezone, timedelta
 
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-
 from src.repositories.base import AsyncBaseRepository, SyncBaseRepository
 from src.database.models.accounts import (
     UserModel,
@@ -17,13 +14,6 @@ class UserRepository(AsyncBaseRepository[UserModel]):
 
     def __init__(self) -> None:
         super().__init__(UserModel)
-
-    async def aget_by_email(self, db: AsyncSession, email: str) -> UserModel | None:
-        result = await db.execute(
-            select(self._model_type)
-            .where(self._model_type.email == email)
-        )
-        return result.scalar_one_or_none()
 
 
 class UserGroupRepository(AsyncBaseRepository[UserGroupModel]):
