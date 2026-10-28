@@ -9,7 +9,7 @@ from src.database.models import accounts as models
 from src.repositories import accounts as repositories
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/accounts/auth/token/")
 
 
 async def get_current_user(
