@@ -487,9 +487,11 @@ class UserService(mixins.ModelItemsMixin):
                 detail="User not found"
             )
 
-        token_instance = await self.rt_repository.aget_by_token(
+        token_instance = await self.rt_repository.aget_by(
             db=db,
-            token=data["refresh_token"],
+            expressions=[
+                models.RefreshTokenModel.token == data["refresh_token"]
+            ]
         )
 
         if (
