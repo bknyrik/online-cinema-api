@@ -353,9 +353,11 @@ class UserService(mixins.ModelItemsMixin):
         user_id: int
     ) -> dict:
         try:
-            group = await self.user_group_repository.aget_by_name(
+            group = await self.user_group_repository.aget_by(
                 db=db,
-                name=data["group"]
+                expressions=[
+                    models.UserGroupModel.name == data["group"]
+                ]
             )
 
             if not group:
