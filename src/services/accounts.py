@@ -318,9 +318,12 @@ class UserService:
         self,
         db: AsyncSession,
         jwt_auth_service: JWTAuthService,
-        data: dict
+        data: dict,
+        current_user: models.UserModel
     ) -> None:
         try:
+            self.user_account_is_active(current_user)
+
             token_instance = await self.rt_repository.aget_by(
                 db=db,
                 expressions=[

@@ -113,7 +113,8 @@ async def logout(
     return await user_service.logout(
         db=db,
         jwt_auth_service=jwt_auth_service,
-        data=data.model_dump()
+        data=data.model_dump(),
+        current_user=current_user
     )
 
 
