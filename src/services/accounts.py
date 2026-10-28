@@ -582,9 +582,9 @@ class UserService(mixins.ModelItemsMixin):
                 detail="User not found"
             )
 
-        token_instance = await self.prt_repository.aget_by_user_id(
+        token_instance = await self.prt_repository.aget_by(
             db=db,
-            user_id=user.id,
+            expressions=[models.PasswordResetTokenModel.user_id == user.id]
         )
 
         if not token_instance or token_instance.token != data["token"]:
