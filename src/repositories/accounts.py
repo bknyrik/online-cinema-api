@@ -2,29 +2,24 @@ import secrets
 from datetime import datetime, timezone, timedelta
 
 from src.repositories.base import AsyncBaseRepository, SyncBaseRepository
-from src.database.models.accounts import (
-    UserModel,
-    UserGroupModel,
-    UserProfileModel,
-    AbstractTokenModel
-)
+from src.database.models import accounts as models
 
 
-class UserRepository(AsyncBaseRepository[UserModel]):
+class UserRepository(AsyncBaseRepository[models.UserModel]):
 
     def __init__(self) -> None:
-        super().__init__(UserModel)
+        super().__init__(models.UserModel)
 
 
-class UserGroupRepository(AsyncBaseRepository[UserGroupModel]):
+class UserGroupRepository(AsyncBaseRepository[models.UserGroupModel]):
 
     def __init__(self) -> None:
-        super().__init__(UserGroupModel)
+        super().__init__(models.UserGroupModel)
 
 
 class TokenRepository(
-    AsyncBaseRepository[AbstractTokenModel],
-    SyncBaseRepository[AbstractTokenModel]
+    AsyncBaseRepository[models.AbstractTokenModel],
+    SyncBaseRepository[models.AbstractTokenModel]
 ):
 
     @staticmethod
@@ -36,7 +31,7 @@ class TokenRepository(
         return datetime.now(timezone.utc) + td
 
 
-class UserProfileRepository(AsyncBaseRepository[UserProfileModel]):
+class UserProfileRepository(AsyncBaseRepository[models.UserProfileModel]):
 
     def __init__(self) -> None:
-        super().__init__(UserProfileModel)
+        super().__init__(models.UserProfileModel)
