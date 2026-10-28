@@ -193,7 +193,10 @@ class UserService(mixins.ModelItemsMixin):
         background_tasks: BackgroundTasks,
         email_sender_service: EmailSenderService
     ) -> dict:
-        user = await self.user_repository.aget_by_email(db, data["email"])
+        user = await self.user_repository.aget_by(
+            db=db,
+            expressions=[self.model_type.email == data["email"]]
+        )
 
         if not user:
             raise HTTPException(
