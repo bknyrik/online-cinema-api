@@ -1,4 +1,5 @@
-from fastapi import APIRouter, status, BackgroundTasks
+from fastapi import APIRouter, Depends, status, BackgroundTasks
+from fastapi.security import OAuth2PasswordRequestForm
 
 from src.database.models import accounts as models
 from src.schemas import accounts as schemas
@@ -65,6 +66,20 @@ async def reactivate_user_account(
         background_tasks=background_tasks,
         email_sender_service=ess,
         db=db
+    )
+
+
+@router.post("/auth/token/", response_model=schemas.AccessTokenDetailResponseSchema)
+async def login_for_access_token(
+    data: authentication.OAuth2PasswordForm,
+    user_service: services.UserServiceDep,
+    jwt_auth_service: services.JWTAuthServiceDep,
+    db: database.AsyncSessionDep,
+) -> dict:
+    return await user_service.login_for_access_token(
+        data={"email": data.username, "password": data.password},
+        db=db,
+        jwt_auth_service=jwt_auth_service,
     )
 
 
