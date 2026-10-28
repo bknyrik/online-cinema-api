@@ -83,22 +83,6 @@ class TokenRepository(
         await self.aupdate(db, instance, data)
         return instance
 
-    async def adelete_by_user_id(
-        self,
-        db: AsyncSession,
-        user_id: int
-    ) -> AbstractTokenModel | None:
-        instance = await self.aget_by_user_id(
-            db=db,
-            user_id=user_id
-        )
-
-        if not instance:
-            return None
-
-        await self.adelete(db, instance)
-        return instance
-
 
 class UserProfileRepository(AsyncBaseRepository[UserProfileModel]):
 
