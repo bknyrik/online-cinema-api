@@ -268,7 +268,10 @@ class UserService(mixins.ModelItemsMixin):
         jwt_auth_service: JWTAuthService,
         db: AsyncSession,
     ) -> dict:
-        user = await self.user_repository.aget_by_email(db, data["email"])
+        user = await self.user_repository.aget_by(
+            db=db,
+            expressions=[self.model_type.email == data["email"]]
+        )
 
         if (
             not user
