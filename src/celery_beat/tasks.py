@@ -1,4 +1,5 @@
 from celery import shared_task
+from sqlalchemy_celery_beat.models import PeriodicTask
 
 from src.database.models.accounts import ActivationTokenModel
 from src.database.config import SyncSessionLocal
@@ -23,9 +24,9 @@ def delete_expired_activation_token(user_id: int, schedule_id: int) -> None:
             ]
         )
 
-        ptr.delete_by_schedule_id(
+        ptr.delete_by(
             db=session,
-            schedule_id=schedule_id
+            expressions=[PeriodicTask.schedule_id == schedule_id]
         )
 
         csr.delete_by_id(
