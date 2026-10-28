@@ -26,18 +26,6 @@ class UserRepository(AsyncBaseRepository[UserModel]):
         )
         return result.scalar_one_or_none()
 
-    async def aget_with_group_by_id(
-        self,
-        db: AsyncSession,
-        id_: int
-    ) -> UserModel | None:
-        result = await db.execute(
-            select(self._model_type)
-            .options(joinedload(self._model_type.group))
-            .where(self._model_type.id == id_)
-        )
-        return result.scalar_one_or_none()
-
 
 class UserGroupRepository(AsyncBaseRepository[UserGroupModel]):
 
