@@ -55,6 +55,11 @@ class ReactivateUserAccountRequestSchema(BaseModel):
     email: EmailStr
 
 
+class AccessTokenDetailResponseSchema(BaseModel):
+    access_token: str
+    token_type: str
+
+
 class LoginRequestSchema(BaseModel):
     email: EmailStr
     password: str
