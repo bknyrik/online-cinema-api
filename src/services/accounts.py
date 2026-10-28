@@ -144,9 +144,9 @@ class UserService(mixins.ModelItemsMixin):
                 detail="User account is already active."
             )
 
-        token_instance = await self.at_repository.aget_by_user_id(
+        token_instance = await self.at_repository.aget_by(
             db=db,
-            user_id=user.id,
+            expressions=[models.ActivationTokenModel.user_id == user.id]
         )
 
         if (
