@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, status
-from fastapi.security.oauth2 import OAuth2PasswordBearer
+from fastapi.security.oauth2 import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 from dependencies import database, services
 from src.database.models import accounts as models
@@ -68,3 +68,4 @@ CurrentAdminDep = Annotated[models.UserModel, Depends(get_current_admin)]
 CurrentModeratorOrAdminDep = Annotated[
     models.UserModel, Depends(get_current_moderator_or_admin)
 ]
+OAuth2PasswordForm = Annotated[OAuth2PasswordRequestForm, Depends()]
