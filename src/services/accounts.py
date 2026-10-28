@@ -19,6 +19,7 @@ from src.settings import settings
 class UserService(mixins.ModelItemsMixin):
 
     def __init__(self) -> None:
+        self.model_type = models.UserModel
         self.user_repository = repositories.UserRepository()
         self.user_group_repository = repositories.UserGroupRepository()
         self.at_repository = repositories.TokenRepository(
