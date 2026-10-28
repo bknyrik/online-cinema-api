@@ -535,7 +535,10 @@ class UserService(mixins.ModelItemsMixin):
         ess: EmailSenderService,
         background_tasks: BackgroundTasks
     ) -> dict:
-        user = await self.user_repository.aget_by_email(db, data["email"])
+        user = await self.user_repository.aget_by(
+            db=db,
+            expressions=[self.model_type.email == data["email"]]
+        )
 
         if user and user.is_active:
             try:
