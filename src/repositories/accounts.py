@@ -110,20 +110,6 @@ class TokenRepository(
         )
         return result.scalar_one_or_none()
 
-    def delete_by_user_id(
-        self,
-        db: Session,
-        user_id: int
-    ) -> AbstractTokenModel | None:
-        instance = self.get_by_user_id(db, user_id)
-
-        if not instance:
-            return None
-
-        self.delete(db, instance)
-
-        return instance
-
 
 class UserProfileRepository(AsyncBaseRepository[UserProfileModel]):
 
