@@ -239,6 +239,26 @@ class UserService:
 
         return {"message": "An activation link is sent to your email"}
 
+    async def login_for_access_token(
+        self,
+        data: dict,
+        db: AsyncSession,
+        jwt_auth_service: JWTAuthService
+    ) -> dict:
+        try:
+            user = await self.user_repository.aget_by(
+                db=db,
+                expressions=[models.UserModel.email == data["email"]]
+            )
+
+            access_token = jwt_auth_service.encode_token(user.id, "access")
+            return {"access_token": access_token, "token_type": "Bearer"}
+        except SQLAlchemyError:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while login for access token"
+            )
+
     async def login(
         self,
         data: dict,
