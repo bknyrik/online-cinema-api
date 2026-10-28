@@ -7,6 +7,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from boto3.exceptions import Boto3Error
 
 from src.database.models import accounts as models
+from src.services import mixins
 from src.services.security import PasswordSecurityService, JWTAuthService
 from src.services.celery_beat import CeleryBeatService
 from src.services.email_sender import EmailSenderService
@@ -15,7 +16,7 @@ from src.repositories import accounts as repositories
 from src.settings import settings
 
 
-class UserService:
+class UserService(mixins.ModelItemsMixin):
 
     def __init__(self) -> None:
         self.user_repository = repositories.UserRepository()
