@@ -16,9 +16,11 @@ def delete_expired_activation_token(user_id: int, schedule_id: int) -> None:
     csr = ClockedScheduleRepository()
 
     with SyncSessionLocal() as session:
-        token_repository.delete_by_user_id(
+        token_repository.delete_by(
             db=session,
-            user_id=user_id
+            expressions=[
+                ActivationTokenModel.user_id == user_id
+            ]
         )
 
         ptr.delete_by_schedule_id(
