@@ -532,9 +532,11 @@ class UserService(mixins.ModelItemsMixin):
                     "expires_at": self.prt_repository.get_expiration_date()
                 }
 
-                token_instance = await self.prt_repository.aupdate_by_user_id(
+                token_instance = await self.prt_repository.aupdate_by(
                     db=db,
-                    user_id=user.id,
+                    expressions=[
+                        models.PasswordResetTokenModel.user_id == user.id
+                    ],
                     data=token_data
                 )
 
