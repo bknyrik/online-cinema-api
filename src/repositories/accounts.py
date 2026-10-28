@@ -99,17 +99,6 @@ class TokenRepository(
         await self.adelete(db, instance)
         return instance
 
-    def get_by_user_id(
-        self,
-        db: Session,
-        user_id: int
-    ) -> AbstractTokenModel | None:
-        result = db.execute(
-            select(self._model_type)
-            .where(self._model_type.user_id == user_id)
-        )
-        return result.scalar_one_or_none()
-
 
 class UserProfileRepository(AsyncBaseRepository[UserProfileModel]):
 
