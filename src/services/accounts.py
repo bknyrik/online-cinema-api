@@ -73,27 +73,22 @@ class UserService(mixins.ModelItemsMixin):
         email_sender_service: EmailSenderService,
         background_tasks: BackgroundTasks
     ) -> models.UserModel:
-
-        user = await self.user_repository.aget_by_email(db, data["email"])
-
-        if user:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"User with this email {repr(data["email"])} exists."
-            )
-
         try:
-            group_name = "USER"
-            group = await self.user_group_repository.aget_by_name(
+            user = await self.user_repository.aget_by(
                 db=db,
-                name=group_name
+                expressions=[self.model_type.email == data["email"]]
             )
 
-            if not group:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=f"Invalid group {repr(group_name)}"
-                )
+            self.validate_item_by_attrs_exists(
+                item=user,
+                attrs={"email": data["email"]},
+                item_type="User"
+            )
+
+            group = await self.user_group_repository.aget_by(
+                db=db,
+                expressions=[models.UserGroupModel.name == "USER"]
+            )
 
             data["group_id"] = group.id
             data["hashed_password"] = pss.hash_password(data.pop("password"))
@@ -109,14 +104,6 @@ class UserService(mixins.ModelItemsMixin):
                 },
             )
 
-            await db.commit()
-        except SQLAlchemyError:
-            await db.rollback()
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="An error occurred while user registration"
-            )
-        else:
             background_tasks.add_task(
                 email_sender_service.send_activation_email,
                 user.email,
@@ -129,7 +116,14 @@ class UserService(mixins.ModelItemsMixin):
                 activation_token.expires_at
             )
 
-        return user
+            await db.commit()
+            return user
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while user registration"
+            )
 
     async def activate_user_account(
         self,
