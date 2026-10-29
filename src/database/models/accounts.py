@@ -168,7 +168,8 @@ class UserProfileModel(Base):
     )
     movie_comments = relationship(
         "MovieCommentModel",
-        back_populates="profile"
+        back_populates="profile",
+        cascade="all, delete-orphan"
     )
     comment_replies = relationship(
         "CommentReplyModel",
