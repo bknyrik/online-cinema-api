@@ -59,7 +59,11 @@ class UserModel(Base):
         nullable=False,
         default=datetime.now(timezone.utc),
     )
-    group_id = Column(Integer, ForeignKey("user_groups.id"), nullable=False)
+    group_id = Column(
+        Integer,
+        ForeignKey("user_groups.id", ondelete="CASCADE"),
+        nullable=False
+    )
     group = relationship(UserGroupModel, back_populates="users")
     activation_token = relationship(
         "ActivationTokenModel",
