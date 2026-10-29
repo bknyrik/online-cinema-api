@@ -64,6 +64,8 @@ class UserModel(Base):
     activation_token = relationship(
         "ActivationTokenModel",
         back_populates="user",
+        uselist=False,
+        cascade="all, delete-orphan"
     )
     password_reset_token = relationship(
         "PasswordResetTokenModel",
