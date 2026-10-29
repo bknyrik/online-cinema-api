@@ -86,6 +86,23 @@ class ModelItemsMixin:
             )
 
     @staticmethod
+    def validate_item_by_attrs_not_found(
+        item: Base | None,
+        attrs: dict,
+        item_type: str
+    ) -> None:
+        if not item:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=(
+                    f"{item_type} with " +
+                    ", ".join(
+                        f"{key} '{value}'" for key, value in attrs.items()
+                    ) + " not found"
+                )
+            )
+
+    @staticmethod
     def validate_item_by_attrs_exists(
         item: Base | None,
         attrs: dict,
