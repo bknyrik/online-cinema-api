@@ -65,8 +65,16 @@ class MovieCommentModel(Base):
     text = Column(Text, nullable=False)
     movie = relationship("MovieModel", back_populates="comments")
     profile = relationship("UserProfileModel", back_populates="movie_comments")
-    replies = relationship("CommentReplyModel", back_populates="comment")
-    likes = relationship("CommentLikeModel", back_populates="comment")
+    replies = relationship(
+        "CommentReplyModel",
+        back_populates="comment",
+        cascade="all, delete-orphan"
+    )
+    likes = relationship(
+        "CommentLikeModel",
+        back_populates="comment",
+        cascade="all, delete-orphan"
+    )
 
 
 class CommentReplyModel(Base):
