@@ -75,7 +75,8 @@ class UserModel(Base):
     )
     refresh_tokens = relationship(
         "RefreshTokenModel",
-        back_populates="user"
+        back_populates="user",
+        cascade="all, delete-orphan"
     )
     profile = relationship(
         "UserProfileModel",
