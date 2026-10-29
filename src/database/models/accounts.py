@@ -158,7 +158,8 @@ class UserProfileModel(Base):
     )
     favorite_movies = relationship(
         FavoriteMovieModel,
-        back_populates="profile"
+        back_populates="profile",
+        cascade="all, delete-orphan"
     )
     movie_likes = relationship(
         "MovieLikeModel",
