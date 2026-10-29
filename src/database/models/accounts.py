@@ -70,6 +70,8 @@ class UserModel(Base):
     password_reset_token = relationship(
         "PasswordResetTokenModel",
         back_populates="user",
+        uselist=False,
+        cascade="all, delete-orphan"
     )
     refresh_tokens = relationship(
         "RefreshTokenModel",
