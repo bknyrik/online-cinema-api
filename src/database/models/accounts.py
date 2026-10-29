@@ -74,6 +74,7 @@ class UserModel(Base):
     profile = relationship(
         "UserProfileModel",
         back_populates="user",
+        cascade="all, delete-orphan",
         uselist=False
     )
 
