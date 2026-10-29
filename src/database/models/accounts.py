@@ -183,5 +183,6 @@ class UserProfileModel(Base):
     )
     comment_likes = relationship(
         "CommentLikeModel",
-        back_populates="profile"
+        back_populates="profile",
+        cascade="all, delete-orphan"
     )
