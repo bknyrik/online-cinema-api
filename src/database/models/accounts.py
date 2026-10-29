@@ -156,7 +156,6 @@ class UserProfileModel(Base):
     user = relationship(
         UserModel,
         back_populates="profile",
-        single_parent=True
     )
     favorite_movies = relationship(
         FavoriteMovieModel,
