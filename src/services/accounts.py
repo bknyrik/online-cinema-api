@@ -361,7 +361,7 @@ class UserService(mixins.ModelItemsMixin):
         db: AsyncSession,
         data: dict,
         user_id: int
-    ) -> dict:
+    ) -> models.UserModel:
         try:
             group = await self.user_group_repository.aget_by(
                 db=db,
@@ -388,11 +388,7 @@ class UserService(mixins.ModelItemsMixin):
 
             await db.commit()
 
-            return {
-                "id": user.id,
-                "email": user.email,
-                "group": group.name
-            }
+            return user
         except SQLAlchemyError:
             await db.rollback()
             raise HTTPException(
