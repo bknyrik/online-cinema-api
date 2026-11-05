@@ -478,45 +478,46 @@ class UserService(mixins.ModelItemsMixin):
         jwt_auth_service: JWTAuthService,
         db: AsyncSession
     ) -> dict:
-        user = await self.user_repository.aget_by(
-            db=db,
-            expressions=[self.model_type.email == data["email"]]
-        )
+        try:
+            user = await self.user_repository.aget_by(
+                db=db,
+                expressions=[self.model_type.email == data["email"]]
+            )
 
-        if not user:
+            self.validate_item_by_attrs_not_found(
+                item=user,
+                attrs={"email": data["email"]},
+                item_type="User"
+            )
+
+            token_instance = await self.rt_repository.aget_by(
+                db=db,
+                expressions=[
+                    models.RefreshTokenModel.token == data["refresh_token"]
+                ]
+            )
+
+            self.validate_token_is_invalid(
+                token_instance=token_instance,
+                token_type="Refresh",
+            )
+
+            self.validate_token_has_expired(
+                token_instance=token_instance,
+                token_type="Refresh",
+            )
+
+            return {
+                "access_token": jwt_auth_service.encode_token(
+                    user_id=user.id,
+                    token_type="access"
+                )
+            }
+        except SQLAlchemyError:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="User not found"
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while refreshing access token"
             )
-
-        token_instance = await self.rt_repository.aget_by(
-            db=db,
-            expressions=[
-                models.RefreshTokenModel.token == data["refresh_token"]
-            ]
-        )
-
-        if (
-            not token_instance
-            or token_instance.token != data["refresh_token"]
-        ):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Token is invalid or missing"
-            )
-
-        if token_instance.has_expired:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Token is expired"
-            )
-
-        return {
-            "access_token": jwt_auth_service.encode_token(
-                user_id=user.id,
-                token_type="access"
-            )
-        }
 
     async def reset_password(
         self,
