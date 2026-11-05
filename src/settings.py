@@ -24,9 +24,7 @@ class Settings(BaseSettings):
     AWS_REGION_NAME = os.getenv("AWS_REGION_NAME")
     AWS_BUCKET_NAME = os.getenv("AWS_BUCKET_NAME")
     LINK_ACCOUNT_ACTIVATION = os.getenv("LINK_ACCOUNT_ACTIVATION")
-    LINK_RESET_PASSWORD = (
-        "http://localhost:8000/api/accounts/me/users/reset_password/complete/"
-    )
+    LINK_RESET_PASSWORD = os.getenv("LINK_RESET_PASSWORD")
 
     class Config:
         env_file = ".env"
