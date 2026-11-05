@@ -374,10 +374,10 @@ class UserService(mixins.ModelItemsMixin):
                 item_type="Group"
             )
 
-            user = await self.user_repository.aupdate_by_id(
+            user = await self.user_repository.aget_by_id(
                 db=db,
                 id_=user_id,
-                data={"group_id": group.id}
+                join_relationships=["group"]
             )
 
             self.validate_item_by_id_not_found(
@@ -385,6 +385,13 @@ class UserService(mixins.ModelItemsMixin):
                 id_=user_id,
                 item_type="User"
             )
+
+            await self.user_repository.aupdate(
+                db=db,
+                instance=user,
+                data={"group_id": group.id}
+            )
+            user.group = group
 
             await db.commit()
 
