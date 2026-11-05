@@ -169,11 +169,7 @@ class UserService(mixins.ModelItemsMixin):
                 item_type="User"
             )
 
-            if user.is_active:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="User account is already active."
-                )
+            self.validate_user_is_not_active(user)
 
             self.validate_token_is_invalid(
                 token_instance=user.activation_token,
