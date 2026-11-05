@@ -203,18 +203,18 @@ class UserService(mixins.ModelItemsMixin):
         background_tasks: BackgroundTasks,
         email_sender_service: EmailSenderService
     ) -> dict:
-        user = await self.user_repository.aget_by(
-            db=db,
-            expressions=[self.model_type.email == data["email"]]
-        )
-
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"User with given email '{data["email"]}' not found"
+        try:
+            user = await self.user_repository.aget_by(
+                db=db,
+                expressions=[self.model_type.email == data["email"]]
             )
 
-        try:
+            self.validate_item_by_attrs_not_found(
+                item=user,
+                attrs=data,
+                item_type="User"
+            )
+
             token = self.at_repository.generate_token()
             token_expiration_date = self.at_repository.get_expiration_date()
 
