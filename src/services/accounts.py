@@ -235,13 +235,7 @@ class UserService(mixins.ModelItemsMixin):
                 )
 
             await db.commit()
-        except SQLAlchemyError:
-            await db.rollback()
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="An error occurred while activating account"
-            )
-        else:
+
             background_tasks.add_task(
                 email_sender_service.send_activation_email,
                 user.email,
@@ -249,7 +243,13 @@ class UserService(mixins.ModelItemsMixin):
                 token_instance.token
             )
 
-        return {"message": "An activation link is sent to your email"}
+            return {"message": "An activation link is sent to your email"}
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while activating account"
+            )
 
     async def login_for_access_token(
         self,
