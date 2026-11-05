@@ -1,5 +1,4 @@
-from fastapi import APIRouter, Depends, status, BackgroundTasks
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi import APIRouter, status, BackgroundTasks
 
 from src.database.models import accounts as models
 from src.schemas import accounts as schemas
@@ -128,7 +127,7 @@ async def change_user_group(
     user_service: services.UserServiceDep,
     db: database.AsyncSessionDep,
     current_user: authentication.CurrentAdminDep
-) -> dict:
+) -> models.UserModel:
     return await user_service.change_user_group(
         db=db,
         data=data.model_dump(),
