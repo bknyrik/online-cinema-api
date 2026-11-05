@@ -460,19 +460,17 @@ class UserService(mixins.ModelItemsMixin):
                 db=db,
                 instance=current_user,
                 data={
-                    "updated_at": datetime.now(timezone.utc),
                     "hashed_password": pss.hash_password(data["new_password"])
                 }
             )
             await db.commit()
+            return {"message": "Password is changed successfully"}
         except SQLAlchemyError:
             await db.rollback()
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while changing user password"
             )
-
-        return {"message": "Password is changed successfully"}
 
     async def refresh_access_token(
         self,
