@@ -132,7 +132,7 @@ class UserService(mixins.ModelItemsMixin):
             background_tasks.add_task(
                 email_sender_service.send_activation_email,
                 user.email,
-                settings.LINK_ACTIVATE_ACCOUNT,
+                settings.LINK_ACCOUNT_ACTIVATION,
                 activation_token.token
             )
             background_tasks.add_task(
@@ -230,7 +230,7 @@ class UserService(mixins.ModelItemsMixin):
             background_tasks.add_task(
                 email_sender_service.send_activation_email,
                 user.email,
-                settings.LINK_ACTIVATE_ACCOUNT,
+                settings.LINK_ACCOUNT_ACTIVATION,
                 user.activation_token.token
             )
 
