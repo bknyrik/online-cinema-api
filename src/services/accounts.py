@@ -365,45 +365,40 @@ class UserService(mixins.ModelItemsMixin):
         try:
             group = await self.user_group_repository.aget_by(
                 db=db,
-                expressions=[
-                    models.UserGroupModel.name == data["group"]
-                ]
+                expressions=[models.UserGroupModel.name == data["group"]]
             )
 
-            if not group:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail=f"Group {data["group"]} not found"
-                )
+            self.validate_item_by_attrs_not_found(
+                item=group,
+                attrs=data,
+                item_type="Group"
+            )
 
             user = await self.user_repository.aupdate_by_id(
                 db=db,
                 id_=user_id,
-                data={
-                    "group_id": group.id,
-                    "updated_at": datetime.now(timezone.utc)
-                }
+                data={"group_id": group.id}
             )
 
-            if not user:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="User not found"
-                )
+            self.validate_item_by_id_not_found(
+                item=user,
+                id_=user_id,
+                item_type="User"
+            )
 
             await db.commit()
+
+            return {
+                "id": user.id,
+                "email": user.email,
+                "group": group.name
+            }
         except SQLAlchemyError:
             await db.rollback()
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while changing user group"
             )
-
-        return {
-            "id": user.id,
-            "email": user.email,
-            "group": group.name
-        }
 
     async def admin_activate_user_account(
         self,
