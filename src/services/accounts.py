@@ -148,51 +148,39 @@ class UserService(mixins.ModelItemsMixin):
         data: dict,
         db: AsyncSession
     ) -> dict:
-        user = await self.user_repository.aget_by(
-            db=db,
-            expressions=[self.model_type.email == data["email"]]
-        )
-
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"User with the given email '{data["email"]}' not found"
-            )
-
-        if user.is_active:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="User account is already active."
-            )
-
-        token_instance = await self.at_repository.aget_by(
-            db=db,
-            expressions=[models.ActivationTokenModel.user_id == user.id]
-        )
-
-        if (
-            not token_instance
-            or token_instance.token != data["activation_token"]
-        ):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Invalid token"
-            )
-
-        if token_instance.has_expired:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Token is expired"
-            )
-
         try:
+            user = await self.user_repository.aget_by(
+                db=db,
+                join_relationships=["activation_token"],
+                expressions=[self.model_type.email == data["email"]]
+            )
+
+            self.validate_item_by_attrs_not_found(
+                item=user,
+                attrs={"email": data["email"]},
+                item_type="User"
+            )
+
+            if user.is_active:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="User account is already active."
+                )
+
+            self.validate_token_is_invalid(
+                token_instance=user.activation_token,
+                token_type="Activation",
+                compare_token=data["activation_token"]
+            )
+            self.validate_token_has_expired(
+                token_instance=user.activation_token,
+                token_type="Activation"
+            )
+
             await self.user_repository.aupdate(
                 db=db,
                 instance=user,
-                data={
-                    "is_active": True,
-                    "updated_at": datetime.now(timezone.utc)
-                }
+                data={"is_active": True}
             )
             await db.commit()
         except SQLAlchemyError:
