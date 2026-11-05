@@ -10,6 +10,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 
 from src.database.models.base import Base
+from src.database.models.cinema import MovieModel
 
 
 class MovieLikeModel(Base):
@@ -31,7 +32,7 @@ class MovieLikeModel(Base):
         ForeignKey("user_profiles.id", ondelete="CASCADE"),
         nullable=False
     )
-    movie = relationship("MovieModel", back_populates="likes")
+    movie = relationship(MovieModel, back_populates="likes")
     profile = relationship("UserProfileModel", back_populates="movie_likes")
 
     __table_args__ = (
