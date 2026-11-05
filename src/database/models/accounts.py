@@ -107,7 +107,7 @@ class AbstractTokenModel(Base):
     )
     expires_at = Column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc) + timedelta(days=1),
+        default=get_expiration_date,
         nullable=False
     )
     user_id = Column(
