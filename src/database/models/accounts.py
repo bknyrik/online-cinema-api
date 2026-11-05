@@ -108,6 +108,7 @@ class AbstractTokenModel(Base):
     expires_at = Column(
         DateTime(timezone=True),
         default=get_expiration_date,
+        onupdate=get_expiration_date,
         nullable=False
     )
     user_id = Column(
