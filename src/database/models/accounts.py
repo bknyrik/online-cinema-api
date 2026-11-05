@@ -1,4 +1,4 @@
-from datetime import timezone, datetime
+from datetime import timezone, datetime, timedelta
 
 from sqlalchemy import (
     Column,
@@ -103,6 +103,7 @@ class AbstractTokenModel(Base):
     )
     expires_at = Column(
         DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc) + timedelta(days=1),
         nullable=False
     )
     user_id = Column(
