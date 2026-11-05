@@ -92,6 +92,10 @@ class UserModel(Base):
     )
 
 
+def get_expiration_date(td: timedelta = timedelta(days=1)) -> datetime:
+    return datetime.now(timezone.utc) + td
+
+
 class AbstractTokenModel(Base):
     __abstract__ = True
 
