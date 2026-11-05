@@ -80,7 +80,7 @@ class UserService(mixins.ModelItemsMixin):
         if not user.is_active:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="User accounts is not activated"
+                detail="User account is not activated"
             )
 
     @staticmethod
