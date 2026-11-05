@@ -51,6 +51,17 @@ class UserService(mixins.ModelItemsMixin):
             )
 
     @staticmethod
+    def validate_token_has_expired(
+        token_instance: models.AbstractTokenModel,
+        token_type: str
+    ) -> None:
+        if token_instance.has_expired:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"{token_type} token has expired"
+            )
+
+    @staticmethod
     def validate_refresh_token_has_valid_type(
         token_instance: models.RefreshTokenModel,
         valid_token_type: str,
