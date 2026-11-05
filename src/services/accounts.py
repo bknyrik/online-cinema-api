@@ -76,7 +76,7 @@ class UserService(mixins.ModelItemsMixin):
             )
 
     @staticmethod
-    def validate_user_account_is_active(user: models.UserModel) -> None:
+    def validate_user_is_active(user: models.UserModel) -> None:
         if not user.is_active:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -341,7 +341,7 @@ class UserService(mixins.ModelItemsMixin):
         current_user: models.UserModel
     ) -> None:
         try:
-            self.validate_user_account_is_active(current_user)
+            self.validate_user_is_active(current_user)
 
             token_instance = await self.rt_repository.aget_by(
                 db=db,
