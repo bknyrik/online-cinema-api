@@ -217,20 +217,14 @@ class UserService(mixins.ModelItemsMixin):
             )
 
             token = self.at_repository.generate_token()
-            token_expiration_date = self.at_repository.get_expiration_date()
 
             if not user.activation_token:
                 user.activation_token = await self.at_repository.acreate(
                     db=db,
-                    data={
-                        "user_id": user.id,
-                        "expires_at": token_expiration_date,
-                        "token": token
-                    }
+                    data={"user_id": user.id, "token": token}
                 )
             else:
                 user.activation_token.token = token
-                user.activation_token.expires_at = token_expiration_date
 
             await db.commit()
 
