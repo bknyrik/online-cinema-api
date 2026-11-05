@@ -42,7 +42,7 @@ class UserService(mixins.ModelItemsMixin):
             not token_instance
             or (
                 compare_token is not None
-                and token_instance != compare_token
+                and token_instance.token != compare_token
             )
         ):
             raise HTTPException(
