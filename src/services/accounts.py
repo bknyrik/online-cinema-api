@@ -83,6 +83,14 @@ class UserService(mixins.ModelItemsMixin):
                 detail="User accounts is not activated"
             )
 
+    @staticmethod
+    def validate_user_is_not_active(user: models.UserModel) -> None:
+        if user.is_active:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User account is activated"
+            )
+
     async def register_user(
         self,
         db: AsyncSession,
