@@ -35,9 +35,16 @@ class UserService(mixins.ModelItemsMixin):
     @staticmethod
     def validate_token_is_invalid(
         token_instance: models.AbstractTokenModel | None,
-        token_type: str
+        token_type: str,
+        compare_token: str | None = None
     ) -> None:
-        if not token_instance:
+        if (
+            not token_instance
+            or (
+                compare_token is not None
+                and token_instance != compare_token
+            )
+        ):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"{token_type} token is invalid"
