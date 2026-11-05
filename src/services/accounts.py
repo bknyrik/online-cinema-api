@@ -126,8 +126,7 @@ class UserService(mixins.ModelItemsMixin):
                 data={
                     "user_id": user.id,
                     "token": self.at_repository.generate_token(),
-                    "expires_at": self.at_repository.get_expiration_date()
-                },
+                }
             )
 
             background_tasks.add_task(
