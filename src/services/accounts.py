@@ -408,41 +408,34 @@ class UserService(mixins.ModelItemsMixin):
         user_id: int,
         db: AsyncSession,
     ) -> dict:
-        user = await self.user_repository.aget_by_id(
-            db=db,
-            id_=user_id
-        )
-
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="User not found"
-            )
-
-        if user.is_active:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="User is already active."
-            )
-
         try:
+            user = await self.user_repository.aget_by_id(
+                db=db,
+                id_=user_id
+            )
+
+            self.validate_item_by_id_not_found(
+                item=user,
+                id_=user_id,
+                item_type="User"
+            )
+
+            self.validate_user_is_not_active(user)
+
             await self.user_repository.aupdate(
                 db=db,
                 instance=user,
-                data={
-                    "is_active": True,
-                    "updated_at": datetime.now(timezone.utc)
-                }
+                data={"is_active": True}
             )
             await db.commit()
+
+            return {"message": "Account is activated successfully"}
         except SQLAlchemyError:
             await db.rollback()
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while account activation"
             )
-
-        return {"message": "Account is activated successfully"}
 
     async def change_user_password(
         self,
