@@ -589,56 +589,47 @@ class UserService(mixins.ModelItemsMixin):
         data: dict,
         pss: PasswordSecurityService
     ) -> dict:
-        user = await self.user_repository.aget_by(
-            db=db,
-            expressions=[self.model_type.email == data["email"]]
-        )
-
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="User not found"
-            )
-
-        token_instance = await self.prt_repository.aget_by(
-            db=db,
-            expressions=[models.PasswordResetTokenModel.user_id == user.id]
-        )
-
-        if not token_instance or token_instance.token != data["token"]:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Token is invalid"
-            )
-
-        if token_instance.has_expired:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Token has expired"
-            )
-
         try:
+            user = await self.user_repository.aget_by(
+                db=db,
+                expressions=[self.model_type.email == data["email"]]
+            )
+
+            self.validate_item_by_attrs_not_found(
+                item=user,
+                item_type="User",
+                attrs={"email": data["email"]}
+            )
+
+            token_instance = await self.prt_repository.aget_by(
+                db=db,
+                expressions=[models.PasswordResetTokenModel.user_id == user.id]
+            )
+
+            self.validate_token_is_invalid(
+                token_instance=token_instance,
+                token_type="Password reset"
+            )
+
+            self.validate_token_has_expired(token_instance, "Password reset")
+
             await self.user_repository.aupdate(
                 db=db,
                 instance=user,
-                data={
-                    "updated_at": datetime.now(timezone.utc),
-                    "hashed_password": pss.hash_password(data["password"])
-                }
+                data={"hashed_password": pss.hash_password(data["password"])}
             )
             await self.prt_repository.adelete(
                 db=db,
                 instance=token_instance
             )
             await db.commit()
+            return {"message": "Password is changed successfully"}
         except SQLAlchemyError:
             await db.rollback()
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while resetting password completion"
             )
-
-        return {"message": "Password is changed successfully"}
 
 
 class UserProfileService:
