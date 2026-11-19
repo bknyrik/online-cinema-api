@@ -527,24 +527,23 @@ class UserService(mixins.ModelItemsMixin):
         ess: EmailSenderService,
         background_tasks: BackgroundTasks
     ) -> dict:
-        user = await self.user_repository.aget_by(
-            db=db,
-            expressions=[self.model_type.email == data["email"]]
-        )
+        try:
+            user = await self.user_repository.aget_by(
+                db=db,
+                expressions=[self.model_type.email == data["email"]]
+            )
 
-        if user and user.is_active:
-            try:
+            if user and user.is_active:
                 token_data = {
                     "token": self.prt_repository.generate_token(),
                     "expires_at": self.prt_repository.get_expiration_date()
                 }
 
-                token_instance = await self.prt_repository.aupdate_by(
+                token_instance = await self.prt_repository.aget_by(
                     db=db,
                     expressions=[
                         models.PasswordResetTokenModel.user_id == user.id
-                    ],
-                    data=token_data
+                    ]
                 )
 
                 if not token_instance:
@@ -553,14 +552,17 @@ class UserService(mixins.ModelItemsMixin):
                         db=db,
                         data=token_data
                     )
+                else:
+                    await self.prt_repository.aupdate_by(
+                        db=db,
+                        expressions=[
+                            models.PasswordResetTokenModel.user_id == user.id
+                        ],
+                        data=token_data
+                    )
+
                 await db.commit()
-            except SQLAlchemyError:
-                await db.rollback()
-                raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail="An error occurred while resetting user password"
-                )
-            else:
+
                 background_tasks.add_task(
                     ess.send_reset_password_email,
                     user.email,
@@ -568,12 +570,18 @@ class UserService(mixins.ModelItemsMixin):
                     token_instance.token
                 )
 
-        return {
-            "message": (
-                "If you are registered, "
-                "you will receive an email with information"
+            return {
+                "message": (
+                    "If you are registered, "
+                    "you will receive an email with information"
+                )
+            }
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while resetting user password"
             )
-        }
 
     async def reset_password_complete(
         self,
