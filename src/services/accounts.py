@@ -302,7 +302,7 @@ class UserService(mixins.ModelItemsMixin):
                 user_id=user.id,
                 token_type="refresh"
             )
-            token_instance = await self.rt_repository.acreate(
+            await self.rt_repository.acreate(
                 db=db,
                 data={
                     "user_id": user.id,
@@ -314,7 +314,7 @@ class UserService(mixins.ModelItemsMixin):
             await db.commit()
             return {
                 "access_token": access_token,
-                "refresh_token": token_instance.token
+                "refresh_token": refresh_token
             }
         except SQLAlchemyError:
             await db.rollback()
