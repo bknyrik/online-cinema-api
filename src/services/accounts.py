@@ -276,27 +276,24 @@ class UserService(mixins.ModelItemsMixin):
         jwt_auth_service: JWTAuthService,
         db: AsyncSession,
     ) -> dict:
-        user = await self.user_repository.aget_by(
-            db=db,
-            expressions=[self.model_type.email == data["email"]]
-        )
-
-        if (
-            not user
-            or not pss.verify_password(data["password"], user.hashed_password)
-        ):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid account with given credentials"
-            )
-
-        if not user.is_active:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="User account is not activated"
-            )
-
         try:
+            user = await self.user_repository.aget_by(
+                db=db,
+                expressions=[self.model_type.email == data["email"]]
+            )
+            password_is_verified = pss.verify_password(
+                raw_password=data["password"],
+                hashed_password=user.hashed_password
+            )
+
+            if not user or not password_is_verified:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Invalid account with given credentials"
+                )
+
+            self.validate_user_is_active(user)
+
             access_token = jwt_auth_service.encode_token(
                 user_id=user.id,
                 token_type="access"
@@ -315,17 +312,16 @@ class UserService(mixins.ModelItemsMixin):
             )
 
             await db.commit()
+            return {
+                "access_token": access_token,
+                "refresh_token": token_instance.token
+            }
         except SQLAlchemyError:
             await db.rollback()
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while login"
             )
-
-        return {
-            "access_token": access_token,
-            "refresh_token": token_instance.token
-        }
 
     async def logout(
         self,
