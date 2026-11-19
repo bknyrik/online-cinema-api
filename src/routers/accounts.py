@@ -170,7 +170,7 @@ async def change_user_password(
 
 
 @router.post(
-    "/users/reset_password/",
+    "/users/me/reset_password/",
     response_model=schemas.MessageResponseSchema
 )
 async def reset_password(
@@ -189,7 +189,7 @@ async def reset_password(
 
 
 @router.post(
-    "/users/reset_password/complete/",
+    "/users/me/reset_password/complete/",
     response_model=schemas.MessageResponseSchema
 )
 async def reset_password_complete(
