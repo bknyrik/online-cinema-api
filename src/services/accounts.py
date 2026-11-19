@@ -444,18 +444,18 @@ class UserService(mixins.ModelItemsMixin):
         current_user: models.UserModel,
         pss: PasswordSecurityService
     ) -> dict:
-        password_is_verified = pss.verify_password(
-            raw_password=data["old_password"],
-            hashed_password=current_user.hashed_password
-        )
-
-        if not password_is_verified:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="The old password is invalid"
+        try:
+            password_is_verified = pss.verify_password(
+                raw_password=data["old_password"],
+                hashed_password=current_user.hashed_password
             )
 
-        try:
+            if not password_is_verified:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="The old password is invalid"
+                )
+
             await self.user_repository.aupdate(
                 db=db,
                 instance=current_user,
@@ -464,6 +464,7 @@ class UserService(mixins.ModelItemsMixin):
                 }
             )
             await db.commit()
+
             return {"message": "Password is changed successfully"}
         except SQLAlchemyError:
             await db.rollback()
