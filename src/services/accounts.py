@@ -507,6 +507,13 @@ class UserService(mixins.ModelItemsMixin):
                 token_type="Refresh",
             )
 
+            self.validate_jwt_token_has_valid_type(
+                token_instance=token_instance,
+                token_type="Refresh",
+                valid_token_type="refresh",
+                jwt_auth_service=jwt_auth_service
+            )
+
             self.validate_token_has_expired(
                 token_instance=token_instance,
                 token_type="Refresh",
