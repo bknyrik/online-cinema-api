@@ -188,14 +188,13 @@ class UserService(mixins.ModelItemsMixin):
                 data={"is_active": True}
             )
             await db.commit()
+            return {"message": "Your account is activated"}
         except SQLAlchemyError:
             await db.rollback()
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while account activation"
             )
-
-        return {"message": "Your account is activated"}
 
     async def reactivate_user_account(
         self,
