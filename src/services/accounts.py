@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Literal
 from datetime import datetime, timezone
 
 from fastapi import BackgroundTasks, HTTPException, status
@@ -64,6 +65,7 @@ class UserService(mixins.ModelItemsMixin):
     @staticmethod
     def validate_jwt_token_has_valid_type(
         token_instance: models.RefreshTokenModel,
+        token_type: Literal["Access", "Refresh"],
         valid_token_type: str,
         jwt_auth_service: JWTAuthService,
     ) -> None:
@@ -72,7 +74,7 @@ class UserService(mixins.ModelItemsMixin):
         if payload["token_type"] != valid_token_type:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Refresh token must be '{valid_token_type}' type"
+                detail=f"{token_type} token must be '{valid_token_type}' type"
             )
 
     @staticmethod
@@ -340,6 +342,7 @@ class UserService(mixins.ModelItemsMixin):
             self.validate_token_is_invalid(token_instance, "Refresh")
             self.validate_jwt_token_has_valid_type(
                 token_instance=token_instance,
+                token_type="Refresh",
                 valid_token_type="refresh",
                 jwt_auth_service=jwt_auth_service
             )
