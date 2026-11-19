@@ -255,6 +255,12 @@ class UserService(mixins.ModelItemsMixin):
                 expressions=[models.UserModel.email == data["email"]]
             )
 
+            self.validate_item_by_attrs_not_found(
+                item=user,
+                item_type="User",
+                attrs={"email": data["email"]}
+            )
+
             access_token = jwt_auth_service.encode_token(user.id, "access")
             return {"access_token": access_token, "token_type": "Bearer"}
         except SQLAlchemyError:
