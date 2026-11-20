@@ -27,7 +27,7 @@ class Settings(BaseSettings):
         f"{os.getenv("ROOT_URL")}/api/accounts/users/activate/"
     )
     LINK_RESET_PASSWORD = (
-        f"{os.getenv("ROOT_URL")}/api/accounts/users/activate/"
+        f"{os.getenv("ROOT_URL")}/api/accounts/users/reset_password/"
     )
 
     class Config:
