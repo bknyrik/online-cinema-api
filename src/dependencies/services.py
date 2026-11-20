@@ -90,3 +90,11 @@ CommentReplyServiceDep = Annotated[
     rating.CommentReplyService,
     Depends()
 ]
+MovieRateServiceDep = Annotated[
+    rating.MovieRateService,
+    Depends()
+]
+FavoriteMovieServiceDep = Annotated[
+    rating.FavoriteMovieService,
+    Depends()
+]
