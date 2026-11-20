@@ -10,7 +10,8 @@ from src.services import (
     email_sender,
     s3,
     accounts,
-    cinema
+    cinema,
+    notifications
 )
 
 
@@ -68,3 +69,7 @@ StarServiceDep = Annotated[cinema.StarService, Depends()]
 CertificationServiceDep = Annotated[cinema.CertificationService, Depends()]
 DirectorServiceDep = Annotated[cinema.DirectorService, Depends()]
 MovieServiceDep = Annotated[cinema.MovieService, Depends()]
+NotificationServiceDep = Annotated[
+    notifications.NotificationService,
+    Depends()
+]
