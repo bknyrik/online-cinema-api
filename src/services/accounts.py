@@ -201,7 +201,8 @@ class UserService(mixins.ModelItemsMixin):
         data: dict,
         db: AsyncSession,
         background_tasks: BackgroundTasks,
-        email_sender_service: EmailSenderService
+        email_sender_service: EmailSenderService,
+        celery_beat_service: CeleryBeatService
     ) -> dict:
         try:
             user = await self.user_repository.aget_by(
@@ -233,6 +234,12 @@ class UserService(mixins.ModelItemsMixin):
                 user.email,
                 settings.LINK_ACCOUNT_ACTIVATION,
                 user.activation_token.token
+            )
+
+            background_tasks.add_task(
+                celery_beat_service.create_periodic_task_to_delete_activation_token,
+                user.id,
+                user.activation_token.expires_at
             )
 
             return {"message": "An activation link is sent to your email"}

@@ -65,6 +65,7 @@ async def reactivate_user_account(
         data=data.model_dump(),
         background_tasks=background_tasks,
         email_sender_service=ess,
+        celery_beat_service=celery_beat_service,
         db=db
     )
 
