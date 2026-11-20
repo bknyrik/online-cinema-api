@@ -58,6 +58,7 @@ async def reactivate_user_account(
     background_tasks: BackgroundTasks,
     user_service: services.UserServiceDep,
     ess: services.EmailSenderServiceDep,
+    celery_beat_service: services.CeleryBeatServiceDep,
     db: database.AsyncSessionDep,
 ) -> dict:
     return await user_service.reactivate_user_account(
