@@ -1,4 +1,4 @@
-from datetime import timezone, datetime
+from datetime import timezone, datetime, timedelta
 
 from sqlalchemy import (
     Column,
@@ -10,7 +10,8 @@ from sqlalchemy import (
     Boolean,
     UniqueConstraint,
     Text,
-    Date
+    Date,
+    func
 )
 from sqlalchemy.orm import relationship
 from enum import StrEnum, auto
@@ -35,7 +36,11 @@ class UserGroupModel(Base):
         nullable=False,
         unique=True
     )
-    users = relationship("UserModel", back_populates="group")
+    users = relationship(
+        "UserModel",
+        cascade="all, delete-orphan",
+        back_populates="group"
+    )
 
 
 class UserModel(Base):
@@ -47,36 +52,48 @@ class UserModel(Base):
     is_active = Column(Boolean, default=False, nullable=False)
     created_at = Column(
         DateTime(timezone=True),
-        default=datetime.now(timezone.utc),
+        server_default=func.now(),
         nullable=False
     )
     updated_at = Column(
         DateTime(timezone=True),
         nullable=False,
-        default=datetime.now(timezone.utc),
+        server_default=func.now(),
+        onupdate=func.now()
     )
-    group_id = Column(Integer, ForeignKey("user_groups.id"), nullable=False)
+    group_id = Column(
+        Integer,
+        ForeignKey("user_groups.id", ondelete="CASCADE"),
+        nullable=False
+    )
     group = relationship(UserGroupModel, back_populates="users")
     activation_token = relationship(
         "ActivationTokenModel",
         back_populates="user",
-        single_parent=True
+        uselist=False,
+        cascade="all, delete-orphan"
     )
     password_reset_token = relationship(
         "PasswordResetTokenModel",
         back_populates="user",
-        single_parent=True
+        uselist=False,
+        cascade="all, delete-orphan"
     )
     refresh_tokens = relationship(
         "RefreshTokenModel",
-        back_populates="user"
+        back_populates="user",
+        cascade="all, delete-orphan"
     )
     profile = relationship(
         "UserProfileModel",
         back_populates="user",
-        single_parent=True,
+        cascade="all, delete-orphan",
         uselist=False
     )
+
+
+def get_expiration_date(td: timedelta = timedelta(days=1)) -> datetime:
+    return datetime.now(timezone.utc) + td
 
 
 class AbstractTokenModel(Base):
@@ -90,6 +107,8 @@ class AbstractTokenModel(Base):
     )
     expires_at = Column(
         DateTime(timezone=True),
+        default=get_expiration_date,
+        onupdate=get_expiration_date,
         nullable=False
     )
     user_id = Column(
@@ -105,11 +124,7 @@ class AbstractTokenModel(Base):
 class ActivationTokenModel(AbstractTokenModel):
     __tablename__ = "activation_tokens"
 
-    user = relationship(
-        UserModel,
-        back_populates="activation_token",
-        single_parent=True
-    )
+    user = relationship(UserModel, back_populates="activation_token")
 
     __table_args__ = (UniqueConstraint("user_id"),)
 
@@ -117,11 +132,7 @@ class ActivationTokenModel(AbstractTokenModel):
 class PasswordResetTokenModel(AbstractTokenModel):
     __tablename__ = "password_reset_tokens"
 
-    user = relationship(
-        UserModel,
-        back_populates="password_reset_token",
-        single_parent=True
-    )
+    user = relationship(UserModel, back_populates="password_reset_token")
 
     __table_args__ = (UniqueConstraint("user_id"),)
 
@@ -149,36 +160,41 @@ class UserProfileModel(Base):
     )
     first_name = Column(String(255), nullable=True)
     last_name = Column(String(255), nullable=True)
-    avatar = Column(String(255), nullable=False)
+    avatar = Column(String(255), nullable=True)
     gender = Column(Enum(GenderEnum), nullable=True)
     date_of_birth = Column(Date, nullable=True)
-    info = Column(Text, nullable=False)
+    info = Column(Text, nullable=True)
     user = relationship(
         UserModel,
         back_populates="profile",
-        single_parent=True
     )
     favorite_movies = relationship(
         FavoriteMovieModel,
-        back_populates="profile"
+        back_populates="profile",
+        cascade="all, delete-orphan"
     )
     movie_likes = relationship(
         "MovieLikeModel",
-        back_populates="profile"
+        back_populates="profile",
+        cascade="all, delete-orphan"
     )
     movie_comments = relationship(
         "MovieCommentModel",
-        back_populates="profile"
+        back_populates="profile",
+        cascade="all, delete-orphan"
     )
     comment_replies = relationship(
         "CommentReplyModel",
-        back_populates="profile"
+        back_populates="profile",
+        cascade="all, delete-orphan"
     )
     rates = relationship(
         "MovieRateModel",
-        back_populates="profile"
+        back_populates="profile",
+        cascade="all, delete-orphan"
     )
     comment_likes = relationship(
         "CommentLikeModel",
-        back_populates="profile"
+        back_populates="profile",
+        cascade="all, delete-orphan"
     )

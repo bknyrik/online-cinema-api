@@ -1,24 +1,30 @@
+from __future__ import annotations
+from typing import Annotated
+
 from fastapi import Depends, HTTPException, status
-from fastapi.security.oauth2 import OAuth2PasswordBearer
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi.security.oauth2 import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
-from dependencies.database import get_db
-from src.database.models.accounts import UserModel
-from src.repositories.accounts import UserRepository
-from src.services.security import JWTAuthService
-from src.dependencies.services import get_jwt_auth_service
+from dependencies import database, services
+from src.database.models import accounts as models
+from src.repositories import accounts as repositories
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/accounts/auth/token/")
 
 
 async def get_current_user(
-    db: AsyncSession = Depends(get_db),
-    token: str = Depends(oauth2_scheme),
-    jwt_auth_service: JWTAuthService = Depends(get_jwt_auth_service)
-) -> UserModel:
-    user_repository = UserRepository()
+    db: database.AsyncSessionDep,
+    jwt_auth_service: services.JWTAuthServiceDep,
+    token: str = Depends(oauth2_scheme)
+) -> models.UserModel:
+    user_repository = repositories.UserRepository()
     payload = jwt_auth_service.decode_token(token)
+
+    if payload["token_type"] != "access":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token must be access type"
+        )
 
     user = await user_repository.aget_by_id(
         db=db,
@@ -35,9 +41,7 @@ async def get_current_user(
     return user
 
 
-async def get_current_admin_user(
-    current_user: UserModel = Depends(get_current_user)
-) -> UserModel:
+async def get_current_admin(current_user: CurrentUserDep) -> models.UserModel:
     if current_user.group.name.value != "admin":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -48,8 +52,8 @@ async def get_current_admin_user(
 
 
 async def get_current_moderator_or_admin(
-    current_user: UserModel = Depends(get_current_user)
-) -> UserModel:
+    current_user: CurrentUserDep
+) -> models.UserModel:
     if current_user.group.name not in ("moderator", "admin"):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -57,3 +61,11 @@ async def get_current_moderator_or_admin(
         )
 
     return current_user
+
+
+CurrentUserDep = Annotated[models.UserModel, Depends(get_current_user)]
+CurrentAdminDep = Annotated[models.UserModel, Depends(get_current_admin)]
+CurrentModeratorOrAdminDep = Annotated[
+    models.UserModel, Depends(get_current_moderator_or_admin)
+]
+OAuth2PasswordForm = Annotated[OAuth2PasswordRequestForm, Depends()]

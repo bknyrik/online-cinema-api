@@ -1,7 +1,7 @@
 import os
 
 import boto3
-from fastapi import UploadFile
+from fastapi import UploadFile, HTTPException, status
 
 
 class S3Service:
@@ -31,9 +31,27 @@ class S3Service:
             f"{self.region_name}.amazonaws.com/"
         )
 
-    def upload_image(self, user_id: int, image: UploadFile) -> str:
+    def get_image_url(self, image_key: str) -> str:
+        return (
+            f"https://{self.bucket_name}.s3."
+            f"{self.region_name}.amazonaws.com/{image_key}"
+        )
+
+    def upload_image(
+        self,
+        identifier: int,
+        image: UploadFile,
+        key_prefix: str,
+        image_prefix: str
+    ) -> str:
+        if not image.content_type.startswith("image/"):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="The provided file is not an image"
+            )
+
         _, ext = os.path.splitext(image.filename)
-        key = f"Avatars/user_{user_id}{ext}"
+        key = f"{key_prefix}/{image_prefix}_{identifier}{ext}"
 
         self.client.upload_fileobj(
             Fileobj=image.file,

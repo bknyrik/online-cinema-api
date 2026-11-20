@@ -18,13 +18,16 @@ class Settings(BaseSettings):
     CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
     CELERY_RESULT_BACKEND = os.getenv("CELERY_BACKEND_RESULT")
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+    JWT_ALGORITHM = os.getenv("JWT_ALGORITHM")
     AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
     AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
     AWS_REGION_NAME = os.getenv("AWS_REGION_NAME")
     AWS_BUCKET_NAME = os.getenv("AWS_BUCKET_NAME")
-    LINK_ACTIVATE_ACCOUNT = "http://localhost:8000/api/accounts/activate/"
+    LINK_ACCOUNT_ACTIVATION = (
+        f"{os.getenv("ROOT_URL")}/api/accounts/users/activate/"
+    )
     LINK_RESET_PASSWORD = (
-        "http://localhost:8000/api/accounts/me/reset_password/complete/"
+        f"{os.getenv("ROOT_URL")}/api/accounts/users/reset_password/"
     )
 
     class Config:

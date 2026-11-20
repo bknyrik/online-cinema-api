@@ -1,37 +1,97 @@
 from __future__ import annotations
+from typing import Literal
 from datetime import datetime, timezone
 
 from fastapi import BackgroundTasks, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
+from boto3.exceptions import Boto3Error
 
-from src.database.models import accounts
+from src.database.models import accounts as models
+from src.services import mixins
 from src.services.security import PasswordSecurityService, JWTAuthService
 from src.services.celery_beat import CeleryBeatService
 from src.services.email_sender import EmailSenderService
-from src.repositories.accounts import (
-    UserRepository,
-    UserGroupRepository,
-    TokenRepository
-)
+from src.services.s3 import S3Service
+from src.repositories import accounts as repositories
 from src.settings import settings
 
 
-class UserService:
+class UserService(mixins.ModelItemsMixin):
 
-    def __init__(
-        self,
-        user_repository: UserRepository,
-        user_group_repository: UserGroupRepository,
-        at_repository: TokenRepository,
-        rt_repository: TokenRepository,
-        prt_repository: TokenRepository,
-    ):
-        self.user_repository = user_repository
-        self.user_group_repository = user_group_repository
-        self.at_repository = at_repository
-        self.rt_repository = rt_repository
-        self.prt_repository = prt_repository
+    def __init__(self) -> None:
+        self.model_type = models.UserModel
+        self.user_repository = repositories.UserRepository()
+        self.user_group_repository = repositories.UserGroupRepository()
+        self.at_repository = repositories.TokenRepository(
+            models.ActivationTokenModel
+        )
+        self.rt_repository = repositories.TokenRepository(
+            models.RefreshTokenModel
+        )
+        self.prt_repository = repositories.TokenRepository(
+            models.PasswordResetTokenModel
+        )
+
+    @staticmethod
+    def validate_token_is_invalid(
+        token_instance: models.AbstractTokenModel | None,
+        token_type: str,
+        compare_token: str | None = None
+    ) -> None:
+        if (
+            not token_instance
+            or (
+                compare_token is not None
+                and token_instance.token != compare_token
+            )
+        ):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"{token_type} token is invalid"
+            )
+
+    @staticmethod
+    def validate_token_has_expired(
+        token_instance: models.AbstractTokenModel,
+        token_type: str
+    ) -> None:
+        if token_instance.has_expired:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"{token_type} token has expired"
+            )
+
+    @staticmethod
+    def validate_jwt_token_has_valid_type(
+        token_instance: models.RefreshTokenModel,
+        token_type: Literal["Access", "Refresh"],
+        valid_token_type: str,
+        jwt_auth_service: JWTAuthService,
+    ) -> None:
+        payload = jwt_auth_service.decode_token(token_instance.token)
+
+        if payload["token_type"] != valid_token_type:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"{token_type} token must be '{valid_token_type}' type"
+            )
+
+    @staticmethod
+    def validate_user_is_active(user: models.UserModel) -> None:
+        if not user.is_active:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="User account is not activated"
+            )
+
+    @staticmethod
+    def validate_user_is_not_active(user: models.UserModel) -> None:
+        if user.is_active:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User account is activated"
+            )
 
     async def register_user(
         self,
@@ -40,28 +100,23 @@ class UserService:
         pss: PasswordSecurityService,
         email_sender_service: EmailSenderService,
         background_tasks: BackgroundTasks
-    ) -> accounts.UserModel:
-
-        user = await self.user_repository.aget_by_email(db, data["email"])
-
-        if user:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"User with this email {repr(data["email"])} exists."
-            )
-
+    ) -> models.UserModel:
         try:
-            group_name = "USER"
-            group = await self.user_group_repository.aget_by_name(
+            user = await self.user_repository.aget_by(
                 db=db,
-                name=group_name
+                expressions=[self.model_type.email == data["email"]]
             )
 
-            if not group:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=f"Invalid group {repr(group_name)}"
-                )
+            self.validate_item_by_attrs_exists(
+                item=user,
+                attrs={"email": data["email"]},
+                item_type="User"
+            )
+
+            group = await self.user_group_repository.aget_by(
+                db=db,
+                expressions=[models.UserGroupModel.name == "USER"]
+            )
 
             data["group_id"] = group.id
             data["hashed_password"] = pss.hash_password(data.pop("password"))
@@ -73,22 +128,13 @@ class UserService:
                 data={
                     "user_id": user.id,
                     "token": self.at_repository.generate_token(),
-                    "expires_at": self.at_repository.get_expiration_date()
-                },
+                }
             )
 
-            await db.commit()
-        except SQLAlchemyError:
-            await db.rollback()
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="An error occurred while user registration"
-            )
-        else:
             background_tasks.add_task(
                 email_sender_service.send_activation_email,
                 user.email,
-                settings.LINK_ACTIVATE_ACCOUNT,
+                settings.LINK_ACCOUNT_ACTIVATION,
                 activation_token.token
             )
             background_tasks.add_task(
@@ -97,57 +143,52 @@ class UserService:
                 activation_token.expires_at
             )
 
-        return user
+            await db.commit()
+            return user
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while user registration"
+            )
 
     async def activate_user_account(
         self,
         data: dict,
         db: AsyncSession
     ) -> dict:
-        user = await self.user_repository.aget_by_email(db, data["email"])
-
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"User with the given email '{data["email"]}' not found"
-            )
-
-        if user.is_active:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="User account is already active."
-            )
-
-        token_instance = await self.at_repository.aget_by_user_id(
-            db=db,
-            user_id=user.id,
-        )
-
-        if (
-            not token_instance
-            or token_instance.token != data["activation_token"]
-        ):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Invalid token"
-            )
-
-        if token_instance.has_expired:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Token is expired"
-            )
-
         try:
+            user = await self.user_repository.aget_by(
+                db=db,
+                join_relationships=["activation_token"],
+                expressions=[self.model_type.email == data["email"]]
+            )
+
+            self.validate_item_by_attrs_not_found(
+                item=user,
+                attrs={"email": data["email"]},
+                item_type="User"
+            )
+
+            self.validate_user_is_not_active(user)
+
+            self.validate_token_is_invalid(
+                token_instance=user.activation_token,
+                token_type="Activation",
+                compare_token=data["activation_token"]
+            )
+            self.validate_token_has_expired(
+                token_instance=user.activation_token,
+                token_type="Activation"
+            )
+
             await self.user_repository.aupdate(
                 db=db,
                 instance=user,
-                data={
-                    "is_active": True,
-                    "updated_at": datetime.now(timezone.utc)
-                }
+                data={"is_active": True}
             )
             await db.commit()
+            return {"message": "Your account is activated"}
         except SQLAlchemyError:
             await db.rollback()
             raise HTTPException(
@@ -155,94 +196,120 @@ class UserService:
                 detail="An error occurred while account activation"
             )
 
-        return {"message": "Your account is activated"}
-
     async def reactivate_user_account(
         self,
         data: dict,
         db: AsyncSession,
         background_tasks: BackgroundTasks,
-        email_sender_service: EmailSenderService
+        email_sender_service: EmailSenderService,
+        celery_beat_service: CeleryBeatService
     ) -> dict:
-        user = await self.user_repository.aget_by_email(db, data["email"])
-
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"User with given email '{data["email"]}' not found"
-            )
-
         try:
-            token = self.at_repository.generate_token()
-            token_expiration_date = self.at_repository.get_expiration_date()
-
-            token_instance = await self.at_repository.aupdate_by_user_id(
+            user = await self.user_repository.aget_by(
                 db=db,
-                user_id=user.id,
-                data={"token": token, "expires_at": token_expiration_date}
+                join_relationships=["activation_token"],
+                expressions=[self.model_type.email == data["email"]]
             )
 
-            if not token_instance:
-                token_instance = await self.at_repository.acreate(
+            self.validate_item_by_attrs_not_found(
+                item=user,
+                attrs=data,
+                item_type="User"
+            )
+
+            token = self.at_repository.generate_token()
+
+            if not user.activation_token:
+                user.activation_token = await self.at_repository.acreate(
                     db=db,
-                    data={
-                        "user_id": user.id,
-                        "expires_at": token_expiration_date,
-                        "token": token
-                    }
+                    data={"user_id": user.id, "token": token}
                 )
+            else:
+                user.activation_token.token = token
 
             await db.commit()
+
+            background_tasks.add_task(
+                email_sender_service.send_activation_email,
+                user.email,
+                settings.LINK_ACCOUNT_ACTIVATION,
+                user.activation_token.token
+            )
+
+            background_tasks.add_task(
+                celery_beat_service.create_periodic_task_to_delete_activation_token,
+                user.id,
+                user.activation_token.expires_at
+            )
+
+            return {"message": "An activation link is sent to your email"}
         except SQLAlchemyError:
             await db.rollback()
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while activating account"
             )
-        else:
-            background_tasks.add_task(
-                email_sender_service.send_activation_email,
-                user.email,
-                settings.LINK_ACTIVATE_ACCOUNT,
-                token_instance.token
+
+    async def login_for_access_token(
+        self,
+        data: dict,
+        db: AsyncSession,
+        jwt_auth_service: JWTAuthService
+    ) -> dict:
+        try:
+            user = await self.user_repository.aget_by(
+                db=db,
+                expressions=[models.UserModel.email == data["email"]]
             )
 
-        return {"message": "An activation link is sent to your email"}
+            self.validate_item_by_attrs_not_found(
+                item=user,
+                item_type="User",
+                attrs={"email": data["email"]}
+            )
+
+            access_token = jwt_auth_service.encode_token(user.id, "access")
+            return {"access_token": access_token, "token_type": "Bearer"}
+        except SQLAlchemyError:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while login for access token"
+            )
 
     async def login(
         self,
         data: dict,
         pss: PasswordSecurityService,
-        jwt_service: JWTAuthService,
+        jwt_auth_service: JWTAuthService,
         db: AsyncSession,
     ) -> dict:
-        user = await self.user_repository.aget_by_email(db, data["email"])
-
-        if (
-            not user
-            or not pss.verify_password(data["password"], user.hashed_password)
-        ):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid account with given credentials"
-            )
-
-        if not user.is_active:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="User account is not activated"
-            )
-
         try:
-            access_token = jwt_service.encode_token(
+            user = await self.user_repository.aget_by(
+                db=db,
+                expressions=[self.model_type.email == data["email"]]
+            )
+            password_is_verified = pss.verify_password(
+                raw_password=data["password"],
+                hashed_password=user.hashed_password
+            )
+
+            if not user or not password_is_verified:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Invalid account with given credentials"
+                )
+
+            self.validate_user_is_active(user)
+
+            access_token = jwt_auth_service.encode_token(
                 user_id=user.id,
                 token_type="access"
             )
-            refresh_token = jwt_service.encode_token(
+            refresh_token = jwt_auth_service.encode_token(
                 user_id=user.id,
                 token_type="refresh"
             )
-            token_instance = await self.rt_repository.acreate(
+            await self.rt_repository.acreate(
                 db=db,
                 data={
                     "user_id": user.id,
@@ -252,6 +319,10 @@ class UserService:
             )
 
             await db.commit()
+            return {
+                "access_token": access_token,
+                "refresh_token": refresh_token
+            }
         except SQLAlchemyError:
             await db.rollback()
             raise HTTPException(
@@ -259,27 +330,30 @@ class UserService:
                 detail="An error occurred while login"
             )
 
-        return {
-            "access_token": access_token,
-            "refresh_token": token_instance.token
-        }
-
     async def logout(
         self,
         db: AsyncSession,
+        jwt_auth_service: JWTAuthService,
         data: dict,
+        current_user: models.UserModel
     ) -> None:
         try:
-            token_instance = await self.rt_repository.aget_by_token(
+            self.validate_user_is_active(current_user)
+
+            token_instance = await self.rt_repository.aget_by(
                 db=db,
-                token=data["refresh_token"]
+                expressions=[
+                    models.RefreshTokenModel.token == data["refresh_token"]
+                ]
             )
 
-            if not token_instance:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Token is invalid"
-                )
+            self.validate_token_is_invalid(token_instance, "Refresh")
+            self.validate_jwt_token_has_valid_type(
+                token_instance=token_instance,
+                token_type="Refresh",
+                valid_token_type="refresh",
+                jwt_auth_service=jwt_auth_service
+            )
 
             await self.rt_repository.adelete(
                 db=db,
@@ -298,35 +372,41 @@ class UserService:
         db: AsyncSession,
         data: dict,
         user_id: int
-    ) -> dict:
+    ) -> models.UserModel:
         try:
-            group = await self.user_group_repository.aget_by_name(
+            group = await self.user_group_repository.aget_by(
                 db=db,
-                name=data["group"]
+                expressions=[models.UserGroupModel.name == data["group"]]
             )
 
-            if not group:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail=f"Group {data["group"]} not found"
-                )
+            self.validate_item_by_attrs_not_found(
+                item=group,
+                attrs=data,
+                item_type="Group"
+            )
 
-            user = await self.user_repository.aupdate_by_id(
+            user = await self.user_repository.aget_by_id(
                 db=db,
                 id_=user_id,
-                data={
-                    "group_id": group.id,
-                    "updated_at": datetime.now(timezone.utc)
-                }
+                join_relationships=["group"]
             )
 
-            if not user:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="User not found"
-                )
+            self.validate_item_by_id_not_found(
+                item=user,
+                id_=user_id,
+                item_type="User"
+            )
+
+            await self.user_repository.aupdate(
+                db=db,
+                instance=user,
+                data={"group_id": group.id}
+            )
+            user.group = group
 
             await db.commit()
+
+            return user
         except SQLAlchemyError:
             await db.rollback()
             raise HTTPException(
@@ -334,44 +414,33 @@ class UserService:
                 detail="An error occurred while changing user group"
             )
 
-        return {
-            "id": user.id,
-            "email": user.email,
-            "group": group.name
-        }
-
     async def admin_activate_user_account(
         self,
         user_id: int,
         db: AsyncSession,
     ) -> dict:
-        user = await self.user_repository.aget_by_id(
-            db=db,
-            id_=user_id
-        )
-
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="User not found"
-            )
-
-        if user.is_active:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="User is already active."
-            )
-
         try:
+            user = await self.user_repository.aget_by_id(
+                db=db,
+                id_=user_id
+            )
+
+            self.validate_item_by_id_not_found(
+                item=user,
+                id_=user_id,
+                item_type="User"
+            )
+
+            self.validate_user_is_not_active(user)
+
             await self.user_repository.aupdate(
                 db=db,
                 instance=user,
-                data={
-                    "is_active": True,
-                    "updated_at": datetime.now(timezone.utc)
-                }
+                data={"is_active": True}
             )
             await db.commit()
+
+            return {"message": "Account is activated successfully"}
         except SQLAlchemyError:
             await db.rollback()
             raise HTTPException(
@@ -379,36 +448,35 @@ class UserService:
                 detail="An error occurred while account activation"
             )
 
-        return {"message": "Account is activated successfully"}
-
     async def change_user_password(
         self,
         db: AsyncSession,
         data: dict,
-        current_user: accounts.UserModel,
+        current_user: models.UserModel,
         pss: PasswordSecurityService
     ) -> dict:
-        password_is_verified = pss.verify_password(
-            raw_password=data["old_password"],
-            hashed_password=current_user.hashed_password
-        )
-
-        if not password_is_verified:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="The old password is invalid"
+        try:
+            password_is_verified = pss.verify_password(
+                raw_password=data["old_password"],
+                hashed_password=current_user.hashed_password
             )
 
-        try:
+            if not password_is_verified:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="The old password is invalid"
+                )
+
             await self.user_repository.aupdate(
                 db=db,
                 instance=current_user,
                 data={
-                    "updated_at": datetime.now(timezone.utc),
                     "hashed_password": pss.hash_password(data["new_password"])
                 }
             )
             await db.commit()
+
+            return {"message": "Password is changed successfully"}
         except SQLAlchemyError:
             await db.rollback()
             raise HTTPException(
@@ -416,48 +484,59 @@ class UserService:
                 detail="An error occurred while changing user password"
             )
 
-        return {"message": "Password is changed successfully"}
-
     async def refresh_access_token(
         self,
         data: dict,
         jwt_auth_service: JWTAuthService,
         db: AsyncSession
     ) -> dict:
-        user = await self.user_repository.aget_by_email(db, data["email"])
+        try:
+            user = await self.user_repository.aget_by(
+                db=db,
+                expressions=[self.model_type.email == data["email"]]
+            )
 
-        if not user:
+            self.validate_item_by_attrs_not_found(
+                item=user,
+                attrs={"email": data["email"]},
+                item_type="User"
+            )
+
+            token_instance = await self.rt_repository.aget_by(
+                db=db,
+                expressions=[
+                    models.RefreshTokenModel.token == data["refresh_token"]
+                ]
+            )
+
+            self.validate_token_is_invalid(
+                token_instance=token_instance,
+                token_type="Refresh",
+            )
+
+            self.validate_jwt_token_has_valid_type(
+                token_instance=token_instance,
+                token_type="Refresh",
+                valid_token_type="refresh",
+                jwt_auth_service=jwt_auth_service
+            )
+
+            self.validate_token_has_expired(
+                token_instance=token_instance,
+                token_type="Refresh",
+            )
+
+            return {
+                "access_token": jwt_auth_service.encode_token(
+                    user_id=user.id,
+                    token_type="access"
+                )
+            }
+        except SQLAlchemyError:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="User not found"
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while refreshing access token"
             )
-
-        token_instance = await self.rt_repository.aget_by_token(
-            db=db,
-            token=data["refresh_token"],
-        )
-
-        if (
-            not token_instance
-            or token_instance.token != data["refresh_token"]
-        ):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Token is invalid or missing"
-            )
-
-        if token_instance.has_expired:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Token is expired"
-            )
-
-        return {
-            "access_token": jwt_auth_service.encode_token(
-                user_id=user.id,
-                token_type="access"
-            )
-        }
 
     async def reset_password(
         self,
@@ -466,19 +545,23 @@ class UserService:
         ess: EmailSenderService,
         background_tasks: BackgroundTasks
     ) -> dict:
-        user = await self.user_repository.aget_by_email(db, data["email"])
+        try:
+            user = await self.user_repository.aget_by(
+                db=db,
+                expressions=[self.model_type.email == data["email"]]
+            )
 
-        if user and user.is_active:
-            try:
+            if user and user.is_active:
                 token_data = {
                     "token": self.prt_repository.generate_token(),
                     "expires_at": self.prt_repository.get_expiration_date()
                 }
 
-                token_instance = await self.prt_repository.aupdate_by_user_id(
+                token_instance = await self.prt_repository.aget_by(
                     db=db,
-                    user_id=user.id,
-                    data=token_data
+                    expressions=[
+                        models.PasswordResetTokenModel.user_id == user.id
+                    ]
                 )
 
                 if not token_instance:
@@ -487,14 +570,17 @@ class UserService:
                         db=db,
                         data=token_data
                     )
+                else:
+                    await self.prt_repository.aupdate_by(
+                        db=db,
+                        expressions=[
+                            models.PasswordResetTokenModel.user_id == user.id
+                        ],
+                        data=token_data
+                    )
+
                 await db.commit()
-            except SQLAlchemyError:
-                await db.rollback()
-                raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail="An error occurred while resetting user password"
-                )
-            else:
+
                 background_tasks.add_task(
                     ess.send_reset_password_email,
                     user.email,
@@ -502,12 +588,18 @@ class UserService:
                     token_instance.token
                 )
 
-        return {
-            "message": (
-                "If you are registered, "
-                "you will receive an email with information"
+            return {
+                "message": (
+                    "If you are registered, "
+                    "you will receive an email with information"
+                )
+            }
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while resetting user password"
             )
-        }
 
     async def reset_password_complete(
         self,
@@ -515,45 +607,41 @@ class UserService:
         data: dict,
         pss: PasswordSecurityService
     ) -> dict:
-        user = await self.user_repository.aget_by_email(db, data["email"])
-
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="User not found"
-            )
-
-        token_instance = await self.prt_repository.aget_by_user_id(
-            db=db,
-            user_id=user.id,
-        )
-
-        if not token_instance or token_instance.token != data["token"]:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Token is invalid"
-            )
-
-        if token_instance.has_expired:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Token has expired"
-            )
-
         try:
+            user = await self.user_repository.aget_by(
+                db=db,
+                expressions=[self.model_type.email == data["email"]]
+            )
+
+            self.validate_item_by_attrs_not_found(
+                item=user,
+                item_type="User",
+                attrs={"email": data["email"]}
+            )
+
+            token_instance = await self.prt_repository.aget_by(
+                db=db,
+                expressions=[models.PasswordResetTokenModel.user_id == user.id]
+            )
+
+            self.validate_token_is_invalid(
+                token_instance=token_instance,
+                token_type="Password reset"
+            )
+
+            self.validate_token_has_expired(token_instance, "Password reset")
+
             await self.user_repository.aupdate(
                 db=db,
                 instance=user,
-                data={
-                    "updated_at": datetime.now(timezone.utc),
-                    "hashed_password": pss.hash_password(data["password"])
-                }
+                data={"hashed_password": pss.hash_password(data["password"])}
             )
             await self.prt_repository.adelete(
                 db=db,
                 instance=token_instance
             )
             await db.commit()
+            return {"message": "Password is changed successfully"}
         except SQLAlchemyError:
             await db.rollback()
             raise HTTPException(
@@ -561,4 +649,146 @@ class UserService:
                 detail="An error occurred while resetting password completion"
             )
 
-        return {"message": "Password is changed successfully"}
+
+class UserProfileService:
+
+    def __init__(self) -> None:
+        self.model_type = models.UserProfileModel
+        self.profile_repository = repositories.UserProfileRepository()
+
+    @staticmethod
+    def validate_user_profile_not_found(
+        current_user: models.UserModel
+    ) -> None:
+        if current_user.profile is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User doesn't have a profile"
+            )
+
+    async def get_current_user_profile(
+        self,
+        s3_service: S3Service,
+        current_user: models.UserModel
+    ) -> models.UserProfileModel:
+        try:
+            self.validate_user_profile_not_found(current_user)
+
+            profile = current_user.profile
+            profile.avatar = s3_service.get_image_url(profile.avatar)
+            return profile
+        except SQLAlchemyError:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while getting current user profile"
+            )
+
+    async def create_user_profile(
+        self,
+        db: AsyncSession,
+        s3_service: S3Service,
+        current_user: models.UserModel,
+        data: dict
+    ) -> models.UserProfileModel:
+        try:
+            profile = await self.profile_repository.aget_by(
+                db=db,
+                expressions=[self.model_type.user_id == current_user.id]
+            )
+
+            if profile:
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail="User already has a profile"
+                )
+
+            data["user_id"] = current_user.id
+            avatar = data.pop("avatar", None)
+
+            profile = await self.profile_repository.acreate(
+                db=db,
+                data=data
+            )
+
+            if avatar:
+                profile.avatar = s3_service.upload_image(
+                    identifier=profile.id,
+                    image=avatar,
+                    key_prefix="Avatars",
+                    image_prefix="profile"
+                )
+
+            await db.commit()
+
+            profile.avatar = (
+                s3_service.get_image_url(profile.avatar)
+                if avatar else None
+            )
+            return profile
+        except (SQLAlchemyError, Boto3Error):
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while creating profile"
+            )
+
+    async def update_current_user_profile(
+        self,
+        db: AsyncSession,
+        data: dict,
+        current_user: models.UserModel,
+        s3_service: S3Service
+    ) -> models.UserProfileModel:
+        try:
+            self.validate_user_profile_not_found(current_user)
+
+            profile = current_user.profile
+            avatar = data.pop("avatar", None)
+
+            await self.profile_repository.aupdate(
+                db=db,
+                instance=profile,
+                data=data
+            )
+            await db.commit()
+
+            if avatar:
+                s3_service.delete_image(profile.avatar)
+                s3_service.upload_image(
+                    identifier=profile.id,
+                    image=data["avatar"],
+                    key_prefix="Avatars",
+                    image_prefix="profile"
+                )
+
+            profile.avatar = s3_service.get_image_url(profile.avatar)
+            return profile
+        except (SQLAlchemyError, Boto3Error):
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while updating profile"
+            )
+
+    async def delete_current_user_profile(
+        self,
+        db: AsyncSession,
+        s3_service: S3Service,
+        current_user: models.UserModel
+    ) -> None:
+        try:
+            self.validate_user_profile_not_found(current_user)
+
+            await self.profile_repository.adelete(
+                db=db,
+                instance=current_user.profile
+            )
+            await db.commit()
+
+            s3_service.delete_image(current_user.profile.avatar)
+        except (SQLAlchemyError, Boto3Error):
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while profile deletion"
+            )

@@ -1,32 +1,28 @@
 from datetime import timedelta
+from typing import Annotated
+
+from fastapi import Depends
 
 from src.settings import settings
-from src.services.accounts import UserService
-from src.services.profiles import UserProfileService
+from src.services.celery_beat import CeleryBeatService
+from src.services.accounts import UserService, UserProfileService
 from src.services.security import PasswordSecurityService, JWTAuthService
 from src.services.email_sender import EmailSenderService
 from src.services.s3 import S3Service
-from src.repositories.accounts import (
-    UserRepository,
-    TokenRepository,
-    UserGroupRepository
-)
-from src.repositories.profiles import UserProfileRepository
-from src.database.models import accounts
 
 
 ACCESS_TOKEN_LIFETIME = timedelta(minutes=30)
 REFRESH_TOKEN_LIFETIME = timedelta(days=1)
 
 
-def get_password_secure_service() -> PasswordSecurityService:
+def get_password_security_service() -> PasswordSecurityService:
     return PasswordSecurityService(schemes=["bcrypt"])
 
 
 def get_jwt_auth_service() -> JWTAuthService:
     return JWTAuthService(
         secret_key=settings.JWT_SECRET_KEY,
-        algorithm="HS256",
+        algorithm=settings.JWT_ALGORITHM,
         access_token_lifetime=ACCESS_TOKEN_LIFETIME,
         refresh_token_lifetime=REFRESH_TOKEN_LIFETIME
     )
@@ -48,17 +44,16 @@ def get_s3_service() -> S3Service:
     )
 
 
-def get_user_service() -> UserService:
-    return UserService(
-        user_repository=UserRepository(),
-        user_group_repository=UserGroupRepository(),
-        at_repository=TokenRepository(accounts.ActivationTokenModel),
-        rt_repository=TokenRepository(accounts.RefreshTokenModel),
-        prt_repository=TokenRepository(accounts.PasswordResetTokenModel)
-    )
-
-
-def get_profile_service() -> UserProfileService:
-    return UserProfileService(
-        profile_repository=UserProfileRepository()
-    )
+PasswordSecurityServiceDep = Annotated[
+    PasswordSecurityService,
+    Depends(get_password_security_service)
+]
+EmailSenderServiceDep = Annotated[
+    EmailSenderService,
+    Depends(get_email_sender_service)
+]
+JWTAuthServiceDep = Annotated[JWTAuthService, Depends(get_jwt_auth_service)]
+S3ServiceDep = Annotated[S3Service, Depends(get_s3_service)]
+CeleryBeatServiceDep = Annotated[CeleryBeatService, Depends()]
+UserServiceDep = Annotated[UserService, Depends()]
+UserProfileServiceDep = Annotated[UserProfileService, Depends()]

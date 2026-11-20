@@ -1,7 +1,16 @@
-from fastapi import HTTPException, status
-from pydantic import BaseModel, EmailStr, field_validator
+import datetime
+from typing import Annotated
 
-from src.database.models.accounts import UserGroupEnum
+from fastapi import Depends, HTTPException, status, Form, UploadFile, File
+from pydantic import (
+    BaseModel,
+    EmailStr,
+    HttpUrl,
+    field_validator,
+    field_serializer
+)
+
+from src.database.models.accounts import UserGroupEnum, GenderEnum
 from src.database.validators import accounts
 
 
@@ -46,6 +55,11 @@ class ReactivateUserAccountRequestSchema(BaseModel):
     email: EmailStr
 
 
+class AccessTokenDetailResponseSchema(BaseModel):
+    access_token: str
+    token_type: str
+
+
 class LoginRequestSchema(BaseModel):
     email: EmailStr
     password: str
@@ -61,10 +75,18 @@ class LogoutRequestSchema(BaseModel):
     refresh_token: str
 
 
+class UserGroupDetailSchema(BaseModel):
+    name: str
+
+
 class UserDetailResponseSchema(BaseModel):
     id: int
     email: EmailStr
-    group: UserGroupEnum
+    group: UserGroupDetailSchema
+
+    @field_serializer("group")
+    def serialize_into_str(self, group: UserGroupDetailSchema) -> str:
+        return group.name
 
 
 class ChangeUserGroupRequestSchema(BaseModel):
@@ -141,3 +163,47 @@ class RefreshAccessTokenResponseSchema(BaseModel):
 
 class MessageResponseSchema(BaseModel):
     message: str
+
+
+class UserProfileFormData(BaseModel):
+    first_name: str | None = Form()
+    last_name: str | None = Form()
+    avatar: UploadFile | None = File(...)
+    gender: GenderEnum | None = Form()
+    date_of_birth: datetime.date | None = Form()
+    info: str | None = Form()
+
+    @classmethod
+    def as_form(
+        cls,
+        first_name: str | None = Form(default=None),
+        last_name: str | None = Form(default=None),
+        avatar: UploadFile | None = File(default=None),
+        gender: GenderEnum | None = Form(default=None),
+        date_of_birth: datetime.date | None = Form(default=None),
+        info: str | None = Form(default=None)
+    ) -> "UserProfileFormData":
+        return cls(
+            first_name=first_name,
+            last_name=last_name,
+            avatar=avatar,
+            gender=gender,
+            date_of_birth=date_of_birth,
+            info=info
+        )
+
+
+class UserProfileDetailResponseSchema(BaseModel):
+    id: int | None
+    first_name: str | None
+    last_name: str | None
+    avatar: HttpUrl | None
+    gender: GenderEnum | None
+    date_of_birth: datetime.date | None
+    info: str | None
+
+
+UserProfileForm = Annotated[
+    UserProfileFormData,
+    Depends(UserProfileFormData.as_form)
+]
