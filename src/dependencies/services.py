@@ -4,6 +4,7 @@ from typing import Annotated
 from fastapi import Depends
 
 from src.settings import settings
+from src.services.celery_beat import CeleryBeatService
 from src.services.accounts import UserService, UserProfileService
 from src.services.security import PasswordSecurityService, JWTAuthService
 from src.services.email_sender import EmailSenderService
@@ -53,5 +54,6 @@ EmailSenderServiceDep = Annotated[
 ]
 JWTAuthServiceDep = Annotated[JWTAuthService, Depends(get_jwt_auth_service)]
 S3ServiceDep = Annotated[S3Service, Depends(get_s3_service)]
+CeleryBeatServiceDep = Annotated[CeleryBeatService, Depends()]
 UserServiceDep = Annotated[UserService, Depends()]
 UserProfileServiceDep = Annotated[UserProfileService, Depends()]
