@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Depends, status
 
-from src.dependencies import database, authentication
+from src.dependencies import database, authentication, services
 from src.database.models.accounts import UserModel
-from src.services.notifications import NotificationService
 from src.schemas import notifications as schemas
 
 
@@ -16,7 +15,7 @@ router = APIRouter()
 async def get_notification_list(
     query_params: schemas.NotificationListQuery,
     db: database.AsyncSessionDep,
-    notification_service: NotificationService = Depends(NotificationService),
+    notification_service: services.NotificationServiceDep,
     current_user: UserModel = Depends(authentication.get_current_user),
 ) -> dict:
     return await notification_service.get_notification_list(
@@ -33,7 +32,7 @@ async def get_notification_list(
 async def delete_notification(
     notification_id: int,
     db: database.AsyncSessionDep,
-    notification_service: NotificationService = Depends(NotificationService),
+    notification_service: services.NotificationServiceDep,
     current_user: UserModel = Depends(authentication.get_current_user)
 ) -> None:
     return await notification_service.delete_notification(
@@ -49,7 +48,7 @@ async def delete_notification(
 )
 async def delete_all_notifications(
     db: database.AsyncSessionDep,
-    notification_service: NotificationService = Depends(NotificationService),
+    notification_service: services.NotificationServiceDep,
     current_user: UserModel = Depends(authentication.get_current_user)
 ) -> None:
     return await notification_service.delete_all_notifications(
@@ -64,7 +63,7 @@ async def delete_all_notifications(
 )
 async def mark_notifications_as_read(
     db: database.AsyncSessionDep,
-    notification_service: NotificationService = Depends(NotificationService),
+    notification_service: services.NotificationServiceDep,
     current_user: UserModel = Depends(authentication.get_current_user)
 ) -> None:
     return await notification_service.mark_notifications_as_read(
