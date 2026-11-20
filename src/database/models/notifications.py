@@ -1,12 +1,11 @@
-from datetime import datetime, timezone
-
 from sqlalchemy import (
     Column,
     Integer,
     DateTime,
     ForeignKey,
     Text,
-    Boolean
+    Boolean,
+    func
 )
 
 from src.database.models.base import Base
@@ -18,7 +17,7 @@ class NotificationModel(Base):
     id = Column(Integer, primary_key=True, index=True)
     created_at = Column(
         DateTime(timezone=True),
-        default=datetime.now(timezone.utc),
+        server_default=func.now(),
         nullable=False
     )
     is_read = Column(Boolean, default=False, nullable=False)
