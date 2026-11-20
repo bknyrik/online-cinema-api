@@ -4,24 +4,26 @@ from typing import Annotated
 from fastapi import Depends
 
 from src.settings import settings
-from src.services.celery_beat import CeleryBeatService
-from src.services.accounts import UserService, UserProfileService
-from src.services.security import PasswordSecurityService, JWTAuthService
-from src.services.email_sender import EmailSenderService
-from src.services.s3 import S3Service
-from src.services import cinema
+from src.services import (
+    celery_beat,
+    security,
+    email_sender,
+    s3,
+    accounts,
+    cinema
+)
 
 
 ACCESS_TOKEN_LIFETIME = timedelta(minutes=30)
 REFRESH_TOKEN_LIFETIME = timedelta(days=1)
 
 
-def get_password_security_service() -> PasswordSecurityService:
-    return PasswordSecurityService(schemes=["bcrypt"])
+def get_password_security_service() -> security.PasswordSecurityService:
+    return security.PasswordSecurityService(schemes=["bcrypt"])
 
 
-def get_jwt_auth_service() -> JWTAuthService:
-    return JWTAuthService(
+def get_jwt_auth_service() -> security.JWTAuthService:
+    return security.JWTAuthService(
         secret_key=settings.JWT_SECRET_KEY,
         algorithm=settings.JWT_ALGORITHM,
         access_token_lifetime=ACCESS_TOKEN_LIFETIME,
@@ -29,15 +31,15 @@ def get_jwt_auth_service() -> JWTAuthService:
     )
 
 
-def get_email_sender_service() -> EmailSenderService:
-    return EmailSenderService(
+def get_email_sender_service() -> email_sender.EmailSenderService:
+    return email_sender.EmailSenderService(
         host=settings.SMTP_HOST,
         port=settings.SMTP_PORT
     )
 
 
-def get_s3_service() -> S3Service:
-    return S3Service(
+def get_s3_service() -> s3.S3Service:
+    return s3.S3Service(
         access_key_id=settings.AWS_ACCESS_KEY_ID,
         secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
         bucket_name=settings.AWS_BUCKET_NAME,
@@ -46,18 +48,21 @@ def get_s3_service() -> S3Service:
 
 
 PasswordSecurityServiceDep = Annotated[
-    PasswordSecurityService,
+    security.PasswordSecurityService,
     Depends(get_password_security_service)
 ]
 EmailSenderServiceDep = Annotated[
-    EmailSenderService,
+    email_sender.EmailSenderService,
     Depends(get_email_sender_service)
 ]
-JWTAuthServiceDep = Annotated[JWTAuthService, Depends(get_jwt_auth_service)]
-S3ServiceDep = Annotated[S3Service, Depends(get_s3_service)]
-CeleryBeatServiceDep = Annotated[CeleryBeatService, Depends()]
-UserServiceDep = Annotated[UserService, Depends()]
-UserProfileServiceDep = Annotated[UserProfileService, Depends()]
+JWTAuthServiceDep = Annotated[
+    security.JWTAuthService,
+    Depends(get_jwt_auth_service)
+]
+S3ServiceDep = Annotated[s3.S3Service, Depends(get_s3_service)]
+CeleryBeatServiceDep = Annotated[celery_beat.CeleryBeatService, Depends()]
+UserServiceDep = Annotated[accounts.UserService, Depends()]
+UserProfileServiceDep = Annotated[accounts.UserProfileService, Depends()]
 GenreServiceDep = Annotated[cinema.GenreService, Depends()]
 StarServiceDep = Annotated[cinema.StarService, Depends()]
 CertificationServiceDep = Annotated[cinema.CertificationService, Depends()]
