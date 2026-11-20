@@ -9,6 +9,7 @@ from src.services.accounts import UserService, UserProfileService
 from src.services.security import PasswordSecurityService, JWTAuthService
 from src.services.email_sender import EmailSenderService
 from src.services.s3 import S3Service
+from src.services import cinema
 
 
 ACCESS_TOKEN_LIFETIME = timedelta(minutes=30)
@@ -57,3 +58,5 @@ S3ServiceDep = Annotated[S3Service, Depends(get_s3_service)]
 CeleryBeatServiceDep = Annotated[CeleryBeatService, Depends()]
 UserServiceDep = Annotated[UserService, Depends()]
 UserProfileServiceDep = Annotated[UserProfileService, Depends()]
+GenreServiceDep = Annotated[cinema.GenreService, Depends()]
+StarServiceDep = Annotated[cinema.StarService, Depends()]
