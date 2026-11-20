@@ -154,7 +154,7 @@ async def admin_activate_user_account(
 
 
 @router.patch(
-    "/users/me/change_password/",
+    "/users/change_password/",
     response_model=schemas.MessageResponseSchema)
 async def change_user_password(
     data: schemas.ChangeUserPasswordRequestSchema,
@@ -172,7 +172,7 @@ async def change_user_password(
 
 
 @router.post(
-    "/users/me/reset_password/",
+    "/users/reset_password/",
     response_model=schemas.MessageResponseSchema
 )
 async def reset_password(
