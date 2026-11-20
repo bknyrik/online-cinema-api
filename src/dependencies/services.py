@@ -11,6 +11,7 @@ from src.services import (
     s3,
     accounts,
     cinema,
+    rating,
     notifications
 )
 
@@ -71,5 +72,13 @@ DirectorServiceDep = Annotated[cinema.DirectorService, Depends()]
 MovieServiceDep = Annotated[cinema.MovieService, Depends()]
 NotificationServiceDep = Annotated[
     notifications.NotificationService,
+    Depends()
+]
+MovieLikeServiceDep = Annotated[
+    rating.MovieLikeService,
+    Depends()
+]
+MovieCommentServiceDep = Annotated[
+    rating.MovieCommentService,
     Depends()
 ]
