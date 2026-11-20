@@ -5,7 +5,8 @@ from sqlalchemy import (
     ForeignKey,
     Text,
     Boolean,
-    func
+    func,
+    text
 )
 
 from src.database.models.base import Base
@@ -20,7 +21,11 @@ class NotificationModel(Base):
         server_default=func.now(),
         nullable=False
     )
-    is_read = Column(Boolean, default=False, nullable=False)
+    is_read = Column(
+        Boolean,
+        server_default=text("false"),
+        nullable=False
+    )
     user_id = Column(
         Integer,
         ForeignKey("users.id", ondelete="CASCADE"),
