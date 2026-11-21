@@ -164,7 +164,11 @@ class MovieService(
                 detail="An error occurred while getting movie"
             )
 
-    async def create_movie(self, db: AsyncSession, data: dict) -> models.MovieModel:
+    async def create_movie(
+        self,
+        db: AsyncSession,
+        data: dict
+    ) -> models.MovieModel:
         try:
             movie = await self.movie_repository.aget_by(
                 db=db,
@@ -178,8 +182,9 @@ class MovieService(
             self.validate_item_by_attrs_exists(
                 item=movie,
                 attrs={
-                    key: value for key, value in data.items()
-                    if key in ("name", "year", "time")
+                    "name": data["name"],
+                    "year": data["year"],
+                    "time": data["time"]
                 },
                 item_type="Movie"
             )
@@ -189,24 +194,22 @@ class MovieService(
                 data=data
             )
 
-            created_movie = await self.movie_repository.acreate(
+            movie = await self.movie_repository.acreate(
                 db=db,
                 data=data
             )
 
-            created_movie = await self.movie_repository.aget_by_id(
-                db=db,
-                id_=created_movie.id,
-                join_relationships=[
-                    "genres",
+            await db.commit()
+            await db.refresh(
+                instance=movie,
+                attribute_names=(
+                    "certification",
                     "stars",
                     "directors",
-                    "certification"
-                ]
+                    "genres"
+                )
             )
-
-            await db.commit()
-            return created_movie
+            return movie
         except SQLAlchemyError:
             await db.rollback()
             raise HTTPException(
