@@ -1,6 +1,7 @@
 from fastapi import HTTPException, status
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
 
 from src.database.models import shopping as models
 from src.database.models.accounts import UserModel
@@ -23,7 +24,10 @@ class CartService:
             cart = await self.cart_repository.aget_by(
                 db=db,
                 expressions=[self.model_type.user_id == current_user.id],
-                join_relationships=["cart_items"]
+                load_relationships=[
+                    joinedload(self.model_type.cart_items).
+                    joinedload(models.CartItemModel.movie),
+                ]
             )
             return cart
         except SQLAlchemyError:

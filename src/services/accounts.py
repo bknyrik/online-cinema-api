@@ -4,6 +4,7 @@ from typing import Literal
 from fastapi import BackgroundTasks, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import joinedload
 from boto3.exceptions import Boto3Error
 
 from src.database.models import accounts as models
@@ -163,7 +164,7 @@ class UserService(mixins.ModelItemsMixin):
         try:
             user = await self.user_repository.aget_by(
                 db=db,
-                join_relationships=["activation_token"],
+                load_relationships=[self.model_type.activation_token],
                 expressions=[self.model_type.email == data["email"]]
             )
 
@@ -210,7 +211,7 @@ class UserService(mixins.ModelItemsMixin):
         try:
             user = await self.user_repository.aget_by(
                 db=db,
-                join_relationships=["activation_token"],
+                load_relationships=[self.model_type.activation_token],
                 expressions=[self.model_type.email == data["email"]]
             )
 

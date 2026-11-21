@@ -2,6 +2,7 @@ from typing import Sequence
 
 from sqlalchemy import select, func, delete, update
 from sqlalchemy.orm import InstrumentedAttribute
+from sqlalchemy.orm.strategy_options import LoaderOption
 from sqlalchemy.sql.elements import ColumnElement, UnaryExpression
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -89,15 +90,13 @@ class AsyncBaseRepository[T]:
         self,
         db: AsyncSession,
         expressions: list[ColumnElement[bool]],
-        join_relationships: list[str] | None = None
+        load_relationships: list[LoaderOption] | None = None
     ) -> T | None:
         stmt = select(self._model_type)
 
-        if join_relationships:
-            for relationship in join_relationships:
-                stmt = stmt.options(
-                    joinedload(getattr(self._model_type, relationship))
-                )
+        if load_relationships:
+            for relationship in load_relationships:
+                stmt = stmt.options(relationship)
 
         stmt = stmt.where(*expressions)
 
