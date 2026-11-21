@@ -118,7 +118,11 @@ class CertificationListResponseSchema(BaseModel):
 
 
 class CertificationDataRequestSchema(BaseModel):
-    name: str = Field(min_length=1, strict=True)
+    name: str = Field(
+        min_length=1,
+        max_length=10,
+        strict=True
+    )
 
 
 class MovieDetailBaseSchema(BaseModel):
