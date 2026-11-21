@@ -25,6 +25,10 @@ class CartItemModel(Base):
         sa.Integer,
         sa.ForeignKey("carts.id", ondelete="CASCADE")
     )
+    movie_id = sa.Column(
+        sa.Integer,
+        sa.ForeignKey("movies.id", ondelete="CASCADE")
+    )
     cart = relationship(
         CartModel,
         back_populates="cart_items"
