@@ -6,6 +6,7 @@ from src.database.models.accounts import UserModel
 
 
 class CartModel(Base):
+    __tablename__ = "carts"
 
     id = sa.Column(sa.Integer, primary_key=True, index=True)
     user_id = sa.Column(
