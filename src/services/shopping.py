@@ -26,11 +26,30 @@ class CartService(
         pagination_data: dict
     ) -> dict:
         try:
-            carts = await self.cart_repository.aget_all_with_count_cart_items(
+            limit, offset = self.get_limit_offset(pagination_data)
+
+            total_carts = await self.cart_repository.acount(
                 db=db
             )
+            total_pages = self.get_total_pages(total_carts, pagination_data["per_page"])
+
+            carts = await self.cart_repository.aget_all_with_count_cart_items(
+                db=db,
+                limit=limit,
+                offset=offset
+            )
+            prev_page, next_page = self.get_prev_next_urls_pages(
+                "/api/shopping/carts/",
+                page=pagination_data["page"],
+                query_params=pagination_data,
+                total_pages=total_pages
+            )
             return {
-                "carts": carts
+                "carts": carts,
+                "total_carts": total_carts,
+                "total_pages": total_pages,
+                "prev": prev_page,
+                "next": next_page
             }
         except SQLAlchemyError:
             raise HTTPException(
