@@ -48,3 +48,10 @@ class CartItemModel(Base):
         CartModel,
         back_populates="cart_items"
     )
+
+    __table_args__ = (
+        sa.UniqueConstraint(
+            "movie_id", "cart_id",
+            name="movie_id_cart_id_unique"
+        ),
+    )
