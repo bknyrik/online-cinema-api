@@ -41,7 +41,7 @@ class CartListItemSchema(BaseModel):
 
 
 class CartListResponseSchema(BaseModel):
-    carts: list
+    carts: list[CartListItemSchema]
 
 
 class CartDetailResponseSchema(BaseModel):
