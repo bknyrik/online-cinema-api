@@ -215,6 +215,7 @@ class MovieDataRequestSchema(BaseModel):
 class MovieUpdateRequestSchema(MovieDataRequestSchema):
     name: str | None = Field(
         min_length=3,
+        max_length=255,
         default=None,
     )
     year: int | None = Field(
