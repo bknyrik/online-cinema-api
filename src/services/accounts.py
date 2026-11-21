@@ -124,6 +124,8 @@ class UserService(mixins.ModelItemsMixin):
 
             user = await self.user_repository.acreate(db, data)
 
+            await self.cart_repository.acreate(db, {"user_id": user.id})
+
             activation_token = await self.at_repository.acreate(
                 db=db,
                 data={
