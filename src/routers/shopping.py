@@ -8,6 +8,14 @@ from src.schemas import shopping as schemas
 router = APIRouter()
 
 
+@router.get("/carts/", response_model=schemas.CartListResponseSchema)
+async def get_cart_list(
+    db: database.AsyncSessionDep,
+    cart_service: services.CartServiceDep
+) -> dict:
+    return await cart_service.get_cart_list(db)
+
+
 @router.get("/carts/me/", response_model=schemas.CartDetailResponseSchema)
 async def get_current_user_cart(
     db: database.AsyncSessionDep,
