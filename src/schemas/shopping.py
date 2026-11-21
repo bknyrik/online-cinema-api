@@ -33,6 +33,13 @@ class CartItemCreateRequestSchema(BaseModel):
     movie_id: int
 
 
+class CartListItemSchema(BaseModel):
+    id: int
+    cart_id: int
+    movie_id: int
+    added_at: datetime
+
+
 class CartListResponseSchema(BaseModel):
     carts: list
 
