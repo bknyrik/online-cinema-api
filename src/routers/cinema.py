@@ -79,7 +79,7 @@ async def delete_movie(
     movie_id: int,
     db: database.AsyncSessionDep,
     movie_service: services.MovieServiceDep,
-    current_user: authentication.CurrentModeratorOrAdminDep
+    current_user: authentication.CurrentAdminDep
 ) -> None:
     return await movie_service.delete_movie(
         db=db,
