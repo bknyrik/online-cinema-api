@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, status
 
 from src.dependencies import authentication, database, services
 from src.database.models import shopping as models
@@ -15,6 +15,18 @@ async def get_current_user_cart(
     current_user: authentication.CurrentUserDep
 ) -> models.CartModel:
     return await cart_service.get_current_user_cart(
+        db=db,
+        current_user=current_user
+    )
+
+
+@router.delete("/carts/me/clear/", status_code=status.HTTP_204_NO_CONTENT)
+async def clear_current_user_cart(
+    db: database.AsyncSessionDep,
+    cart_service: services.CartServiceDep,
+    current_user: authentication.CurrentUserDep
+) -> None:
+    return await cart_service.clear_current_user_cart(
         db=db,
         current_user=current_user
     )
