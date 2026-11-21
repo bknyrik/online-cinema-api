@@ -49,6 +49,13 @@ class CartService(
                     .joinedload(MovieModel.genres),
                 ]
             )
+
+            self.validate_item_by_id_not_found(
+                item=cart,
+                item_type="Cart",
+                id_=cart_id
+            )
+
             return cart
         except SQLAlchemyError:
             raise HTTPException(
