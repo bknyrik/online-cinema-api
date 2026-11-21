@@ -1,6 +1,23 @@
+from decimal import Decimal
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_serializer
+
+from src.schemas.cinema import GenreDetailResponseSchema
+
+
+class CartItemMovieDetailSchema(BaseModel):
+    name: str
+    price: Decimal
+    genres: list[GenreDetailResponseSchema]
+    year: int
+
+    @field_serializer("genres")
+    def serialize_into_str_name(
+        self,
+        genres: list[GenreDetailResponseSchema]
+    ) -> list[str]:
+        return [genre.name for genre in genres]
 
 
 class CartItemDetailSchema(BaseModel):
