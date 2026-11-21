@@ -12,7 +12,8 @@ from src.services import (
     accounts,
     cinema,
     rating,
-    notifications
+    notifications,
+    shopping
 )
 
 
@@ -96,5 +97,9 @@ MovieRateServiceDep = Annotated[
 ]
 FavoriteMovieServiceDep = Annotated[
     rating.FavoriteMovieService,
+    Depends()
+]
+CartServiceDep = Annotated[
+    shopping.CartService,
     Depends()
 ]
