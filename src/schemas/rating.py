@@ -136,7 +136,7 @@ class MovieRateCreateRequestSchema(BaseModel):
 
 
 class MovieRateUpdateRequestSchema(BaseModel):
-    scale: int = Field(min_length=1, max_length=10)
+    scale: int = Field(ge=1, le=10)
 
     model_config = ConfigDict(strict=True)
 

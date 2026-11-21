@@ -1,14 +1,7 @@
-from fastapi import APIRouter, Depends, status
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter, status
 
-from src.dependencies import database, authentication
-from src.database.models.accounts import UserModel
-from src.services.notifications import NotificationService
-from src.schemas.notifications import (
-    NotificationListResponseSchema,
-    NotificationListQuery
-)
-from src.schemas import pagination
+from src.dependencies import database, authentication, services
+from src.schemas import notifications as schemas
 
 
 router = APIRouter()
@@ -16,13 +9,13 @@ router = APIRouter()
 
 @router.get(
     "/",
-    response_model=NotificationListResponseSchema
+    response_model=schemas.NotificationListResponseSchema
 )
 async def get_notification_list(
-    query_params: NotificationListQuery,
-    db: AsyncSession = Depends(database.get_db),
-    notification_service: NotificationService = Depends(NotificationService),
-    current_user: UserModel = Depends(authentication.get_current_user),
+    query_params: schemas.NotificationListQuery,
+    db: database.AsyncSessionDep,
+    notification_service: services.NotificationServiceDep,
+    current_user: authentication.CurrentUserDep,
 ) -> dict:
     return await notification_service.get_notification_list(
         db=db,
@@ -37,9 +30,9 @@ async def get_notification_list(
 )
 async def delete_notification(
     notification_id: int,
-    db: AsyncSession = Depends(database.get_db),
-    notification_service: NotificationService = Depends(NotificationService),
-    current_user: UserModel = Depends(authentication.get_current_user)
+    db: database.AsyncSessionDep,
+    notification_service: services.NotificationServiceDep,
+    current_user: authentication.CurrentUserDep
 ) -> None:
     return await notification_service.delete_notification(
         db=db,
@@ -53,9 +46,9 @@ async def delete_notification(
     status_code=status.HTTP_204_NO_CONTENT
 )
 async def delete_all_notifications(
-    db: AsyncSession = Depends(database.get_db),
-    notification_service: NotificationService = Depends(NotificationService),
-    current_user: UserModel = Depends(authentication.get_current_user)
+    db: database.AsyncSessionDep,
+    notification_service: services.NotificationServiceDep,
+    current_user: authentication.CurrentUserDep
 ) -> None:
     return await notification_service.delete_all_notifications(
         db=db,
@@ -68,9 +61,9 @@ async def delete_all_notifications(
     status_code=status.HTTP_204_NO_CONTENT
 )
 async def mark_notifications_as_read(
-    db: AsyncSession = Depends(database.get_db),
-    notification_service: NotificationService = Depends(NotificationService),
-    current_user: UserModel = Depends(authentication.get_current_user)
+    db: database.AsyncSessionDep,
+    notification_service: services.NotificationServiceDep,
+    current_user: authentication.CurrentUserDep
 ) -> None:
     return await notification_service.mark_notifications_as_read(
         db=db,

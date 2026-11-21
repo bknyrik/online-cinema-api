@@ -29,7 +29,11 @@ class DirectorListResponseSchema(BaseModel):
 
 
 class DirectorDataRequestSchema(BaseModel):
-    name: str = Field(min_length=5, strict=True)
+    name: str = Field(
+        min_length=5,
+        max_length=128,
+        strict=True
+    )
 
 
 class StarDetailResponseSchema(BaseModel):
@@ -48,7 +52,11 @@ class StarListResponseSchema(BaseModel):
 
 
 class StarDataRequestSchema(BaseModel):
-    name: str = Field(min_length=3, strict=True)
+    name: str = Field(
+        min_length=3,
+        max_length=64,
+        strict=True
+    )
 
 
 
@@ -87,7 +95,11 @@ class GenreMoviesDetailResponseSchema(GenreDetailResponseSchema):
 
 
 class GenreDataRequestSchema(BaseModel):
-    name: str = Field(min_length=5, strict=True)
+    name: str = Field(
+        min_length=3,
+        max_length=64,
+        strict=True
+    )
 
 
 class CertificationDetailResponseSchema(BaseModel):
@@ -106,7 +118,11 @@ class CertificationListResponseSchema(BaseModel):
 
 
 class CertificationDataRequestSchema(BaseModel):
-    name: str = Field(min_length=1, strict=True)
+    name: str = Field(
+        min_length=1,
+        max_length=10,
+        strict=True
+    )
 
 
 class MovieDetailBaseSchema(BaseModel):
@@ -171,7 +187,7 @@ class MovieDetailResponseSchema(MovieDetailBaseSchema):
 
 
 class MovieDataRequestSchema(BaseModel):
-    name: str = Field(min_length=3)
+    name: str = Field(min_length=3, max_length=255)
     year: int = Field(ge=1)
     time: int = Field(ge=1)
     imdb: float = Field(ge=1, le=10)
@@ -199,6 +215,7 @@ class MovieDataRequestSchema(BaseModel):
 class MovieUpdateRequestSchema(MovieDataRequestSchema):
     name: str | None = Field(
         min_length=3,
+        max_length=255,
         default=None,
     )
     year: int | None = Field(

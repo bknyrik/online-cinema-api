@@ -89,7 +89,11 @@ class CertificationModel(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(10), nullable=False, unique=True)
-    movies = relationship("MovieModel", back_populates="certification")
+    movies = relationship(
+        "MovieModel",
+        cascade="all, delete-orphan",
+        back_populates="certification"
+    )
 
     def __eq__(self, other: "CertificationModel") -> bool:
         return self.name == other.name
@@ -138,14 +142,17 @@ class MovieModel(Base):
     likes = relationship(
         "MovieLikeModel",
         back_populates="movie",
+        cascade="all, delete-orphan"
     )
     comments = relationship(
         "MovieCommentModel",
+        cascade="all, delete-orphan",
         back_populates="movie"
     )
     rates = relationship(
         "MovieRateModel",
-        back_populates="movie"
+        back_populates="movie",
+        cascade="all, delete-orphan"
     )
 
     __table_args__ = (

@@ -1,6 +1,5 @@
 from __future__ import annotations
 from typing import Literal
-from datetime import datetime, timezone
 
 from fastapi import BackgroundTasks, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession

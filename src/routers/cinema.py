@@ -1,12 +1,9 @@
-from fastapi import APIRouter, Depends, status
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter, status
 
 from src.schemas import cinema as schemas
 from src.schemas import pagination
-from src.dependencies import database, authentication
-from src.services import cinema as services
+from src.dependencies import database, authentication, services
 from src.database.models import cinema as models
-from src.database.models.accounts import UserModel
 
 
 router = APIRouter()
@@ -15,8 +12,8 @@ router = APIRouter()
 @router.get("/movies/", response_model=schemas.MovieListResponseSchema)
 async def get_movie_list(
     query_params: schemas.MovieListQuery,
-    db: AsyncSession = Depends(database.get_db),
-    movie_service: services.MovieService = Depends(services.MovieService)
+    db: database.AsyncSessionDep,
+    movie_service: services.MovieServiceDep
 ) -> dict:
     return await movie_service.get_movie_list(
         db=db,
@@ -30,8 +27,8 @@ async def get_movie_list(
 )
 async def get_detail_movie(
     movie_id: int,
-    db: AsyncSession = Depends(database.get_db),
-    movie_service: services.MovieService = Depends(services.MovieService)
+    db: database.AsyncSessionDep,
+    movie_service: services.MovieServiceDep
 ) -> models.MovieModel:
     return await movie_service.get_detail_movie(
         db=db,
@@ -46,9 +43,9 @@ async def get_detail_movie(
 )
 async def create_movie(
     data: schemas.MovieDataRequestSchema,
-    movie_service: services.MovieService = Depends(services.MovieService),
-    db: AsyncSession = Depends(database.get_db),
-    current_user: UserModel = Depends(authentication.get_current_moderator_or_admin)
+    db: database.AsyncSessionDep,
+    movie_service: services.MovieServiceDep,
+    current_user: authentication.CurrentModeratorOrAdminDep
 ) -> models.MovieModel:
     return await movie_service.create_movie(
         db=db,
@@ -63,9 +60,9 @@ async def create_movie(
 async def update_movie(
     movie_id: int,
     data: schemas.MovieUpdateRequestSchema,
-    db: AsyncSession = Depends(database.get_db),
-    movie_service: services.MovieService = Depends(services.MovieService),
-    current_user: UserModel = Depends(authentication.get_current_moderator_or_admin)
+    db: database.AsyncSessionDep,
+    movie_service: services.MovieServiceDep,
+    current_user: authentication.CurrentModeratorOrAdminDep
 ) -> models.MovieModel:
     return await movie_service.update_movie(
         db=db,
@@ -80,9 +77,9 @@ async def update_movie(
 )
 async def delete_movie(
     movie_id: int,
-    db: AsyncSession = Depends(database.get_db),
-    movie_service: services.MovieService = Depends(services.MovieService),
-    current_user: UserModel = Depends(authentication.get_current_moderator_or_admin)
+    db: database.AsyncSessionDep,
+    movie_service: services.MovieServiceDep,
+    current_user: authentication.CurrentAdminDep
 ) -> None:
     return await movie_service.delete_movie(
         db=db,
@@ -96,8 +93,8 @@ async def delete_movie(
 )
 async def get_genre_list(
     query_params: pagination.PaginationQuery,
-    db: AsyncSession = Depends(database.get_db),
-    genre_service: services.GenreService = Depends(services.GenreService),
+    db: database.AsyncSessionDep,
+    genre_service: services.GenreServiceDep,
 ) -> dict:
     return await genre_service.get_genre_list(
         db=db,
@@ -111,8 +108,8 @@ async def get_genre_list(
 )
 async def get_genre_detail(
     genre_id: int,
-    db: AsyncSession = Depends(database.get_db),
-    genre_service: services.GenreService = Depends(services.GenreService),
+    db: database.AsyncSessionDep,
+    genre_service: services.GenreServiceDep,
 ) -> models.GenreModel:
     return await genre_service.get_genre_detail(
         db=db,
@@ -127,9 +124,9 @@ async def get_genre_detail(
 )
 async def create_genre(
     data: schemas.GenreDataRequestSchema,
-    db: AsyncSession = Depends(database.get_db),
-    genre_service: services.GenreService = Depends(services.GenreService),
-    current_user: UserModel = Depends(authentication.get_current_moderator_or_admin)
+    db: database.AsyncSessionDep,
+    genre_service: services.GenreServiceDep,
+    current_user: authentication.CurrentModeratorOrAdminDep
 ) -> models.GenreModel:
     return await genre_service.create_genre(
         db=db,
@@ -144,9 +141,9 @@ async def create_genre(
 async def update_genre(
     genre_id: int,
     data: schemas.GenreDataRequestSchema,
-    db: AsyncSession = Depends(database.get_db),
-    genre_service: services.GenreService = Depends(services.GenreService),
-    current_user: UserModel = Depends(authentication.get_current_moderator_or_admin)
+    db: database.AsyncSessionDep,
+    genre_service: services.GenreServiceDep,
+    current_user: authentication.CurrentModeratorOrAdminDep
 ) -> models.GenreModel:
     return await genre_service.update_genre(
         db=db,
@@ -161,9 +158,9 @@ async def update_genre(
 )
 async def delete_genre(
     genre_id: int,
-    db: AsyncSession = Depends(database.get_db),
-    genre_service: services.GenreService = Depends(services.GenreService),
-    current_user: UserModel = Depends(authentication.get_current_moderator_or_admin)
+    db: database.AsyncSessionDep,
+    genre_service: services.GenreServiceDep,
+    current_user: authentication.CurrentAdminDep
 ) -> None:
     return await genre_service.delete_genre(
         db=db,
@@ -177,8 +174,8 @@ async def delete_genre(
 )
 async def get_certification_list(
     query_params: pagination.PaginationQuery,
-    db: AsyncSession = Depends(database.get_db),
-    certification_service: services.CertificationService = Depends(services.CertificationService),
+    db: database.AsyncSessionDep,
+    certification_service: services.CertificationServiceDep,
 ) -> dict:
     return await certification_service.get_certification_list(
         query_params=query_params.model_dump(),
@@ -192,8 +189,8 @@ async def get_certification_list(
 )
 async def get_certification_detail(
     certification_id: int,
-    db: AsyncSession = Depends(database.get_db),
-    certification_service: services.CertificationService = Depends(services.CertificationService),
+    db: database.AsyncSessionDep,
+    certification_service: services.CertificationServiceDep,
 ) -> models.CertificationModel:
     return await certification_service.get_certification_detail(
         db=db,
@@ -208,9 +205,9 @@ async def get_certification_detail(
 )
 async def create_certification(
     data: schemas.CertificationDataRequestSchema,
-    db: AsyncSession = Depends(database.get_db),
-    certification_service: services.CertificationService = Depends(services.CertificationService),
-    current_user: UserModel = Depends(authentication.get_current_moderator_or_admin)
+    db: database.AsyncSessionDep,
+    certification_service: services.CertificationServiceDep,
+    current_user: authentication.CurrentModeratorOrAdminDep
 ) -> models.CertificationModel:
     return await certification_service.create_certification(
         db=db,
@@ -225,9 +222,9 @@ async def create_certification(
 async def update_certification(
     certification_id: int,
     data: schemas.CertificationDataRequestSchema,
-    db: AsyncSession = Depends(database.get_db),
-    certification_service: services.CertificationService = Depends(services.CertificationService),
-    current_user: UserModel = Depends(authentication.get_current_moderator_or_admin)
+    db: database.AsyncSessionDep,
+    certification_service: services.CertificationServiceDep,
+    current_user: authentication.CurrentModeratorOrAdminDep
 ) -> models.CertificationModel:
     return await certification_service.update_certification(
         db=db,
@@ -242,9 +239,9 @@ async def update_certification(
 )
 async def delete_certification(
     certification_id: int,
-    db: AsyncSession = Depends(database.get_db),
-    certification_service: services.CertificationService = Depends(services.CertificationService),
-    current_user: UserModel = Depends(authentication.get_current_moderator_or_admin)
+    db: database.AsyncSessionDep,
+    certification_service: services.CertificationServiceDep,
+    current_user: authentication.CurrentAdminDep
 ) -> None:
     return await certification_service.delete_certification(
         db=db,
@@ -255,8 +252,8 @@ async def delete_certification(
 @router.get("/directors/", response_model=schemas.DirectorListResponseSchema)
 async def get_director_list(
     query_params: pagination.PaginationQuery,
-    db: AsyncSession = Depends(database.get_db),
-    director_service: services.DirectorService = Depends(services.DirectorService)
+    db: database.AsyncSessionDep,
+    director_service: services.DirectorServiceDep
 ) -> dict:
     return await director_service.get_director_list(
         db=db,
@@ -270,8 +267,8 @@ async def get_director_list(
 )
 async def get_director_detail(
     director_id: int,
-    db: AsyncSession = Depends(database.get_db),
-    director_service: services.DirectorService = Depends(services.DirectorService)
+    db: database.AsyncSessionDep,
+    director_service: services.DirectorServiceDep
 ) -> models.DirectorModel:
     return await director_service.get_director_detail(
         db=db,
@@ -286,9 +283,9 @@ async def get_director_detail(
 )
 async def create_director(
     data: schemas.DirectorDataRequestSchema,
-    db: AsyncSession = Depends(database.get_db),
-    director_service: services.DirectorService = Depends(services.DirectorService),
-    current_user: UserModel = Depends(authentication.get_current_moderator_or_admin)
+    db: database.AsyncSessionDep,
+    director_service: services.DirectorServiceDep,
+    current_user: authentication.CurrentModeratorOrAdminDep
 ) -> models.DirectorModel:
     return await director_service.create_director(
         db=db,
@@ -303,9 +300,9 @@ async def create_director(
 async def update_director(
     director_id: int,
     data: schemas.DirectorDataRequestSchema,
-    db: AsyncSession = Depends(database.get_db),
-    director_service: services.DirectorService = Depends(services.DirectorService),
-    current_user: UserModel = Depends(authentication.get_current_moderator_or_admin)
+    db: database.AsyncSessionDep,
+    director_service: services.DirectorServiceDep,
+    current_user: authentication.CurrentModeratorOrAdminDep
 ) -> models.DirectorModel:
     return await director_service.update_director(
         db=db,
@@ -320,9 +317,9 @@ async def update_director(
 )
 async def delete_director(
     director_id: int,
-    db: AsyncSession = Depends(database.get_db),
-    director_service: services.DirectorService = Depends(services.DirectorService),
-    current_user: UserModel = Depends(authentication.get_current_moderator_or_admin)
+    db: database.AsyncSessionDep,
+    director_service: services.DirectorServiceDep,
+    current_user: authentication.CurrentAdminDep
 ) -> None:
     return await director_service.delete_director(
         db=db,
@@ -336,8 +333,8 @@ async def delete_director(
 )
 async def get_star_list(
     query_params: pagination.PaginationQuery,
-    db: AsyncSession = Depends(database.get_db),
-    star_service: services.StarService = Depends(services.StarService),
+    db: database.AsyncSessionDep,
+    star_service: services.StarServiceDep,
 ) -> dict:
     return await star_service.get_star_list(
         query_params=query_params.model_dump(),
@@ -351,8 +348,8 @@ async def get_star_list(
 )
 async def get_star_detail(
     star_id: int,
-    db: AsyncSession = Depends(database.get_db),
-    star_service: services.StarService = Depends(services.StarService),
+    db: database.AsyncSessionDep,
+    star_service: services.StarServiceDep,
 ) -> models.StarModel:
     return await star_service.get_star_detail(
         db=db,
@@ -367,9 +364,9 @@ async def get_star_detail(
 )
 async def create_star(
     data: schemas.StarDataRequestSchema,
-    db: AsyncSession = Depends(database.get_db),
-    star_service: services.StarService = Depends(services.StarService),
-    current_user: UserModel = Depends(authentication.get_current_moderator_or_admin)
+    db: database.AsyncSessionDep,
+    star_service: services.StarServiceDep,
+    current_user: authentication.CurrentModeratorOrAdminDep
 ) -> models.StarModel:
     return await star_service.create_star(
         db=db,
@@ -384,9 +381,9 @@ async def create_star(
 async def update_star(
     star_id: int,
     data: schemas.StarDataRequestSchema,
-    db: AsyncSession = Depends(database.get_db),
-    star_service: services.StarService = Depends(services.StarService),
-    current_user: UserModel = Depends(authentication.get_current_moderator_or_admin)
+    db: database.AsyncSessionDep,
+    star_service: services.StarServiceDep,
+    current_user: authentication.CurrentModeratorOrAdminDep
 ) -> models.StarModel:
     return await star_service.update_star(
         db=db,
@@ -401,9 +398,9 @@ async def update_star(
 )
 async def delete_star(
     star_id: int,
-    db: AsyncSession = Depends(database.get_db),
-    star_service: services.StarService = Depends(services.StarService),
-    current_user: UserModel = Depends(authentication.get_current_moderator_or_admin)
+    db: database.AsyncSessionDep,
+    star_service: services.StarServiceDep,
+    current_user: authentication.CurrentAdminDep
 ) -> None:
     return await star_service.delete_star(
         db=db,
