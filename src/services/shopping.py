@@ -16,6 +16,20 @@ class CartService:
         self.cart_repository = repositories.CartRepository()
         self.cart_item_repository = repositories.CartItemRepository()
 
+    async def get_cart_list(self, db: AsyncSession) -> dict:
+        try:
+            carts = await self.cart_repository.aget_all_with_count_cart_items(
+                db=db
+            )
+            return {
+                "carts": carts
+            }
+        except SQLAlchemyError:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while getting list with carts"
+            )
+
     async def get_cart_detail(
         self,
         db: AsyncSession,
