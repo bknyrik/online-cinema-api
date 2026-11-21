@@ -160,7 +160,7 @@ async def delete_genre(
     genre_id: int,
     db: database.AsyncSessionDep,
     genre_service: services.GenreServiceDep,
-    current_user: authentication.CurrentModeratorOrAdminDep
+    current_user: authentication.CurrentAdminDep
 ) -> None:
     return await genre_service.delete_genre(
         db=db,
