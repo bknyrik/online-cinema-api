@@ -5,6 +5,7 @@ from sqlalchemy.orm import joinedload
 
 from src.database.models import shopping as models
 from src.database.models.accounts import UserModel
+from src.database.models.cinema import MovieModel
 from src.repositories import shopping as repositories
 
 
@@ -25,8 +26,9 @@ class CartService:
                 db=db,
                 expressions=[self.model_type.user_id == current_user.id],
                 load_relationships=[
-                    joinedload(self.model_type.cart_items).
-                    joinedload(models.CartItemModel.movie),
+                    joinedload(self.model_type.cart_items)
+                    .joinedload(models.CartItemModel.movie)
+                    .joinedload(MovieModel.genres),
                 ]
             )
             return cart
