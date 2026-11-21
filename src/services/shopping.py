@@ -7,9 +7,13 @@ from src.database.models import shopping as models
 from src.database.models.accounts import UserModel
 from src.database.models.cinema import MovieModel
 from src.repositories import shopping as repositories
+from src.services import mixins
 
 
-class CartService:
+class CartService(
+    mixins.PaginationLimitOffsetMixin,
+    mixins.ModelItemsMixin
+):
 
     def __init__(self) -> None:
         self.model_type = models.CartModel
