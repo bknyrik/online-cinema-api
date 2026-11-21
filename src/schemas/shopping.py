@@ -33,7 +33,7 @@ class CartItemCreateRequestSchema(BaseModel):
     movie_id: int
 
 
-class CartListResponseSchema(BaseModel):
+class CartDetailResponseSchema(BaseModel):
     cart_items: list[CartItemDetailSchema]
 
     model_config = ConfigDict(from_attributes=True)
