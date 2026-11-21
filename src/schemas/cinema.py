@@ -87,7 +87,7 @@ class GenreMoviesDetailResponseSchema(GenreDetailResponseSchema):
 
 
 class GenreDataRequestSchema(BaseModel):
-    name: str = Field(min_length=5, strict=True)
+    name: str = Field(min_length=3, strict=True)
 
 
 class CertificationDetailResponseSchema(BaseModel):
