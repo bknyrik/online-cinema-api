@@ -41,6 +41,8 @@ class CartListItemSchema(BaseModel):
 
 class CartListResponseSchema(BaseModel):
     carts: list[CartListItemSchema]
+    prev: str | None = None
+    next: str | None = None
 
     model_config = ConfigDict(from_attributes=True)
 
