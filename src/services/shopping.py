@@ -44,3 +44,25 @@ class CartService:
         current_user: UserModel
     ) -> models.CartModel:
         return await self.get_cart_detail(db=db, user_id=current_user.id)
+
+    async def clear_current_user_cart(
+        self,
+        db: AsyncSession,
+        current_user: UserModel
+    ) -> None:
+        try:
+            cart = await self.cart_repository.aget_by(
+                db=db,
+                expressions=[self.model_type.user_id == current_user.id],
+                load_relationships=[
+                    joinedload(self.model_type.cart_items)
+                ]
+            )
+            cart.cart_items.clear()
+            await db.commit()
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while cleaning current user cart"
+            )
