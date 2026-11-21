@@ -29,6 +29,11 @@ class CartItemModel(Base):
         sa.Integer,
         sa.ForeignKey("movies.id", ondelete="CASCADE")
     )
+    added_at = sa.Column(
+        sa.DateTime(timezone=True),
+        server_default=sa.func.now(),
+        nullable=False
+    )
     cart = relationship(
         CartModel,
         back_populates="cart_items"
