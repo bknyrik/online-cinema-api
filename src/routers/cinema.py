@@ -241,7 +241,7 @@ async def delete_certification(
     certification_id: int,
     db: database.AsyncSessionDep,
     certification_service: services.CertificationServiceDep,
-    current_user: authentication.CurrentModeratorOrAdminDep
+    current_user: authentication.CurrentAdminDep
 ) -> None:
     return await certification_service.delete_certification(
         db=db,
