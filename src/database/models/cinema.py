@@ -142,9 +142,11 @@ class MovieModel(Base):
     likes = relationship(
         "MovieLikeModel",
         back_populates="movie",
+        cascade="all, delete-orphan"
     )
     comments = relationship(
         "MovieCommentModel",
+        casade="all, delete-orphan",
         back_populates="movie"
     )
     rates = relationship(
