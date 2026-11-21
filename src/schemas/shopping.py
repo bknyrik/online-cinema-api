@@ -43,6 +43,8 @@ class CartListItemSchema(BaseModel):
 class CartListResponseSchema(BaseModel):
     carts: list[CartListItemSchema]
 
+    model_config = ConfigDict(from_attributes=True)
+
 
 class CartDetailResponseSchema(BaseModel):
     cart_items: list[CartItemDetailSchema]
