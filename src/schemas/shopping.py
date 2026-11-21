@@ -41,6 +41,8 @@ class CartListItemSchema(BaseModel):
 
 class CartListResponseSchema(BaseModel):
     carts: list[CartListItemSchema]
+    total_carts: int
+    total_pages: int
     prev: str | None = None
     next: str | None = None
 
