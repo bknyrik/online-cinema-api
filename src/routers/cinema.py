@@ -319,7 +319,7 @@ async def delete_director(
     director_id: int,
     db: database.AsyncSessionDep,
     director_service: services.DirectorServiceDep,
-    current_user: authentication.CurrentModeratorOrAdminDep
+    current_user: authentication.CurrentAdminDep
 ) -> None:
     return await director_service.delete_director(
         db=db,
