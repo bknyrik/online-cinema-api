@@ -19,12 +19,12 @@ class CartService:
     async def get_cart_detail(
         self,
         db: AsyncSession,
-        current_user: UserModel
+        user_id: int
     ) -> models.CartModel:
         try:
             cart = await self.cart_repository.aget_by(
                 db=db,
-                expressions=[self.model_type.user_id == current_user.id],
+                expressions=[self.model_type.user_id == user_id],
                 load_relationships=[
                     joinedload(self.model_type.cart_items)
                     .joinedload(models.CartItemModel.movie)
