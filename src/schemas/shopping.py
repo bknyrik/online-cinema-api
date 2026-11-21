@@ -23,8 +23,10 @@ class CartItemMovieDetailSchema(BaseModel):
 class CartItemDetailSchema(BaseModel):
     id: int
     cart_id: int
-    movie_id: int
+    movie: CartItemMovieDetailSchema
     added_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class CartItemCreateRequestSchema(BaseModel):
