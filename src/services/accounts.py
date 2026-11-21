@@ -7,6 +7,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from boto3.exceptions import Boto3Error
 
 from src.database.models import accounts as models
+from src.repositories.shopping import CartRepository
 from src.services import mixins
 from src.services.security import PasswordSecurityService, JWTAuthService
 from src.services.celery_beat import CeleryBeatService
@@ -31,6 +32,7 @@ class UserService(mixins.ModelItemsMixin):
         self.prt_repository = repositories.TokenRepository(
             models.PasswordResetTokenModel
         )
+        self.cart_repository = CartRepository()
 
     @staticmethod
     def validate_token_is_invalid(
