@@ -52,7 +52,11 @@ class StarListResponseSchema(BaseModel):
 
 
 class StarDataRequestSchema(BaseModel):
-    name: str = Field(min_length=3, strict=True)
+    name: str = Field(
+        min_length=3,
+        max_length=64,
+        strict=True
+    )
 
 
 
