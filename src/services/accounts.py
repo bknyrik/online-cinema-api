@@ -164,7 +164,9 @@ class UserService(mixins.ModelItemsMixin):
         try:
             user = await self.user_repository.aget_by(
                 db=db,
-                load_relationships=[self.model_type.activation_token],
+                load_relationships=[
+                    joinedload(self.model_type.activation_token)
+                ],
                 expressions=[self.model_type.email == data["email"]]
             )
 
@@ -211,7 +213,9 @@ class UserService(mixins.ModelItemsMixin):
         try:
             user = await self.user_repository.aget_by(
                 db=db,
-                load_relationships=[self.model_type.activation_token],
+                load_relationships=[
+                    joinedload(self.model_type.activation_token)
+                ],
                 expressions=[self.model_type.email == data["email"]]
             )
 
@@ -392,7 +396,9 @@ class UserService(mixins.ModelItemsMixin):
             user = await self.user_repository.aget_by_id(
                 db=db,
                 id_=user_id,
-                join_relationships=["group"]
+                load_relationships=[
+                    joinedload(self.model_type.group)
+                ]
             )
 
             self.validate_item_by_id_not_found(

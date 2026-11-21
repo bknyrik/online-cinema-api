@@ -70,18 +70,16 @@ class AsyncBaseRepository[T]:
         self,
         db: AsyncSession,
         id_: int,
-        join_relationships: list[str] | None = None
+        load_relationships: list[LoaderOption] | None = None
     ) -> T | None:
         stmt = (
             select(self._model_type)
             .where(self._model_type.id == id_)
         )
 
-        if join_relationships:
-            for relationship in join_relationships:
-                stmt = stmt.options(
-                    joinedload(getattr(self._model_type, relationship))
-                )
+        if load_relationships:
+            for relationship in load_relationships:
+                stmt = stmt.options(relationship)
 
         result = await db.execute(stmt)
         return result.unique().scalar_one_or_none()

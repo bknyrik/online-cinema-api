@@ -3,6 +3,7 @@ from copy import deepcopy
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import joinedload
 
 from src.database.models import cinema as models
 from src.repositories import cinema as repositories
@@ -145,11 +146,11 @@ class MovieService(
             movie = await self.movie_repository.aget_by_id(
                 db=db,
                 id_=movie_id,
-                join_relationships=[
-                    "genres",
-                    "stars",
-                    "directors",
-                    "certification"
+                load_relationships=[
+                    joinedload(self.model_type.genres),
+                    joinedload(self.model_type.stars),
+                    joinedload(self.model_type.directors),
+                    joinedload(self.model_type.certification)
                 ]
             )
 
@@ -229,11 +230,11 @@ class MovieService(
             movie = await self.movie_repository.aget_by_id(
                 db=db,
                 id_=movie_id,
-                join_relationships=[
-                    "certification",
-                    "genres",
-                    "stars",
-                    "directors"
+                load_relationships=[
+                    joinedload(self.model_type.certification),
+                    joinedload(self.model_type.genres),
+                    joinedload(self.model_type.stars),
+                    joinedload(self.model_type.directors)
                 ]
             )
 
@@ -556,7 +557,7 @@ class GenreService(
             genre = await self.genre_repository.aget_by_id(
                 db=db,
                 id_=genre_id,
-                join_relationships=["movies"]
+                load_relationships=[joinedload(self.model_type.movies)]
             )
 
             self.validate_item_by_id_not_found(genre, genre_id, "Genre")

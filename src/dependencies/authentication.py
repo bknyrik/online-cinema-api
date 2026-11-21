@@ -3,6 +3,7 @@ from typing import Annotated
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security.oauth2 import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from sqlalchemy.orm import joinedload
 
 from dependencies import database, services
 from src.database.models import accounts as models
@@ -29,7 +30,10 @@ async def get_current_user(
     user = await user_repository.aget_by_id(
         db=db,
         id_=int(payload["sub"]),
-        join_relationships=["profile", "group"]
+        load_relationships=[
+            joinedload(models.UserModel.profile),
+            joinedload(models.UserModel.group)
+        ]
     )
 
     if not user:
