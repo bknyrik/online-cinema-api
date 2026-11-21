@@ -400,7 +400,7 @@ async def delete_star(
     star_id: int,
     db: database.AsyncSessionDep,
     star_service: services.StarServiceDep,
-    current_user: authentication.CurrentModeratorOrAdminDep
+    current_user: authentication.CurrentAdminDep
 ) -> None:
     return await star_service.delete_star(
         db=db,
