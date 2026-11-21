@@ -152,7 +152,7 @@ class MovieModel(Base):
     rates = relationship(
         "MovieRateModel",
         back_populates="movie",
-        cascade="all, delete_orphan"
+        cascade="all, delete-orphan"
     )
 
     __table_args__ = (
