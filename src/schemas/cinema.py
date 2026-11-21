@@ -29,7 +29,11 @@ class DirectorListResponseSchema(BaseModel):
 
 
 class DirectorDataRequestSchema(BaseModel):
-    name: str = Field(min_length=5, strict=True)
+    name: str = Field(
+        min_length=5,
+        max_length=128,
+        strict=True
+    )
 
 
 class StarDetailResponseSchema(BaseModel):
