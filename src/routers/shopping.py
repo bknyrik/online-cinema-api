@@ -2,7 +2,7 @@ from fastapi import APIRouter, status
 
 from src.dependencies import authentication, database, services
 from src.database.models import shopping as models
-from src.schemas import shopping as schemas
+from src.schemas import shopping as schemas, pagination
 
 
 router = APIRouter()
@@ -11,7 +11,8 @@ router = APIRouter()
 @router.get("/carts/", response_model=schemas.CartListResponseSchema)
 async def get_cart_list(
     db: database.AsyncSessionDep,
-    cart_service: services.CartServiceDep
+    cart_service: services.CartServiceDep,
+    pagination_data: pagination.PaginationQuery
 ) -> dict:
     return await cart_service.get_cart_list(db)
 
