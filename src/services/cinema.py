@@ -106,11 +106,11 @@ class MovieService(
             movies = list(
                 await self.movie_repository.aget_all(
                     db=db,
-                    join_relationships=[
-                        "genres",
-                        "stars",
-                        "directors",
-                        "certification"
+                    load_relationships=[
+                        joinedload(self.model_type.genres),
+                        joinedload(self.model_type.stars),
+                        joinedload(self.model_type.directors),
+                        joinedload(self.model_type.certification)
                     ],
                     offset=offset,
                     limit=limit,
