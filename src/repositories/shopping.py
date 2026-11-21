@@ -14,7 +14,9 @@ class CartRepository(AsyncBaseRepository[models.CartModel]):
 
     async def aget_all_with_count_cart_items(
         self,
-        db: AsyncSession
+        db: AsyncSession,
+        limit: int,
+        offset: int
     ) -> Sequence[Row]:
         result = await db.execute(
             select(
@@ -25,6 +27,8 @@ class CartRepository(AsyncBaseRepository[models.CartModel]):
             .join(models.CartItemModel, isouter=True)
             .group_by(self._model_type.id)
             .order_by(self._model_type.id)
+            .limit(limit)
+            .offset(offset)
         )
         return result.all()
 
