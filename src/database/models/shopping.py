@@ -16,6 +16,11 @@ class CartModel(Base):
         nullable=False
     )
     user = relationship(UserModel, back_populates="cart", single_parent=True)
+    cart_items = relationship(
+        "CartItemModel",
+        back_populates="cart",
+        cascade="all, delete-orphan"
+    )
 
 
 class CartItemModel(Base):
