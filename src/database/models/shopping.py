@@ -30,11 +30,13 @@ class CartItemModel(Base):
     id = sa.Column(sa.Integer, primary_key=True, index=True)
     cart_id = sa.Column(
         sa.Integer,
-        sa.ForeignKey("carts.id", ondelete="CASCADE")
+        sa.ForeignKey("carts.id", ondelete="CASCADE"),
+        nullable=False
     )
     movie_id = sa.Column(
         sa.Integer,
-        sa.ForeignKey("movies.id", ondelete="CASCADE")
+        sa.ForeignKey("movies.id", ondelete="CASCADE"),
+        nullable=False
     )
     added_at = sa.Column(
         sa.DateTime(timezone=True),
