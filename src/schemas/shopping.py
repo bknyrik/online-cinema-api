@@ -1,7 +1,7 @@
 from decimal import Decimal
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict, field_serializer
+from pydantic import BaseModel, ConfigDict, Field, field_serializer
 
 from src.schemas.cinema import GenreDetailResponseSchema
 
@@ -51,3 +51,9 @@ class CartDetailResponseSchema(BaseModel):
     cart_items: list[CartItemDetailSchema]
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class CurrentUserCartDetailResponseSchema(CartDetailResponseSchema):
+    id: int
+    user_id: int = Field(exclude=True)
+    cart_items: list[CartItemDetailSchema]
