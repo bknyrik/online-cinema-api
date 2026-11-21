@@ -10,6 +10,10 @@ class CartItemDetailSchema(BaseModel):
     added_at: datetime
 
 
+class CartItemCreateRequestSchema(BaseModel):
+    movie_id: int
+
+
 class CartListResponseSchema(BaseModel):
     cart_items: list[CartItemDetailSchema]
 
