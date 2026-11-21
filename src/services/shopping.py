@@ -37,3 +37,10 @@ class CartService:
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while getting current user cart"
             )
+
+    async def get_current_user_cart(
+        self,
+        db: AsyncSession,
+        current_user: UserModel
+    ) -> models.CartModel:
+        return await self.get_cart_detail(db=db, user_id=current_user.id)
