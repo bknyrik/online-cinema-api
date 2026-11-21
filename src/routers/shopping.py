@@ -16,7 +16,10 @@ async def get_cart_list(
     return await cart_service.get_cart_list(db)
 
 
-@router.get("/carts/me/", response_model=schemas.CartDetailResponseSchema)
+@router.get(
+    "/carts/me/",
+    response_model=schemas.CurrentUserCartDetailResponseSchema
+)
 async def get_current_user_cart(
     db: database.AsyncSessionDep,
     cart_service: services.CartServiceDep,
