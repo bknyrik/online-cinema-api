@@ -146,7 +146,7 @@ class MovieModel(Base):
     )
     comments = relationship(
         "MovieCommentModel",
-        casade="all, delete-orphan",
+        cascade="all, delete-orphan",
         back_populates="movie"
     )
     rates = relationship(
