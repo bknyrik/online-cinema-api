@@ -187,7 +187,7 @@ class MovieDetailResponseSchema(MovieDetailBaseSchema):
 
 
 class MovieDataRequestSchema(BaseModel):
-    name: str = Field(min_length=3)
+    name: str = Field(min_length=3, max_length=255)
     year: int = Field(ge=1)
     time: int = Field(ge=1)
     imdb: float = Field(ge=1, le=10)
