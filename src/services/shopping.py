@@ -20,7 +20,11 @@ class CartService(
         self.cart_repository = repositories.CartRepository()
         self.cart_item_repository = repositories.CartItemRepository()
 
-    async def get_cart_list(self, db: AsyncSession) -> dict:
+    async def get_cart_list(
+        self,
+        db: AsyncSession,
+        pagination_data: dict
+    ) -> dict:
         try:
             carts = await self.cart_repository.aget_all_with_count_cart_items(
                 db=db

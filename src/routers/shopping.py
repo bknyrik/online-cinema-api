@@ -14,7 +14,10 @@ async def get_cart_list(
     cart_service: services.CartServiceDep,
     pagination_data: pagination.PaginationQuery
 ) -> dict:
-    return await cart_service.get_cart_list(db)
+    return await cart_service.get_cart_list(
+        db=db,
+        pagination_data=pagination_data.model_dump()
+    )
 
 
 @router.get(
