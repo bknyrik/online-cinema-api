@@ -255,8 +255,9 @@ class MovieService(
                     item=movie,
                     another_item=another_movie,
                     attrs={
-                        key: value for key, value in data.items()
-                        if key in ("name", "year", "time")
+                        "name": data["name"],
+                        "year": data["year"],
+                        "time": data["time"],
                     },
                     item_type="Movie"
                 )
