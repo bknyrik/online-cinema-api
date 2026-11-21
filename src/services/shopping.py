@@ -33,12 +33,34 @@ class CartService:
     async def get_cart_detail(
         self,
         db: AsyncSession,
-        user_id: int
+        cart_id: int
     ) -> models.CartModel:
         try:
             cart = await self.cart_repository.aget_by(
                 db=db,
-                expressions=[self.model_type.user_id == user_id],
+                expressions=[self.model_type.id == cart_id],
+                load_relationships=[
+                    joinedload(self.model_type.cart_items)
+                    .joinedload(models.CartItemModel.movie)
+                    .joinedload(MovieModel.genres),
+                ]
+            )
+            return cart
+        except SQLAlchemyError:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while getting cart"
+            )
+
+    async def get_current_user_cart(
+        self,
+        db: AsyncSession,
+        current_user: UserModel
+    ) -> models.CartModel:
+        try:
+            cart = await self.cart_repository.aget_by(
+                db=db,
+                expressions=[self.model_type.user_id == current_user.id],
                 load_relationships=[
                     joinedload(self.model_type.cart_items)
                     .joinedload(models.CartItemModel.movie)
@@ -51,13 +73,6 @@ class CartService:
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while getting current user cart"
             )
-
-    async def get_current_user_cart(
-        self,
-        db: AsyncSession,
-        current_user: UserModel
-    ) -> models.CartModel:
-        return await self.get_cart_detail(db=db, user_id=current_user.id)
 
     async def clear_current_user_cart(
         self,
