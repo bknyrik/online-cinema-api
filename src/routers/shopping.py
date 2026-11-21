@@ -14,7 +14,7 @@ async def get_current_user_cart(
     cart_service: services.CartServiceDep,
     current_user: authentication.CurrentUserDep
 ) -> models.CartModel:
-    return await cart_service.get_cart_detail(
+    return await cart_service.get_current_user_cart(
         db=db,
         current_user=current_user
     )
