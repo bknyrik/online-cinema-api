@@ -30,7 +30,7 @@ class MovieService(
         db: AsyncSession,
         data: dict
     ) -> dict:
-        repositories = {
+        relations_repositories = {
             "genres": self.genre_repository,
             "stars": self.star_repository,
             "directors": self.director_repository,
@@ -41,7 +41,7 @@ class MovieService(
         for key, value in data.items():
             match key:
                 case "genres" | "stars" | "directors":
-                    items = await repositories[key].aget_by_ids(
+                    items = await relations_repositories[key].aget_by_ids(
                         db=db,
                         ids=data_copy[key]
                     )
@@ -53,9 +53,11 @@ class MovieService(
                     )
                     data_copy[key] = items
                 case "certification":
-                    certification = await repositories[key].aget_by_id(
-                        db=db,
-                        id_=data[key]
+                    certification = (
+                        await relations_repositories[key].aget_by_id(
+                            db=db,
+                            id_=data[key]
+                        )
                     )
                     self.validate_item_by_id_not_found(
                         item=certification,
