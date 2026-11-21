@@ -46,6 +46,8 @@ class CartListResponseSchema(BaseModel):
 
 
 class CartDetailResponseSchema(BaseModel):
+    id: int
+    user_id: int
     cart_items: list[CartItemDetailSchema]
 
     model_config = ConfigDict(from_attributes=True)
