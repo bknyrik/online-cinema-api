@@ -13,6 +13,7 @@ class CartModel(Base):
     user_id = sa.Column(
         sa.Integer,
         sa.ForeignKey("users.id", ondelete="CASCADE"),
+        unique=True,
         nullable=False
     )
     user = relationship(UserModel, back_populates="cart", single_parent=True)
