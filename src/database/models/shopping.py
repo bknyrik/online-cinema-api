@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 
 from src.database.models.base import Base
 from src.database.models.accounts import UserModel
+from src.database.models.cinema import MovieModel
 
 
 class CartModel(Base):
@@ -33,6 +34,10 @@ class CartItemModel(Base):
         sa.DateTime(timezone=True),
         server_default=sa.func.now(),
         nullable=False
+    )
+    movie = relationship(
+        MovieModel,
+        back_populates="cart_items"
     )
     cart = relationship(
         CartModel,
