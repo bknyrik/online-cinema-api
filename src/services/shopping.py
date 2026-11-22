@@ -136,3 +136,26 @@ class CartItemService(mixins.ModelItemsMixin):
     def __init__(self) -> None:
         self.model_type = models.CartItemModel
         self.cart_item_repository = repositories.CartItemRepository()
+
+    async def create_cart_item(
+        self,
+        db: AsyncSession,
+        data: dict,
+        current_user: UserModel
+    ) -> models.CartItemModel:
+        try:
+            cart_item = await self.cart_item_repository.acreate(
+                db=db,
+                data=data | {"cart_id": current_user.cart.id}
+            )
+
+            await db.commit()
+            await db.refresh(cart_item)
+
+            return cart_item
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while adding movie to cart"
+            )
