@@ -12,7 +12,8 @@ router = APIRouter()
 async def get_cart_list(
     db: database.AsyncSessionDep,
     cart_service: services.CartServiceDep,
-    pagination_data: pagination.PaginationQuery
+    pagination_data: pagination.PaginationQuery,
+    current_user: authentication.CurrentAdminDep
 ) -> dict:
     return await cart_service.get_cart_list(
         db=db,
