@@ -144,6 +144,17 @@ class CartItemService(mixins.ModelItemsMixin):
         current_user: UserModel
     ) -> models.CartItemModel:
         try:
+            cart_item = await self.cart_item_repository.aget_by(
+                db=db,
+                expressions=[self.model_type.movie_id == data["movie_id"]]
+            )
+
+            self.validate_item_by_attrs_exists(
+                item=cart_item,
+                attrs=data,
+                item_type="Cart item"
+            )
+
             cart_item = await self.cart_item_repository.acreate(
                 db=db,
                 data=data | {"cart_id": current_user.cart.id}
