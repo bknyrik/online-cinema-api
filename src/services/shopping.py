@@ -201,7 +201,7 @@ class CartItemService(mixins.ModelItemsMixin):
             if cart_item.cart_id != current_user.cart.id:
                 raise HTTPException(
                     detail="User cannot delete cart item of another cart",
-                    status_code=status.HTTP_400_BAD_REQUEST
+                    status_code=status.HTTP_403_FORBIDDEN
                 )
 
             await self.cart_item_repository.adelete(db, cart_item)
