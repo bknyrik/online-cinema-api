@@ -28,7 +28,8 @@ async def get_cart_list(
 async def get_cart_detail(
     cart_id: int,
     db: database.AsyncSessionDep,
-    cart_service: services.CartServiceDep
+    cart_service: services.CartServiceDep,
+    current_user: authentication.CurrentAdminDep
 ) -> models.CartModel:
     return await cart_service.get_cart_detail(
         db=db,
