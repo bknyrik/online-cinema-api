@@ -80,3 +80,20 @@ async def create_cart_item(
         data=data.model_dump(),
         current_user=current_user
     )
+
+
+@router.delete(
+    "/cart_items/{cart_item_id}/",
+    status_code=status.HTTP_204_NO_CONTENT
+)
+async def delete_cart_item(
+    cart_item_id: int,
+    db: database.AsyncSessionDep,
+    cart_item_service: services.CartItemServiceDep,
+    current_user: authentication.CurrentUserDep
+) -> None:
+    return await cart_item_service.delete_cart_item(
+        db=db,
+        cart_item_id=cart_item_id,
+        current_user=current_user
+    )
