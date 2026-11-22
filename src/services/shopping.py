@@ -129,3 +129,10 @@ class CartService(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while cleaning current user cart"
             )
+
+
+class CartItemService(mixins.ModelItemsMixin):
+
+    def __init__(self) -> None:
+        self.model_type = models.CartItemModel
+        self.cart_item_repository = repositories.CartItemRepository()
