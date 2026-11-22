@@ -62,3 +62,21 @@ async def clear_current_user_cart(
         db=db,
         current_user=current_user
     )
+
+
+@router.post(
+    "/cart_items/",
+    response_model=schemas.CartItemDetailSchema,
+    status_code=status.HTTP_201_CREATED
+)
+async def create_cart_item(
+    db: database.AsyncSessionDep,
+    data: schemas.CartItemCreateRequestSchema,
+    cart_item_service: services.CartItemServiceDep,
+    current_user: authentication.CurrentUserDep
+) -> models.CartItemModel:
+    return await cart_item_service.create_cart_item(
+        db=db,
+        data=data.model_dump(),
+        current_user=current_user
+    )
