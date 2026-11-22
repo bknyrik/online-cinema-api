@@ -103,3 +103,7 @@ CartServiceDep = Annotated[
     shopping.CartService,
     Depends()
 ]
+CartItemServiceDep = Annotated[
+    shopping.CartItemService,
+    Depends()
+]
