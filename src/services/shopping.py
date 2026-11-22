@@ -168,3 +168,36 @@ class CartItemService(mixins.ModelItemsMixin):
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while adding movie to cart"
             )
+
+    async def delete_cart_item(
+        self,
+        db: AsyncSession,
+        cart_item_id: int,
+        current_user: UserModel
+    ) -> None:
+        try:
+            cart_item = await self.cart_item_repository.aget_by_id(
+                db=db,
+                id_=cart_item_id
+            )
+
+            self.validate_item_by_id_not_found(
+                item=cart_item,
+                id_=cart_item_id,
+                item_type="Cart item"
+            )
+
+            if cart_item.cart_id != current_user.cart.id:
+                raise HTTPException(
+                    detail="User cannot delete cart item of another cart",
+                    status_code=status.HTTP_400_BAD_REQUEST
+                )
+
+            await self.cart_item_repository.adelete(db, cart_item)
+            await db.commit()
+        except:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while cart item deletion"
+            )
