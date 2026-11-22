@@ -152,6 +152,15 @@ class CartItemService(mixins.ModelItemsMixin):
             await db.commit()
             await db.refresh(cart_item)
 
+            cart_item = await self.cart_item_repository.aget_by_id(
+                db=db,
+                id_=cart_item.id,
+                load_relationships=[
+                    joinedload(self.model_type.movie)
+                    .joinedload(MovieModel.genres)
+                ]
+            )
+
             return cart_item
         except SQLAlchemyError:
             await db.rollback()
