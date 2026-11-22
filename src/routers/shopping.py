@@ -38,7 +38,7 @@ async def get_cart_detail(
 
 
 @router.get(
-    "/carts/me/",
+    "/carts/me/content/",
     response_model=schemas.CurrentUserCartDetailResponseSchema
 )
 async def get_current_user_cart(
