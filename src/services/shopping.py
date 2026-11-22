@@ -146,7 +146,10 @@ class CartItemService(mixins.ModelItemsMixin):
         try:
             cart_item = await self.cart_item_repository.aget_by(
                 db=db,
-                expressions=[self.model_type.movie_id == data["movie_id"]]
+                expressions=[
+                    self.model_type.movie_id == data["movie_id"],
+                    self.model_type.cart_id == current_user.cart.id
+                ]
             )
 
             self.validate_item_by_attrs_exists(
