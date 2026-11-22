@@ -32,7 +32,8 @@ async def get_current_user(
         id_=int(payload["sub"]),
         load_relationships=[
             joinedload(models.UserModel.profile),
-            joinedload(models.UserModel.group)
+            joinedload(models.UserModel.group),
+            joinedload(models.UserModel.cart),
         ]
     )
 
