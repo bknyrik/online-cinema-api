@@ -8,7 +8,7 @@ from src.database.models.base import Base
 class OrderStatusEnum(StrEnum):
     PENDING = auto()
     PAID = auto()
-    CANCELLED = auto()
+    CANCELED = auto()
 
 
 class OrderModel(Base):
