@@ -7,6 +7,7 @@ from sqlalchemy.orm import joinedload
 
 from src.database.models import cinema as models
 from src.repositories import cinema as repositories
+from src.repositories.notifications import NotificationRepository
 from src.services import mixins
 
 
@@ -25,6 +26,7 @@ class MovieService(
         self.star_repository = repositories.StarRepository()
         self.director_repository = repositories.DirectorRepository()
         self.certification_repository = repositories.CertificationRepository()
+        self.notification_repository = NotificationRepository()
 
     async def handle_movie_data_parent_objects(
         self,
