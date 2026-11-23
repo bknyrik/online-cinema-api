@@ -1,6 +1,7 @@
 from enum import StrEnum, auto
 
 import sqlalchemy as sa
+from sqlalchemy.orm import relationship
 
 from src.database.models.base import Base
 
@@ -34,3 +35,4 @@ class OrderModel(Base):
         sa.DECIMAL(10, 2),
         nullable=True
     )
+    user = relationship("UserModel", back_populates="orders")
