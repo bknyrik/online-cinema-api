@@ -79,11 +79,12 @@ async def delete_movie(
     movie_id: int,
     db: database.AsyncSessionDep,
     movie_service: services.MovieServiceDep,
-    current_user: authentication.CurrentAdminDep
+    current_user: authentication.CurrentModeratorOrAdminDep
 ) -> None:
     return await movie_service.delete_movie(
         db=db,
-        movie_id=movie_id
+        movie_id=movie_id,
+        current_user=current_user
     )
 
 
@@ -160,7 +161,7 @@ async def delete_genre(
     genre_id: int,
     db: database.AsyncSessionDep,
     genre_service: services.GenreServiceDep,
-    current_user: authentication.CurrentAdminDep
+    current_user: authentication.CurrentModeratorOrAdminDep
 ) -> None:
     return await genre_service.delete_genre(
         db=db,
@@ -241,7 +242,7 @@ async def delete_certification(
     certification_id: int,
     db: database.AsyncSessionDep,
     certification_service: services.CertificationServiceDep,
-    current_user: authentication.CurrentAdminDep
+    current_user: authentication.CurrentModeratorOrAdminDep
 ) -> None:
     return await certification_service.delete_certification(
         db=db,
@@ -319,7 +320,7 @@ async def delete_director(
     director_id: int,
     db: database.AsyncSessionDep,
     director_service: services.DirectorServiceDep,
-    current_user: authentication.CurrentAdminDep
+    current_user: authentication.CurrentModeratorOrAdminDep
 ) -> None:
     return await director_service.delete_director(
         db=db,
@@ -400,7 +401,7 @@ async def delete_star(
     star_id: int,
     db: database.AsyncSessionDep,
     star_service: services.StarServiceDep,
-    current_user: authentication.CurrentAdminDep
+    current_user: authentication.CurrentModeratorOrAdminDep
 ) -> None:
     return await star_service.delete_star(
         db=db,

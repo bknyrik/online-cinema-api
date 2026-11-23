@@ -3,9 +3,12 @@ from copy import deepcopy
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import joinedload
 
 from src.database.models import cinema as models
+from src.database.models.accounts import UserModel
 from src.repositories import cinema as repositories
+from src.repositories.notifications import NotificationRepository
 from src.services import mixins
 
 
@@ -24,6 +27,7 @@ class MovieService(
         self.star_repository = repositories.StarRepository()
         self.director_repository = repositories.DirectorRepository()
         self.certification_repository = repositories.CertificationRepository()
+        self.notification_repository = NotificationRepository()
 
     async def handle_movie_data_parent_objects(
         self,
@@ -105,11 +109,11 @@ class MovieService(
             movies = list(
                 await self.movie_repository.aget_all(
                     db=db,
-                    join_relationships=[
-                        "genres",
-                        "stars",
-                        "directors",
-                        "certification"
+                    load_relationships=[
+                        joinedload(self.model_type.genres),
+                        joinedload(self.model_type.stars),
+                        joinedload(self.model_type.directors),
+                        joinedload(self.model_type.certification)
                     ],
                     offset=offset,
                     limit=limit,
@@ -145,11 +149,11 @@ class MovieService(
             movie = await self.movie_repository.aget_by_id(
                 db=db,
                 id_=movie_id,
-                join_relationships=[
-                    "genres",
-                    "stars",
-                    "directors",
-                    "certification"
+                load_relationships=[
+                    joinedload(self.model_type.genres),
+                    joinedload(self.model_type.stars),
+                    joinedload(self.model_type.directors),
+                    joinedload(self.model_type.certification)
                 ]
             )
 
@@ -229,11 +233,11 @@ class MovieService(
             movie = await self.movie_repository.aget_by_id(
                 db=db,
                 id_=movie_id,
-                join_relationships=[
-                    "certification",
-                    "genres",
-                    "stars",
-                    "directors"
+                load_relationships=[
+                    joinedload(self.model_type.certification),
+                    joinedload(self.model_type.genres),
+                    joinedload(self.model_type.stars),
+                    joinedload(self.model_type.directors)
                 ]
             )
 
@@ -284,9 +288,14 @@ class MovieService(
                 detail="An error occurred while updating movie"
             )
 
-    async def delete_movie(self, db: AsyncSession, movie_id: int) -> None:
+    async def delete_movie(
+        self,
+        db: AsyncSession,
+        movie_id: int,
+        current_user: UserModel
+    ) -> None:
         try:
-            movie = await self.movie_repository.adelete_by_id(
+            movie = await self.movie_repository.aget_by_id(
                 db=db,
                 id_=movie_id
             )
@@ -297,6 +306,27 @@ class MovieService(
                 item_type="Movie"
             )
 
+            if movie.cart_items:
+                await self.notification_repository.acreate(
+                    db=db,
+                    data={
+                        "user_id": current_user.id,
+                        "text": (
+                            f"Movie {repr(movie.name)} in users' carts: " +
+                            ", ".join(
+                                f"'{cart_item.cart_id}'"
+                                for cart_item in movie.cart_items
+                            )
+                        )
+                    }
+                )
+                await db.commit()
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail=f"Can't delete movie because it's in users' carts"
+                )
+
+            await self.movie_repository.adelete(db, movie)
             await db.commit()
         except SQLAlchemyError:
             await db.rollback()
@@ -556,7 +586,7 @@ class GenreService(
             genre = await self.genre_repository.aget_by_id(
                 db=db,
                 id_=genre_id,
-                join_relationships=["movies"]
+                load_relationships=[joinedload(self.model_type.movies)]
             )
 
             self.validate_item_by_id_not_found(genre, genre_id, "Genre")

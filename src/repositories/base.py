@@ -2,6 +2,7 @@ from typing import Sequence
 
 from sqlalchemy import select, func, delete, update
 from sqlalchemy.orm import InstrumentedAttribute
+from sqlalchemy.orm.strategy_options import LoaderOption
 from sqlalchemy.sql.elements import ColumnElement, UnaryExpression
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -30,17 +31,15 @@ class AsyncBaseRepository[T]:
         db: AsyncSession,
         offset: int | None = None,
         limit: int | None = None,
-        join_relationships: list[str] | None = None,
+        load_relationships: list[LoaderOption] | None = None,
         expressions: list[ColumnElement[bool]] | None = None,
         order_by_columns: list[InstrumentedAttribute | UnaryExpression] | None = None,
     ) -> Sequence[T]:
         stmt = select(self._model_type)
 
-        if join_relationships is not None:
-            for relationship in join_relationships:
-                stmt = stmt.options(
-                    joinedload(getattr(self._model_type, relationship))
-                )
+        if load_relationships is not None:
+            for relationship in load_relationships:
+                stmt = stmt.options(relationship)
 
         if expressions is not None:
             stmt = stmt.where(*expressions)
@@ -69,18 +68,16 @@ class AsyncBaseRepository[T]:
         self,
         db: AsyncSession,
         id_: int,
-        join_relationships: list[str] | None = None
+        load_relationships: list[LoaderOption] | None = None
     ) -> T | None:
         stmt = (
             select(self._model_type)
             .where(self._model_type.id == id_)
         )
 
-        if join_relationships:
-            for relationship in join_relationships:
-                stmt = stmt.options(
-                    joinedload(getattr(self._model_type, relationship))
-                )
+        if load_relationships:
+            for relationship in load_relationships:
+                stmt = stmt.options(relationship)
 
         result = await db.execute(stmt)
         return result.unique().scalar_one_or_none()
@@ -89,15 +86,13 @@ class AsyncBaseRepository[T]:
         self,
         db: AsyncSession,
         expressions: list[ColumnElement[bool]],
-        join_relationships: list[str] | None = None
+        load_relationships: list[LoaderOption] | None = None
     ) -> T | None:
         stmt = select(self._model_type)
 
-        if join_relationships:
-            for relationship in join_relationships:
-                stmt = stmt.options(
-                    joinedload(getattr(self._model_type, relationship))
-                )
+        if load_relationships:
+            for relationship in load_relationships:
+                stmt = stmt.options(relationship)
 
         stmt = stmt.where(*expressions)
 

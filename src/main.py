@@ -4,7 +4,8 @@ from src.routers import (
     accounts,
     cinema,
     rating,
-    notifications
+    notifications,
+    shopping
 )
 
 
@@ -35,4 +36,9 @@ app.include_router(
     notifications.router,
     prefix=f"{api_prefix}/notifications",
     tags=["notifications"]
+)
+app.include_router(
+    shopping.router,
+    prefix=f"{api_prefix}/shopping",
+    tags=["shopping"]
 )

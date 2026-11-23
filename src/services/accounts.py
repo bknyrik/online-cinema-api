@@ -4,9 +4,11 @@ from typing import Literal
 from fastapi import BackgroundTasks, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import joinedload
 from boto3.exceptions import Boto3Error
 
 from src.database.models import accounts as models
+from src.repositories.shopping import CartRepository
 from src.services import mixins
 from src.services.security import PasswordSecurityService, JWTAuthService
 from src.services.celery_beat import CeleryBeatService
@@ -31,6 +33,7 @@ class UserService(mixins.ModelItemsMixin):
         self.prt_repository = repositories.TokenRepository(
             models.PasswordResetTokenModel
         )
+        self.cart_repository = CartRepository()
 
     @staticmethod
     def validate_token_is_invalid(
@@ -122,6 +125,8 @@ class UserService(mixins.ModelItemsMixin):
 
             user = await self.user_repository.acreate(db, data)
 
+            await self.cart_repository.acreate(db, {"user_id": user.id})
+
             activation_token = await self.at_repository.acreate(
                 db=db,
                 data={
@@ -159,7 +164,9 @@ class UserService(mixins.ModelItemsMixin):
         try:
             user = await self.user_repository.aget_by(
                 db=db,
-                join_relationships=["activation_token"],
+                load_relationships=[
+                    joinedload(self.model_type.activation_token)
+                ],
                 expressions=[self.model_type.email == data["email"]]
             )
 
@@ -206,7 +213,9 @@ class UserService(mixins.ModelItemsMixin):
         try:
             user = await self.user_repository.aget_by(
                 db=db,
-                join_relationships=["activation_token"],
+                load_relationships=[
+                    joinedload(self.model_type.activation_token)
+                ],
                 expressions=[self.model_type.email == data["email"]]
             )
 
@@ -387,7 +396,9 @@ class UserService(mixins.ModelItemsMixin):
             user = await self.user_repository.aget_by_id(
                 db=db,
                 id_=user_id,
-                join_relationships=["group"]
+                load_relationships=[
+                    joinedload(self.model_type.group)
+                ]
             )
 
             self.validate_item_by_id_not_found(

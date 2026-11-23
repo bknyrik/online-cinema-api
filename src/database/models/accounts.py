@@ -90,6 +90,12 @@ class UserModel(Base):
         cascade="all, delete-orphan",
         uselist=False
     )
+    cart = relationship(
+        "CartModel",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        uselist=False
+    )
 
 
 def get_expiration_date(td: timedelta = timedelta(days=1)) -> datetime:

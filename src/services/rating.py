@@ -1,6 +1,7 @@
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import joinedload
 
 from src.services import mixins
 from src.repositories.cinema import MovieRepository
@@ -525,7 +526,7 @@ class CommentReplyService(
             comment = await self.comment_repository.aget_by_id(
                 db=db,
                 id_=data["comment_id"],
-                join_relationships=["profile"]
+                load_relationships=[joinedload(self.model_type.profile)]
             )
 
             self.validate_item_by_id_not_found(
@@ -729,7 +730,7 @@ class CommentLikeService(
             comment = await self.comment_repository.aget_by_id(
                 db=db,
                 id_=data["comment_id"],
-                join_relationships=["profile"]
+                load_relationships=[joinedload(self.model_type.profile)]
             )
             self.validate_item_by_id_not_found(comment, data["comment_id"], "Comment")
 
