@@ -56,3 +56,7 @@ class OrderItemModel(Base):
         sa.DECIMAL(10, 2),
         nullable=False
     )
+    order = relationship(
+        OrderModel,
+        back_populates="order_items"
+    )
