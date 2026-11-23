@@ -22,7 +22,6 @@ class CartItemMovieDetailSchema(BaseModel):
 
 class CartItemDetailSchema(BaseModel):
     id: int
-    cart_id: int
     movie: CartItemMovieDetailSchema
     added_at: datetime
 
