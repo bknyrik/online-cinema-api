@@ -295,7 +295,7 @@ class MovieService(
         current_user: UserModel
     ) -> None:
         try:
-            movie = await self.movie_repository.adelete_by_id(
+            movie = await self.movie_repository.aget_by_id(
                 db=db,
                 id_=movie_id
             )
@@ -306,6 +306,27 @@ class MovieService(
                 item_type="Movie"
             )
 
+            if movie.cart_items:
+                await self.notification_repository.acreate(
+                    db=db,
+                    data={
+                        "user_id": current_user.id,
+                        "text": (
+                            f"Movie {repr(movie.name)} in users' carts: " +
+                            ", ".join(
+                                f"'{cart_item.cart_id}'"
+                                for cart_item in movie.cart_items
+                            )
+                        )
+                    }
+                )
+                await db.commit()
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail=f"Can't delete movie because it's in users' carts"
+                )
+
+            await self.movie_repository.adelete(db, movie)
             await db.commit()
         except SQLAlchemyError:
             await db.rollback()
