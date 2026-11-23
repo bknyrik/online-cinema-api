@@ -49,7 +49,7 @@ class OrderItemModel(Base):
     id = sa.Column(sa.Integer, primary_key=True, index=True)
     order_id = sa.Column(
         sa.Integer,
-        sa.ForeignKey("orders", ondelete="CASCADE"),
+        sa.ForeignKey("orders.id", ondelete="CASCADE"),
         nullable=False
     )
     movie_id = sa.Column(
