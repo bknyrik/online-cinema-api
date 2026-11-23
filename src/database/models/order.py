@@ -36,3 +36,23 @@ class OrderModel(Base):
         nullable=True
     )
     user = relationship("UserModel", back_populates="orders")
+
+
+class OrderItemModel(Base):
+    __tablename__ = "order_items"
+
+    id = sa.Column(sa.Integer, primary_key=True, index=True)
+    order_id = sa.Column(
+        sa.Integer,
+        sa.ForeignKey("orders", ondelete="CASCADE"),
+        nullable=False
+    )
+    movie_id = sa.Column(
+        sa.Integer,
+        sa.ForeignKey("movies.id", ondelete="CASCADE"),
+        nullable=False
+    )
+    price_at_order = sa.Column(
+        sa.DECIMAL(10, 2),
+        nullable=False
+    )
