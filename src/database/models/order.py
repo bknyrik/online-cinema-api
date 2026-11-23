@@ -28,7 +28,7 @@ class OrderModel(Base):
     )
     status = sa.Column(
         sa.Enum(OrderStatusEnum),
-        server_default=OrderStatusEnum.PENDING,
+        server_default=OrderStatusEnum.PENDING.upper(),
         nullable=False
     )
     total_amount = sa.Column(
