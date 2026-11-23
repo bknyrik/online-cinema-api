@@ -36,6 +36,11 @@ class OrderModel(Base):
         nullable=True
     )
     user = relationship("UserModel", back_populates="orders")
+    order_items = relationship(
+        "OrderItemModel",
+        back_populates="order",
+        cascade="all, delete-orphan"
+    )
 
 
 class OrderItemModel(Base):
