@@ -83,7 +83,8 @@ async def delete_movie(
 ) -> None:
     return await movie_service.delete_movie(
         db=db,
-        movie_id=movie_id
+        movie_id=movie_id,
+        current_user=current_user
     )
 
 

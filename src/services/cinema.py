@@ -6,6 +6,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import joinedload
 
 from src.database.models import cinema as models
+from src.database.models.accounts import UserModel
 from src.repositories import cinema as repositories
 from src.repositories.notifications import NotificationRepository
 from src.services import mixins
@@ -287,7 +288,12 @@ class MovieService(
                 detail="An error occurred while updating movie"
             )
 
-    async def delete_movie(self, db: AsyncSession, movie_id: int) -> None:
+    async def delete_movie(
+        self,
+        db: AsyncSession,
+        movie_id: int,
+        current_user: UserModel
+    ) -> None:
         try:
             movie = await self.movie_repository.adelete_by_id(
                 db=db,
