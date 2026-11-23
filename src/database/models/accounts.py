@@ -96,6 +96,11 @@ class UserModel(Base):
         cascade="all, delete-orphan",
         uselist=False
     )
+    orders = relationship(
+        "OrderModel",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
 
 
 def get_expiration_date(td: timedelta = timedelta(days=1)) -> datetime:
