@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from fastapi import HTTPException, status
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -33,7 +35,10 @@ class OrderService(
         try:
             order = await self.order_repository.acreate(
                 db=db,
-                data={"user_id": current_user.id}
+                data={
+                    "user_id": current_user.id,
+                    "total_amount": Decimal("0")
+                }
             )
 
             movie_ids = data["movies"]
@@ -48,7 +53,7 @@ class OrderService(
                     id_=movie_id,
                     item_type="Movie"
                 )
-                await self.order_item_repository.acreate(
+                order_item = await self.order_item_repository.acreate(
                     db=db,
                     data={
                         "movie_id": movie_id,
@@ -56,6 +61,7 @@ class OrderService(
                         "price_at_order": movie.price
                     }
                 )
+                order.total_amount += order_item.price_at_order
 
             await db.commit()
 
