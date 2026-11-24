@@ -57,13 +57,11 @@ class OrderListItemSchema(OrderDetailResponseSchema):
 
 
 class OrderListResponseSchema(BaseModel):
-    orders: list[OrderDetailResponseSchema]
+    orders: list[OrderListItemSchema]
     total_orders: int
     total_pages: int
     prev: str | None
     next: str | None
-
-    model_config = ConfigDict(from_attributes=True)
 
 
 class OrderCreateRequestSchema(BaseModel):
