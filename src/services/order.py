@@ -27,6 +27,31 @@ class OrderService(
         self.order_item_repository = repositories.OrderItemRepository()
         self.movie_repository = MovieRepository()
 
+    async def get_current_user_orders(
+        self,
+        db: AsyncSession,
+        current_user: UserModel
+    ) -> list[models.OrderModel]:
+        try:
+            orders = list(
+                await self.order_repository.aget_all(
+                    db=db,
+                    expressions=[self.model_type.user_id == current_user.id],
+                    load_relationships=[
+                        joinedload(self.model_type.order_items)
+                        .joinedload(models.OrderItemModel.movie)
+                        .joinedload(MovieModel.genres)
+                    ]
+                )
+            )
+
+            return orders
+        except SQLAlchemyError:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while getting current user orders"
+            )
+
     async def create_order(
         self,
         db: AsyncSession,
