@@ -4,6 +4,7 @@ import sqlalchemy as sa
 from sqlalchemy.orm import relationship
 
 from src.database.models.base import Base
+from src.database.models.cinema import MovieModel
 
 
 class OrderStatusEnum(StrEnum):
@@ -63,5 +64,9 @@ class OrderItemModel(Base):
     )
     order = relationship(
         OrderModel,
+        back_populates="order_items"
+    )
+    movie = relationship(
+        MovieModel,
         back_populates="order_items"
     )
