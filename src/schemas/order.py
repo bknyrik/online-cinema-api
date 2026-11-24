@@ -14,8 +14,8 @@ class OrderItemMovieDetailSchema(BaseModel):
     name: str
     time: int
     year: int
-    genres: list[str]
-    certification: str
+    genres: list[GenreDetailResponseSchema]
+    certification: CertificationDetailResponseSchema
 
     @field_serializer("genres")
     def serialize_into_str_names(
