@@ -46,6 +46,7 @@ class OrderDetailResponseSchema(BaseModel):
     order_items: list[OrderItemDetailResponseSchema]
     created_at: datetime
     status: OrderStatusEnum
+    total_amount: Decimal
 
     model_config = ConfigDict(from_attributes=True)
 
