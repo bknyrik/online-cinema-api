@@ -1,9 +1,12 @@
+from typing import Annotated
 from datetime import datetime
 from decimal import Decimal
 
-from pydantic import BaseModel, field_serializer, ConfigDict
+from fastapi import Query
+from pydantic import BaseModel, field_serializer, ConfigDict, Field
 
 from src.database.models.order import OrderStatusEnum
+from src.schemas.pagination import PaginationParams
 from src.schemas.cinema import (
     GenreDetailResponseSchema,
     CertificationDetailResponseSchema
@@ -66,3 +69,13 @@ class OrderListResponseSchema(BaseModel):
 
 class OrderCreateRequestSchema(BaseModel):
     movies: list[int]
+
+
+class OrderListQueryParams(PaginationParams):
+    filter_by_user_id: int | None = Field(default=None)
+    filter_by_min_created_at: datetime | None = Field(default=None)
+    filter_by_max_created_at: datetime | None = Field(default=None)
+    filter_by_status: OrderStatusEnum | None = Field(default=None)
+
+
+OrderListQuery = Annotated[OrderListQueryParams, Query()]
