@@ -43,7 +43,7 @@ class OrderItemDetailResponseSchema(BaseModel):
 class OrderDetailResponseSchema(BaseModel):
     id: int
     user_id: int
-    order_items: list[OrderItemDetailResponseSchema]
+    movies: list[OrderItemMovieDetailSchema]
     created_at: datetime
     status: OrderStatusEnum
     total_amount: Decimal
