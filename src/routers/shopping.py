@@ -2,6 +2,10 @@ from fastapi import APIRouter, status
 
 from src.dependencies import authentication, database, services
 from src.database.models import shopping as models
+from src.schemas.order import (
+    OrderCreateRequestSchema,
+    OrderDetailResponseSchema
+)
 from src.schemas import shopping as schemas, pagination
 
 
@@ -95,5 +99,23 @@ async def delete_cart_item(
     return await cart_item_service.delete_cart_item(
         db=db,
         cart_item_id=cart_item_id,
+        current_user=current_user
+    )
+
+
+@router.post(
+    "/orders/",
+    response_model=OrderDetailResponseSchema,
+    status_code=status.HTTP_201_CREATED
+)
+async def create_order(
+    db: database.AsyncSessionDep,
+    data: OrderCreateRequestSchema,
+    order_service: services.OrderServiceDep,
+    current_user: authentication.CurrentUserDep
+) -> dict:
+    return await order_service.create_order(
+        db=db,
+        data=data.model_dump(),
         current_user=current_user
     )
