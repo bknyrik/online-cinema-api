@@ -14,6 +14,7 @@ class OrderItemMovieDetailSchema(BaseModel):
     name: str
     time: int
     year: int
+    price: Decimal
     genres: list[GenreDetailResponseSchema]
     certification: CertificationDetailResponseSchema
 
