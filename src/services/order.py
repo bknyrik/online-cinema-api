@@ -2,12 +2,14 @@ from fastapi import HTTPException, status
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import joinedload
 
 from src.repositories import order as repositories
 from src.repositories.cinema import MovieRepository
 
 from src.database.models import order as models
 from src.database.models.accounts import UserModel
+from src.database.models.cinema import MovieModel
 from src.services import mixins
 
 
@@ -27,7 +29,7 @@ class OrderService(
         db: AsyncSession,
         data: dict,
         current_user: UserModel
-    ) -> models.OrderModel:
+    ) -> dict:
         try:
             order = await self.order_repository.acreate(
                 db=db,
@@ -56,8 +58,30 @@ class OrderService(
                 )
 
             await db.commit()
-            await db.refresh(order, ("order_items",))
-            return order
+
+            order = await self.order_repository.aget_by_id(
+                db=db,
+                id_=order.id,
+                load_relationships=[
+                    joinedload(self.model_type.order_items)
+                    .joinedload(models.OrderItemModel.movie)
+                    .joinedload(MovieModel.certification),
+                    joinedload(self.model_type.order_items)
+                    .joinedload(models.OrderItemModel.movie)
+                    .joinedload(MovieModel.genres)
+                ]
+            )
+
+            return {
+                "id": order.id,
+                "user_id": order.user_id,
+                "status": order.status,
+                "created_at": order.created_at,
+                "movies": [
+                    order_item.movie for order_item in order.order_items
+                ],
+                "total_amount": order.total_amount
+            }
         except SQLAlchemyError:
             await db.rollback()
             raise HTTPException(
