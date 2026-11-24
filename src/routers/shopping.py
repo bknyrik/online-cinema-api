@@ -4,7 +4,8 @@ from src.dependencies import authentication, database, services
 from src.database.models import shopping as models
 from src.database.models.order import OrderModel
 from src.schemas.order import (
-    OrderDetailResponseSchema
+    OrderDetailResponseSchema,
+    CurrentUserOrderDetailResponseSchema
 )
 from src.schemas import shopping as schemas, pagination
 
@@ -99,6 +100,21 @@ async def delete_cart_item(
     return await cart_item_service.delete_cart_item(
         db=db,
         cart_item_id=cart_item_id,
+        current_user=current_user
+    )
+
+
+@router.get(
+    "/orders/me/content/",
+    response_model=list[CurrentUserOrderDetailResponseSchema],
+)
+async def get_current_user_order_list(
+    db: database.AsyncSessionDep,
+    order_service: services.OrderServiceDep,
+    current_user: authentication.CurrentUserDep
+) -> list[OrderModel]:
+    return await order_service.get_current_user_orders(
+        db=db,
         current_user=current_user
     )
 
