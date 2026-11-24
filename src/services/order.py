@@ -72,9 +72,6 @@ class OrderService(
                 load_relationships=[
                     joinedload(self.model_type.order_items)
                     .joinedload(models.OrderItemModel.movie)
-                    .joinedload(MovieModel.certification),
-                    joinedload(self.model_type.order_items)
-                    .joinedload(models.OrderItemModel.movie)
                     .joinedload(MovieModel.genres)
                 ]
             )

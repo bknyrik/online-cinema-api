@@ -7,10 +7,7 @@ from pydantic import BaseModel, field_serializer, ConfigDict, Field
 
 from src.database.models.order import OrderStatusEnum
 from src.schemas.pagination import PaginationParams
-from src.schemas.cinema import (
-    GenreDetailResponseSchema,
-    CertificationDetailResponseSchema
-)
+from src.schemas.cinema import GenreDetailResponseSchema
 
 
 class OrderItemMovieDetailSchema(BaseModel):
@@ -19,7 +16,6 @@ class OrderItemMovieDetailSchema(BaseModel):
     year: int
     price: Decimal
     genres: list[GenreDetailResponseSchema]
-    certification: CertificationDetailResponseSchema
 
     @field_serializer("genres")
     def serialize_into_str_names(
@@ -27,13 +23,6 @@ class OrderItemMovieDetailSchema(BaseModel):
         genres: list[GenreDetailResponseSchema]
     ) -> list[str]:
         return [genre.name for genre in genres]
-
-    @field_serializer("certification")
-    def serialize_into_str_name(
-        self,
-        certification: CertificationDetailResponseSchema
-    ) -> str:
-        return certification.name
 
 
 class OrderItemDetailResponseSchema(BaseModel):
