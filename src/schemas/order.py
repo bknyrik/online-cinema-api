@@ -49,7 +49,7 @@ class CurrentUserOrderDetailResponseSchema(OrderDetailResponseSchema):
 
 
 class OrderListItemSchema(OrderDetailResponseSchema):
-    movies: int
+    order_items: int
 
 
 class OrderListResponseSchema(BaseModel):
