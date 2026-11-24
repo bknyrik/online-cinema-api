@@ -44,6 +44,10 @@ class OrderDetailResponseSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class CurrentUserOrderDetailResponseSchema(OrderDetailResponseSchema):
+    user_id: int = Field(exclude=True)
+
+
 class OrderListItemSchema(OrderDetailResponseSchema):
     movies: int
 
