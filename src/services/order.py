@@ -37,6 +37,15 @@ class OrderService(
             movie_ids = data["movies"]
 
             for movie_id in movie_ids:
+                movie = await self.movie_repository.aget_by_id(
+                    db=db,
+                    id_=movie_id
+                )
+                self.validate_item_by_id_not_found(
+                    item=movie,
+                    id_=movie_id,
+                    item_type="Movie"
+                )
                 order.order_items.append(
                     await self.order_item_repository.acreate(
                         db=db,
