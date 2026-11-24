@@ -48,3 +48,7 @@ class OrderDetailResponseSchema(BaseModel):
     status: OrderStatusEnum
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class OrderCreateRequestSchema(BaseModel):
+    movies: list[int]
