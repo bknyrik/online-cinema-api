@@ -1,6 +1,9 @@
+from datetime import datetime
 from decimal import Decimal
 
 from pydantic import BaseModel, field_serializer, ConfigDict
+
+from src.database.models.order import OrderStatusEnum
 
 
 class OrderItemMovieDetailSchema(BaseModel):
@@ -18,5 +21,15 @@ class OrderItemDetailResponseSchema(BaseModel):
     id: int
     movie: OrderItemMovieDetailSchema
     price_at_order: Decimal
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class OrderDetailResponseSchema(BaseModel):
+    id: int
+    user_id: int
+    order_items: list[OrderItemDetailResponseSchema]
+    created_at: datetime
+    status: OrderStatusEnum
 
     model_config = ConfigDict(from_attributes=True)
