@@ -46,7 +46,7 @@ class OrderDetailResponseSchema(BaseModel):
     movies: list[OrderItemMovieDetailSchema]
     created_at: datetime
     status: OrderStatusEnum
-    total_amount: Decimal
+    total_amount: Decimal | None
 
     model_config = ConfigDict(from_attributes=True)
 
