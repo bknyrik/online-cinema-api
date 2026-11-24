@@ -32,7 +32,7 @@ class OrderService(
         db: AsyncSession,
         data: dict,
         current_user: UserModel
-    ) -> dict:
+    ) -> models.OrderModel:
         try:
             order = await self.order_repository.acreate(
                 db=db,
@@ -76,16 +76,7 @@ class OrderService(
                 ]
             )
 
-            return {
-                "id": order.id,
-                "user_id": order.user_id,
-                "status": order.status,
-                "created_at": order.created_at,
-                "movies": [
-                    order_item.movie for order_item in order.order_items
-                ],
-                "total_amount": order.total_amount
-            }
+            return order
         except SQLAlchemyError:
             await db.rollback()
             raise HTTPException(

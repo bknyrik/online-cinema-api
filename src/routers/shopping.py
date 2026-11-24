@@ -2,6 +2,7 @@ from fastapi import APIRouter, status
 
 from src.dependencies import authentication, database, services
 from src.database.models import shopping as models
+from src.database.models.order import OrderModel
 from src.schemas.order import (
     OrderDetailResponseSchema
 )
@@ -111,7 +112,7 @@ async def create_order(
     db: database.AsyncSessionDep,
     order_service: services.OrderServiceDep,
     current_user: authentication.CurrentUserDep
-) -> dict:
+) -> OrderModel:
     return await order_service.create_order(
         db=db,
         data={},
