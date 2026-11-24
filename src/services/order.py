@@ -8,9 +8,13 @@ from src.repositories.cinema import MovieRepository
 
 from src.database.models import order as models
 from src.database.models.accounts import UserModel
+from src.services import mixins
 
 
-class OrderService:
+class OrderService(
+    mixins.PaginationLimitOffsetMixin,
+    mixins.ModelItemsMixin
+):
 
     def __init__(self) -> None:
         self.model_type = models.OrderModel
