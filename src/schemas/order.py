@@ -5,6 +5,7 @@ from pydantic import BaseModel, field_serializer, ConfigDict
 
 from src.database.models.order import OrderStatusEnum
 from src.schemas.cinema import (
+    GenreDetailResponseSchema,
     CertificationDetailResponseSchema
 )
 
@@ -17,7 +18,10 @@ class OrderItemMovieDetailSchema(BaseModel):
     certification: str
 
     @field_serializer("genres")
-    def serialize_into_str_names(self, genres: list) -> list[str]:
+    def serialize_into_str_names(
+        self,
+        genres: list[GenreDetailResponseSchema]
+    ) -> list[str]:
         return [genre.name for genre in genres]
 
     @field_serializer("certification")
