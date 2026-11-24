@@ -115,6 +115,5 @@ async def create_order(
 ) -> OrderModel:
     return await order_service.create_order(
         db=db,
-        data={},
         current_user=current_user
     )

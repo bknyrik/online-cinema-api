@@ -30,7 +30,6 @@ class OrderService(
     async def create_order(
         self,
         db: AsyncSession,
-        data: dict,
         current_user: UserModel
     ) -> models.OrderModel:
         try:
@@ -42,22 +41,15 @@ class OrderService(
                 }
             )
 
-            movie_ids = data["movies"]
+            movies: list[MovieModel] = [
+                cart_item.movie for cart_item in current_user.cart.cart_items
+            ]
 
-            for movie_id in movie_ids:
-                movie = await self.movie_repository.aget_by_id(
-                    db=db,
-                    id_=movie_id
-                )
-                self.validate_item_by_id_not_found(
-                    item=movie,
-                    id_=movie_id,
-                    item_type="Movie"
-                )
+            for movie in movies:
                 order_item = await self.order_item_repository.acreate(
                     db=db,
                     data={
-                        "movie_id": movie_id,
+                        "movie_id": movie.id,
                         "order_id": order.id,
                         "price_at_order": movie.price
                     }
