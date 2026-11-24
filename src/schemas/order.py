@@ -52,5 +52,15 @@ class OrderDetailResponseSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class OrderListResponseSchema(BaseModel):
+    orders: list[OrderDetailResponseSchema]
+    total_orders: int
+    total_pages: int
+    prev: str | None
+    next: str | None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 class OrderCreateRequestSchema(BaseModel):
     movies: list[int]
