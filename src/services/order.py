@@ -46,11 +46,13 @@ class OrderService(
                     id_=movie_id,
                     item_type="Movie"
                 )
-                order.order_items.append(
-                    await self.order_item_repository.acreate(
-                        db=db,
-                        data={"movie_id": movie_id, "order_id": order.id}
-                    )
+                await self.order_item_repository.acreate(
+                    db=db,
+                    data={
+                        "movie_id": movie_id,
+                        "order_id": order.id,
+                        "price_at_order": movie.price
+                    }
                 )
 
             await db.commit()
