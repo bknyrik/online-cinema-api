@@ -5,7 +5,7 @@ from pydantic import BaseModel, field_serializer, ConfigDict
 
 class OrderItemMovieDetailSchema(BaseModel):
     name: str
-    description: str
+    time: int
     year: int
     genres: list[str]
 
