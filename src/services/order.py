@@ -18,7 +18,8 @@ from src.services import mixins
 class OrderService(
     mixins.PaginationLimitOffsetMixin,
     mixins.ModelItemsMixin,
-    mixins.FilterItemsMixin
+    mixins.FilterItemsMixin,
+    mixins.UserPermissionsMixin
 ):
 
     def __init__(self) -> None:
