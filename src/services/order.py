@@ -212,3 +212,35 @@ class OrderService(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred while order creation"
             )
+
+    async def cancel_order(
+        self,
+        db: AsyncSession,
+        order_id: int,
+        current_user: UserModel
+    ) -> None:
+        try:
+            order = await self.order_repository.aget_by_id(
+                db=db,
+                id_=order_id
+            )
+
+            self.validate_item_by_id_not_found(
+                item=order,
+                id_=order_id,
+                item_type="Order"
+            )
+            self.belongs_to_user_or_is_admin_or_moderator(
+                current_user=current_user,
+                child_object=order,
+                child_object_type="Order",
+            )
+
+            order.status = "CANCELED"
+            await db.commit()
+        except SQLAlchemyError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while canceling the order"
+            )
