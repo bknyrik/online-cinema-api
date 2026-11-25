@@ -46,6 +46,7 @@ class OrderDetailResponseSchema(BaseModel):
 
 class CurrentUserOrderDetailResponseSchema(OrderDetailResponseSchema):
     user_id: int = Field(exclude=True)
+    order_items: int
 
 
 class OrderListItemSchema(OrderDetailResponseSchema):
