@@ -119,6 +119,20 @@ async def get_order_list(
     )
 
 
+@router.get("/orders/{order_id}/", response_model=OrderDetailResponseSchema)
+async def get_order_detail(
+    order_id: int,
+    db: database.AsyncSessionDep,
+    order_service: services.OrderServiceDep,
+    current_user: authentication.CurrentUserDep
+) -> OrderModel:
+    return await order_service.get_order_detail(
+        db=db,
+        order_id=order_id,
+        current_user=current_user
+    )
+
+
 @router.get(
     "/orders/me/content/",
     response_model=CurrentUserOrderListResponseSchema,
