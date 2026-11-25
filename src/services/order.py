@@ -30,6 +30,7 @@ class OrderService(
     async def get_current_user_order_list(
         self,
         db: AsyncSession,
+        query_params: dict,
         current_user: UserModel
     ) -> list[models.OrderModel]:
         try:
