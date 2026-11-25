@@ -13,8 +13,7 @@ from src.services import (
     cinema,
     rating,
     notifications,
-    shopping,
-    order
+    shopping
 )
 
 
@@ -109,6 +108,6 @@ CartItemServiceDep = Annotated[
     Depends()
 ]
 OrderServiceDep = Annotated[
-    order.OrderService,
+    shopping.OrderService,
     Depends()
 ]
