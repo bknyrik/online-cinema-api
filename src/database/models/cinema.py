@@ -159,6 +159,11 @@ class MovieModel(Base):
         back_populates="movie",
         cascade="all, delete-orphan"
     )
+    order_items = relationship(
+        "OrderItemModel",
+        back_populates="movie",
+        cascade="all, delete-orphan"
+    )
 
     __table_args__ = (
         UniqueConstraint("name", "year", "time", name="name_year_time_unique"),

@@ -1,5 +1,5 @@
 from urllib import parse
-from enum import StrEnum, auto
+from enum import Enum, StrEnum, auto
 
 from fastapi import HTTPException, status
 from sqlalchemy import UnaryExpression, ColumnElement
@@ -239,6 +239,22 @@ class FilterItemsMixin:
         }
 
     @staticmethod
+    def _get_enum_filter_expressions(
+        filter_data: dict,
+        model_type: type[Base]
+    ) -> list[ColumnElement[bool]]:
+        expressions = list()
+        for key, value in filter_data.items():
+            column = getattr(model_type, key, None)
+
+            if column and value is not None:
+                if hasattr(column.expression.type, "enum_class"):
+                    expressions.append(column == value)
+
+        return expressions
+
+
+    @staticmethod
     def _get_min_max_filter_expressions(
         filter_data: dict,
         model_type: type[Base]
@@ -318,7 +334,8 @@ class FilterItemsMixin:
             self._get_min_max_filter_expressions(filter_data, self.model_type) +
             self._get_single_id_expressions(filter_data, self.model_type) +
             self._get_multiple_ids_expressions(filter_data, self.model_type) +
-            self._get_boolean_expressions(filter_data, self.model_type)
+            self._get_boolean_expressions(filter_data, self.model_type) +
+            self._get_enum_filter_expressions(filter_data, self.model_type)
         )
 
 

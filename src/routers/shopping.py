@@ -97,3 +97,83 @@ async def delete_cart_item(
         cart_item_id=cart_item_id,
         current_user=current_user
     )
+
+
+@router.get("/orders/", response_model=schemas.OrderListResponseSchema)
+async def get_order_list(
+    db: database.AsyncSessionDep,
+    order_service: services.OrderServiceDep,
+    query_params: schemas.OrderListQuery,
+    current_user: authentication.CurrentModeratorOrAdminDep
+) -> dict:
+    return await order_service.get_order_list(
+        db=db,
+        query_params=query_params.model_dump()
+    )
+
+
+@router.get(
+    "/orders/{order_id}/",
+    response_model=schemas.OrderDetailResponseSchema
+)
+async def get_order_detail(
+    order_id: int,
+    db: database.AsyncSessionDep,
+    order_service: services.OrderServiceDep,
+    current_user: authentication.CurrentUserDep
+) -> models.OrderModel:
+    return await order_service.get_order_detail(
+        db=db,
+        order_id=order_id,
+        current_user=current_user
+    )
+
+
+@router.get(
+    "/orders/me/content/",
+    response_model=schemas.CurrentUserOrderListResponseSchema,
+)
+async def get_current_user_order_list(
+    db: database.AsyncSessionDep,
+    order_service: services.OrderServiceDep,
+    query_params: pagination.PaginationQuery,
+    current_user: authentication.CurrentUserDep
+) -> dict:
+    return await order_service.get_current_user_order_list(
+        db=db,
+        query_params=query_params.model_dump(),
+        current_user=current_user
+    )
+
+
+@router.post(
+    "/orders/",
+    response_model=schemas.OrderDetailResponseSchema,
+    status_code=status.HTTP_201_CREATED
+)
+async def create_order(
+    db: database.AsyncSessionDep,
+    order_service: services.OrderServiceDep,
+    current_user: authentication.CurrentUserDep
+) -> models.OrderModel:
+    return await order_service.create_order(
+        db=db,
+        current_user=current_user
+    )
+
+
+@router.post(
+    "/orders/{order_id}/cancel/",
+    status_code=status.HTTP_204_NO_CONTENT
+)
+async def cancel_order(
+    order_id: int,
+    db: database.AsyncSessionDep,
+    order_service: services.OrderServiceDep,
+    current_user: authentication.CurrentUserDep
+) -> None:
+    return await order_service.cancel_order(
+        db=db,
+        order_id=order_id,
+        current_user=current_user
+    )

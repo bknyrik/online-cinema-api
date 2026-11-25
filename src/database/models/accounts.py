@@ -18,6 +18,7 @@ from enum import StrEnum, auto
 
 from src.database.models.base import Base
 from src.database.models.rating import FavoriteMovieModel
+from src.database.models import shopping as shopping_models
 
 
 class UserGroupEnum(StrEnum):
@@ -95,6 +96,11 @@ class UserModel(Base):
         back_populates="user",
         cascade="all, delete-orphan",
         uselist=False
+    )
+    orders = relationship(
+        shopping_models.OrderModel,
+        back_populates="user",
+        cascade="all, delete-orphan"
     )
 
 
