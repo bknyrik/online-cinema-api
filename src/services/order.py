@@ -75,6 +75,36 @@ class OrderService(
                 detail="An error occurred while getting list with orders"
             )
 
+    async def get_order_detail(
+        self,
+        db: AsyncSession,
+        order_id: int,
+        current_user: UserModel
+    ) -> models.OrderModel:
+        try:
+            order = await self.order_repository.aget_by_id(
+                db=db,
+                id_=order_id,
+                load_relationships=[
+                    joinedload(self.model_type.order_items)
+                    .joinedload(models.OrderItemModel.movie)
+                    .joinedload(MovieModel.genres)
+                ]
+            )
+
+            self.validate_item_by_id_not_found(
+                item=order,
+                id_=order_id,
+                item_type="Order"
+            )
+
+            return order
+        except SQLAlchemyError:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while getting order"
+            )
+
     async def get_current_user_order_list(
         self,
         db: AsyncSession,
