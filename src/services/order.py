@@ -27,6 +27,54 @@ class OrderService(
         self.order_item_repository = repositories.OrderItemRepository()
         self.movie_repository = MovieRepository()
 
+    async def get_order_list(
+        self,
+        db: AsyncSession,
+        query_params: dict
+    ) -> dict:
+        try:
+            pagination_data, filter_data = (
+                self.get_pagination_data(query_params),
+                self.get_filter_data(query_params),
+            )
+            limit, offset = self.get_limit_offset(pagination_data)
+            expressions = self.get_filter_expressions(filter_data)
+
+            total_orders = await self.order_repository.acount(
+                db=db,
+                expressions=expressions
+            )
+            total_pages = self.get_total_pages(
+                total_items=total_orders,
+                per_page=pagination_data["per_page"]
+            )
+
+            orders = await self.order_repository.aget_all_with_order_items_count(
+                db=db,
+                expressions=expressions,
+                limit=limit,
+                offset=offset
+            )
+            prev_page, next_page = self.get_prev_next_urls_pages(
+                "/api/shopping/orders/",
+                query_params=query_params,
+                page=pagination_data["page"],
+                total_pages=total_pages
+            )
+
+            return {
+                "orders": orders,
+                "total_orders": total_orders,
+                "total_pages": total_pages,
+                "prev": prev_page,
+                "next": next_page
+            }
+        except SQLAlchemyError:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="An error occurred while getting list with orders"
+            )
+
     async def get_current_user_order_list(
         self,
         db: AsyncSession,
