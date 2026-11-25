@@ -3,12 +3,6 @@ from fastapi import APIRouter, status
 from src.dependencies import authentication, database, services
 from src.database.models import shopping as models
 from src.database.models.order import OrderModel
-from src.schemas.order import (
-    OrderDetailResponseSchema,
-    OrderListResponseSchema,
-    CurrentUserOrderListResponseSchema,
-    OrderListQuery
-)
 from src.schemas import shopping as schemas, pagination
 
 
@@ -106,11 +100,11 @@ async def delete_cart_item(
     )
 
 
-@router.get("/orders/", response_model=OrderListResponseSchema)
+@router.get("/orders/", response_model=schemas.OrderListResponseSchema)
 async def get_order_list(
     db: database.AsyncSessionDep,
     order_service: services.OrderServiceDep,
-    query_params: OrderListQuery,
+    query_params: schemas.OrderListQuery,
     current_user: authentication.CurrentModeratorOrAdminDep
 ) -> dict:
     return await order_service.get_order_list(
@@ -119,7 +113,10 @@ async def get_order_list(
     )
 
 
-@router.get("/orders/{order_id}/", response_model=OrderDetailResponseSchema)
+@router.get(
+    "/orders/{order_id}/",
+    response_model=schemas.OrderDetailResponseSchema
+)
 async def get_order_detail(
     order_id: int,
     db: database.AsyncSessionDep,
@@ -135,7 +132,7 @@ async def get_order_detail(
 
 @router.get(
     "/orders/me/content/",
-    response_model=CurrentUserOrderListResponseSchema,
+    response_model=schemas.CurrentUserOrderListResponseSchema,
 )
 async def get_current_user_order_list(
     db: database.AsyncSessionDep,
@@ -152,7 +149,7 @@ async def get_current_user_order_list(
 
 @router.post(
     "/orders/",
-    response_model=OrderDetailResponseSchema,
+    response_model=schemas.OrderDetailResponseSchema,
     status_code=status.HTTP_201_CREATED
 )
 async def create_order(
