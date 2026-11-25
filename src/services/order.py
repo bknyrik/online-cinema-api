@@ -158,6 +158,12 @@ class OrderService(
         current_user: UserModel
     ) -> models.OrderModel:
         try:
+            if not current_user.cart.cart_items:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="User can't create an order from the empty cart"
+                )
+
             order = await self.order_repository.acreate(
                 db=db,
                 data={
