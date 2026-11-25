@@ -11,7 +11,7 @@ from src.schemas.cinema import GenreDetailResponseSchema
 from src.schemas.pagination import PaginationParams
 
 
-class CartItemMovieDetailSchema(BaseModel):
+class ShoppingMovieDetailSchema(BaseModel):
     name: str
     price: Decimal
     genres: list[GenreDetailResponseSchema]
@@ -27,7 +27,7 @@ class CartItemMovieDetailSchema(BaseModel):
 
 class CartItemDetailSchema(BaseModel):
     id: int
-    movie: CartItemMovieDetailSchema
+    movie: ShoppingMovieDetailSchema
     added_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
@@ -69,7 +69,7 @@ class CurrentUserCartDetailResponseSchema(CartDetailResponseSchema):
 
 class OrderItemDetailResponseSchema(BaseModel):
     id: int
-    movie: CartItemMovieDetailSchema
+    movie: ShoppingMovieDetailSchema
     price_at_order: Decimal
 
     model_config = ConfigDict(from_attributes=True)
