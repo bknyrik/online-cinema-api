@@ -18,7 +18,7 @@ class ShoppingMovieDetailSchema(BaseModel):
     year: int
 
     @field_serializer("genres")
-    def serialize_into_str_name(
+    def serialize_into_str_names(
         self,
         genres: list[GenreDetailResponseSchema]
     ) -> list[str]:
