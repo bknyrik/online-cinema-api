@@ -6,7 +6,7 @@ from datetime import datetime
 from fastapi import Query
 from pydantic import BaseModel, ConfigDict, Field, field_serializer
 
-from src.database.models.order import OrderStatusEnum
+from src.database.models.shopping import OrderStatusEnum
 from src.schemas.cinema import GenreDetailResponseSchema
 from src.schemas.pagination import PaginationParams
 

@@ -5,7 +5,6 @@ from sqlalchemy import select, Row, func
 
 from src.repositories.base import AsyncBaseRepository
 from src.database.models import shopping as models
-from src.database.models.order import OrderModel, OrderItemModel
 
 
 class CartRepository(AsyncBaseRepository[models.CartModel]):
@@ -40,10 +39,10 @@ class CartItemRepository(AsyncBaseRepository[models.CartItemModel]):
         super().__init__(models.CartItemModel)
 
 
-class OrderRepository(AsyncBaseRepository[OrderModel]):
+class OrderRepository(AsyncBaseRepository[models.OrderModel]):
 
     def __init__(self) -> None:
-        super().__init__(OrderModel)
+        super().__init__(models.OrderModel)
 
     async def aget_all_with_order_items_count(
         self,
@@ -59,9 +58,9 @@ class OrderRepository(AsyncBaseRepository[OrderModel]):
                 self._model_type.user_id,
                 self._model_type.status,
                 self._model_type.total_amount,
-                func.count(OrderItemModel.id).label("order_items")
+                func.count(models.OrderItemModel.id).label("order_items")
             )
-            .join(OrderItemModel)
+            .join(models.OrderItemModel)
             .where(*expressions)
             .group_by(self._model_type.id)
             .order_by(self._model_type.id)
@@ -71,7 +70,7 @@ class OrderRepository(AsyncBaseRepository[OrderModel]):
         return result.all()
 
 
-class OrderItemRepository(AsyncBaseRepository[OrderItemModel]):
+class OrderItemRepository(AsyncBaseRepository[models.OrderItemModel]):
 
     def __init__(self) -> None:
-        super().__init__(OrderItemModel)
+        super().__init__(models.OrderItemModel)

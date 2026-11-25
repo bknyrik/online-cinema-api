@@ -7,7 +7,6 @@ from sqlalchemy.orm import joinedload
 
 from src.database.models import shopping as models
 from src.database.models.accounts import UserModel
-from src.database.models.order import OrderModel, OrderItemModel
 from src.database.models.cinema import MovieModel
 from src.repositories import shopping as repositories
 from src.repositories.cinema import MovieRepository
@@ -229,7 +228,7 @@ class OrderService(
 ):
 
     def __init__(self) -> None:
-        self.model_type = OrderModel
+        self.model_type = models.OrderModel
         self.order_repository = repositories.OrderRepository()
         self.order_item_repository = repositories.OrderItemRepository()
         self.movie_repository = MovieRepository()
@@ -287,14 +286,14 @@ class OrderService(
         db: AsyncSession,
         order_id: int,
         current_user: UserModel
-    ) -> OrderModel:
+    ) -> models.OrderModel:
         try:
             order = await self.order_repository.aget_by_id(
                 db=db,
                 id_=order_id,
                 load_relationships=[
                     joinedload(self.model_type.order_items)
-                    .joinedload(OrderItemModel.movie)
+                    .joinedload(models.OrderItemModel.movie)
                     .joinedload(MovieModel.genres)
                 ]
             )
@@ -368,7 +367,7 @@ class OrderService(
         self,
         db: AsyncSession,
         current_user: UserModel
-    ) -> OrderModel:
+    ) -> models.OrderModel:
         try:
             if not current_user.cart.cart_items:
                 raise HTTPException(
@@ -417,7 +416,7 @@ class OrderService(
                 id_=order.id,
                 load_relationships=[
                     joinedload(self.model_type.order_items)
-                    .joinedload(OrderItemModel.movie)
+                    .joinedload(models.OrderItemModel.movie)
                     .joinedload(MovieModel.genres)
                 ]
             )
