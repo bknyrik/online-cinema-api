@@ -164,3 +164,20 @@ async def create_order(
         db=db,
         current_user=current_user
     )
+
+
+@router.post(
+    "/orders/{order_id}/cancel/",
+    status_code=status.HTTP_204_NO_CONTENT
+)
+async def cancel_order(
+    order_id: int,
+    db: database.AsyncSessionDep,
+    order_service: services.OrderServiceDep,
+    current_user: authentication.CurrentUserDep
+) -> None:
+    return await order_service.cancel_order(
+        db=db,
+        order_id=order_id,
+        current_user=current_user
+    )
