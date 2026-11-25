@@ -13,7 +13,6 @@ from src.database.models.cinema import *
 from src.database.models.rating import *
 from src.database.models.notifications import *
 from src.database.models.shopping import *
-from src.database.models.order import *
 
 
 # this is the Alembic Config object, which provides

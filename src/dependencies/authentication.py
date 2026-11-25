@@ -7,8 +7,7 @@ from sqlalchemy.orm import joinedload
 
 from dependencies import database, services
 from src.database.models import accounts as models
-from src.database.models.shopping import CartModel, CartItemModel
-from src.database.models.order import OrderModel, OrderItemModel
+from src.database.models import shopping as shopping_models
 from src.database.models.cinema import MovieModel
 from src.repositories import accounts as repositories
 
@@ -38,14 +37,14 @@ async def get_current_user(
             joinedload(models.UserModel.group),
             (
                 joinedload(models.UserModel.cart)
-                .joinedload(CartModel.cart_items)
-                .joinedload(CartItemModel.movie)
+                .joinedload(shopping_models.CartModel.cart_items)
+                .joinedload(shopping_models.CartItemModel.movie)
                 .joinedload(MovieModel.genres)
             ),
             (
                 joinedload(models.UserModel.orders)
-                .joinedload(OrderModel.order_items)
-                .joinedload(OrderItemModel.movie)
+                .joinedload(shopping_models.OrderModel.order_items)
+                .joinedload(shopping_models.OrderItemModel.movie)
                 .joinedload(MovieModel.genres)
             )
         ]
