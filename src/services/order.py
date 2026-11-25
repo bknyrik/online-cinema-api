@@ -27,7 +27,7 @@ class OrderService(
         self.order_item_repository = repositories.OrderItemRepository()
         self.movie_repository = MovieRepository()
 
-    async def get_current_user_orders(
+    async def get_current_user_order_list(
         self,
         db: AsyncSession,
         current_user: UserModel
