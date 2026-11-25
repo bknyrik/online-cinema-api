@@ -113,9 +113,10 @@ async def get_current_user_order_list(
     order_service: services.OrderServiceDep,
     query_params: pagination.PaginationQuery,
     current_user: authentication.CurrentUserDep
-) -> list[OrderModel]:
+) -> dict:
     return await order_service.get_current_user_order_list(
         db=db,
+        query_params=query_params.model_dump(),
         current_user=current_user
     )
 

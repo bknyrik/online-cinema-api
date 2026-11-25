@@ -32,21 +32,41 @@ class OrderService(
         db: AsyncSession,
         query_params: dict,
         current_user: UserModel
-    ) -> list[models.OrderModel]:
+    ) -> dict:
         try:
+            limit, offset = self.get_limit_offset(query_params)
+            expressions = [self.model_type.user_id == current_user.id]
+            total_orders = await self.order_repository.acount(
+                db=db,
+                expressions=expressions
+            )
+            total_pages = self.get_total_pages(
+                total_items=total_orders,
+                per_page=query_params["per_page"]
+            )
+
             orders = list(
-                await self.order_repository.aget_all(
+                await self.order_repository.aget_all_with_order_items_count(
                     db=db,
-                    expressions=[self.model_type.user_id == current_user.id],
-                    load_relationships=[
-                        joinedload(self.model_type.order_items)
-                        .joinedload(models.OrderItemModel.movie)
-                        .joinedload(MovieModel.genres)
-                    ]
+                    expressions=expressions,
+                    limit=limit,
+                    offset=offset
                 )
             )
 
-            return orders
+            prev_page, next_page = self.get_prev_next_urls_pages(
+                "/api/shopping/orders/me/content/",
+                query_params=query_params,
+                page=query_params["page"],
+                total_pages=total_pages
+            )
+            return {
+                "orders": orders,
+                "total_orders": total_orders,
+                "total_pages": total_pages,
+                "prev": prev_page,
+                "next": next_page
+            }
         except SQLAlchemyError:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
