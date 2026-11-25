@@ -11,7 +11,6 @@ from src.database.models.order import OrderModel, OrderItemModel
 from src.database.models.cinema import MovieModel
 from src.repositories import shopping as repositories
 from src.repositories.cinema import MovieRepository
-from src.repositories.order import OrderRepository, OrderItemRepository
 from src.services import mixins
 
 
@@ -231,8 +230,8 @@ class OrderService(
 
     def __init__(self) -> None:
         self.model_type = OrderModel
-        self.order_repository = OrderRepository()
-        self.order_item_repository = OrderItemRepository()
+        self.order_repository = repositories.OrderRepository()
+        self.order_item_repository = repositories.OrderItemRepository()
         self.movie_repository = MovieRepository()
 
     async def get_order_list(
