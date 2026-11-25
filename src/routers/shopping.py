@@ -111,6 +111,7 @@ async def delete_cart_item(
 async def get_current_user_order_list(
     db: database.AsyncSessionDep,
     order_service: services.OrderServiceDep,
+    query_params: pagination.PaginationQuery,
     current_user: authentication.CurrentUserDep
 ) -> list[OrderModel]:
     return await order_service.get_current_user_orders(
