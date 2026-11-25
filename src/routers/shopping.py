@@ -5,7 +5,7 @@ from src.database.models import shopping as models
 from src.database.models.order import OrderModel
 from src.schemas.order import (
     OrderDetailResponseSchema,
-    CurrentUserOrderDetailResponseSchema
+    CurrentUserOrderListResponseSchema
 )
 from src.schemas import shopping as schemas, pagination
 
@@ -106,7 +106,7 @@ async def delete_cart_item(
 
 @router.get(
     "/orders/me/content/",
-    response_model=list[CurrentUserOrderDetailResponseSchema],
+    response_model=CurrentUserOrderListResponseSchema,
 )
 async def get_current_user_order_list(
     db: database.AsyncSessionDep,
