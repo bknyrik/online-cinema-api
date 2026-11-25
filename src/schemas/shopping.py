@@ -84,7 +84,7 @@ class OrderItemMovieDetailSchema(BaseModel):
 
 class OrderItemDetailResponseSchema(BaseModel):
     id: int
-    movie: OrderItemMovieDetailSchema
+    movie: CartItemMovieDetailSchema
     price_at_order: Decimal
 
     model_config = ConfigDict(from_attributes=True)
