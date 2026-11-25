@@ -61,6 +61,10 @@ class OrderListResponseSchema(BaseModel):
     next: str | None
 
 
+class CurrentUserOrderListResponseSchema(OrderListResponseSchema):
+    orders: list[CurrentUserOrderDetailResponseSchema]
+
+
 class OrderListQueryParams(PaginationParams):
     filter_by_user_id: int | None = Field(default=None)
     filter_by_min_created_at: datetime | None = Field(default=None)
