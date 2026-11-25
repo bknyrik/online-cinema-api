@@ -67,21 +67,6 @@ class CurrentUserCartDetailResponseSchema(CartDetailResponseSchema):
     cart_items: list[CartItemDetailSchema]
 
 
-class OrderItemMovieDetailSchema(BaseModel):
-    name: str
-    time: int
-    year: int
-    price: Decimal
-    genres: list[GenreDetailResponseSchema]
-
-    @field_serializer("genres")
-    def serialize_into_str_names(
-        self,
-        genres: list[GenreDetailResponseSchema]
-    ) -> list[str]:
-        return [genre.name for genre in genres]
-
-
 class OrderItemDetailResponseSchema(BaseModel):
     id: int
     movie: CartItemMovieDetailSchema
