@@ -4,7 +4,6 @@ import sqlalchemy as sa
 from sqlalchemy.orm import relationship
 
 from src.database.models.base import Base
-from src.database.models.accounts import UserModel
 from src.database.models.cinema import MovieModel
 
 
@@ -18,7 +17,11 @@ class CartModel(Base):
         unique=True,
         nullable=False
     )
-    user = relationship(UserModel, back_populates="cart", single_parent=True)
+    user = relationship(
+        "UserModel",
+        back_populates="cart",
+        single_parent=True
+    )
     cart_items = relationship(
         "CartItemModel",
         back_populates="cart",
