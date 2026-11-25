@@ -5,7 +5,9 @@ from src.database.models import shopping as models
 from src.database.models.order import OrderModel
 from src.schemas.order import (
     OrderDetailResponseSchema,
-    CurrentUserOrderListResponseSchema
+    OrderListResponseSchema,
+    CurrentUserOrderListResponseSchema,
+    OrderListQuery
 )
 from src.schemas import shopping as schemas, pagination
 
@@ -101,6 +103,19 @@ async def delete_cart_item(
         db=db,
         cart_item_id=cart_item_id,
         current_user=current_user
+    )
+
+
+@router.get("/orders/", response_model=OrderListResponseSchema)
+async def get_order_list(
+    db: database.AsyncSessionDep,
+    order_service: services.OrderServiceDep,
+    query_params: OrderListQuery,
+    current_user: authentication.CurrentModeratorOrAdminDep
+) -> dict:
+    return await order_service.get_order_list(
+        db=db,
+        query_params=query_params.model_dump()
     )
 
 
