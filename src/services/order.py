@@ -99,6 +99,12 @@ class OrderService(
                 item_type="Order"
             )
 
+            self.belongs_to_user_or_is_admin_or_moderator(
+                current_user=current_user,
+                child_object=order,
+                child_object_type="Order"
+            )
+
             return order
         except SQLAlchemyError:
             raise HTTPException(
