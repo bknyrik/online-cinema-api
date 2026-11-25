@@ -170,6 +170,21 @@ class OrderService(
                     detail="User can't create an order from the empty cart"
                 )
 
+            movies: list[MovieModel] = [
+                cart_item.movie for cart_item in current_user.cart.cart_items
+            ]
+
+            for order in current_user.orders:
+                for movie in movies:
+                    if any(movie.id == oi.movie.id for oi in order.order_items):
+                        raise HTTPException(
+                            status_code=status.HTTP_400_BAD_REQUEST,
+                            detail=(
+                                f"Movie with id {movie.id} is already"
+                                f" in another order by id {order.id}"
+                            )
+                        )
+
             order = await self.order_repository.acreate(
                 db=db,
                 data={
@@ -177,10 +192,6 @@ class OrderService(
                     "total_amount": Decimal("0")
                 }
             )
-
-            movies: list[MovieModel] = [
-                cart_item.movie for cart_item in current_user.cart.cart_items
-            ]
 
             for movie in movies:
                 order_item = await self.order_item_repository.acreate(
